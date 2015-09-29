@@ -1,0 +1,274 @@
+package org.qmsos.quakemo;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import android.app.AlarmManager;
+import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.location.Location;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
+import android.util.Log;
+
+public class EarthquakeUpdateService extends IntentService {
+	public static final String TAG = "EARTHQUAKE_UPDATE_SERVICE";
+	public static final String QUAKES_REFRESHED = "org.qmsos.quakemo.QUAKES_REFRESHED";
+	public static final int NOTIFICATION_ID = 1;
+	
+	private AlarmManager alarmManager;
+	private PendingIntent alarmIntent;
+	private Notification.Builder earthquakeNotificationBuilder;
+	
+	/**
+	 * Default constructor of this service.
+	 */
+	public EarthquakeUpdateService() {
+		super("EarthquakeUpdateService");
+	}
+
+	/**
+	 * Constructor with a debug-purpose name of this service.
+	 * @param name Tag name for debug.
+	 */
+	public EarthquakeUpdateService(String name) {
+		super(name);
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+	
+		alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		
+		String ALARM_ACTION = 
+				EarthquakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM;
+		Intent intentToFire = new Intent(ALARM_ACTION);
+		alarmIntent = PendingIntent.getBroadcast(this, 0, intentToFire, 0);
+		
+		earthquakeNotificationBuilder = new Notification.Builder(this);
+		earthquakeNotificationBuilder
+			.setAutoCancel(true)
+			.setTicker("Earthquake detected")
+			.setSmallIcon(R.drawable.notification_icon);
+	}
+
+	@Override
+	protected void onHandleIntent(Intent intent) {
+		SharedPreferences prefs = 
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		
+		int updateFreq = Integer.parseInt(
+				prefs.getString(EarthquakePreferences.PREF_UPDATE_FREQ, "60"));
+		boolean autoUpdateChecked = 
+				prefs.getBoolean(EarthquakePreferences.PREF_AUTO_UPDATE, false);
+		
+		if (autoUpdateChecked) {
+			int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
+			int intervalMillis = updateFreq * 60 * 1000;
+			long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
+			
+			alarmManager.setInexactRepeating(
+					alarmType, timeToRefresh, intervalMillis, alarmIntent);
+		} else {
+			alarmManager.cancel(alarmIntent);
+		}
+		
+		refreshEarthquakes();
+		sendBroadcast(new Intent(QUAKES_REFRESHED));
+		
+		Context context = getApplicationContext();
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+		ComponentName earthquakeWidget = new ComponentName(context, EarthquakeListWidget.class);
+		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(earthquakeWidget);
+		
+		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+	}
+
+	/**
+	 * Refresh UI to show new earthquakes.
+	 */
+	public void refreshEarthquakes() {
+		URL url;
+		try {
+			String quakeFeed = queryQuakeString();
+			url = new URL(quakeFeed);
+			
+			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+			int responseCode = httpConnection.getResponseCode();
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				InputStream inStream = httpConnection.getInputStream();
+				
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder builder = factory.newDocumentBuilder();
+				
+				Document dom = builder.parse(inStream);
+				Element domElement = dom.getDocumentElement();
+				
+				Element eventParameters = (Element) 
+						domElement.getElementsByTagName("eventParameters").item(0);
+				
+				NodeList list = eventParameters.getElementsByTagName("event");
+				if ((list != null) && (list.getLength() > 0)) {
+					for (int i = 0; i < list.getLength(); i++) {
+						final EarthQuake quake = parseQuake(list, i);
+
+						addNewQuake(quake);
+					}
+				}
+			}
+		} catch (IOException e) {
+			Log.d(TAG, "IOException");
+		} catch (ParserConfigurationException e) {
+			Log.d(TAG, "Parser Configuration Exception");
+		} catch (SAXException e) {
+			Log.d(TAG, "SAX Exception");
+		} finally {
+		}
+	}
+	
+	/**
+	 * Add new Quake instance to the database.
+	 * @param quake the instance to add.
+	 */
+	private void addNewQuake(EarthQuake quake) {
+		ContentResolver resolver = getContentResolver();
+		
+		String where = EarthquakeProvider.KEY_DATE + " = " + quake.getDate().getTime();
+		
+		Cursor query = resolver.query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
+		if (query.getCount() == 0) {
+			ContentValues values = new ContentValues();
+			values.put(EarthquakeProvider.KEY_DATE, quake.getDate().getTime());
+			values.put(EarthquakeProvider.KEY_DETAILS, quake.getDetails());
+			values.put(EarthquakeProvider.KEY_SUMMARY, quake.toString());
+			values.put(EarthquakeProvider.KEY_LOCATION_LA, quake.getLocation().getLatitude());
+			values.put(EarthquakeProvider.KEY_LOCATION_LO, quake.getLocation().getLongitude());
+			values.put(EarthquakeProvider.KEY_LINK, quake.getLink());
+			values.put(EarthquakeProvider.KEY_MAGNITUDE, quake.getMagnitude());
+			
+			broadcastNotification(quake);
+			
+			resolver.insert(EarthquakeProvider.CONTENT_URI, values);
+		}
+		query.close();
+	}
+
+	/**
+	 * Making query String.
+	 * @return the query string.
+	 */
+	private String queryQuakeString() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+		Date date = new Date();
+		String dateString = dateFormat.format(date);
+		
+		String queryString = "http://earthquake.usgs.gov/fdsnws/event/1/query?" +
+				"format=xml" + "&" + "starttime=" + dateString + "&" + "minmagnitude=3";
+
+		return queryString;
+	}
+	
+	/**
+	 * Parsing a single quake in a NodeList
+	 * @param list the NodeList contains quake instance.
+	 * @param i the index.
+	 * @return parsed quake.
+	 */
+	private EarthQuake parseQuake(NodeList list, int i) {
+		Element event = (Element) list.item(i);
+		Element description = (Element) event.getElementsByTagName("description").item(0);
+		Element origin = (Element) event.getElementsByTagName("origin").item(0);
+		Element magnitude = (Element) event.getElementsByTagName("magnitude").item(0);
+		
+		Element text = (Element) description.getElementsByTagName("text").item(0);
+		String details = text.getFirstChild().getNodeValue();
+		
+		double mag = Double.parseDouble(getValueElement(magnitude));
+		
+		Element time = (Element) origin.getElementsByTagName("time").item(0);
+		Element longitude = (Element) origin.getElementsByTagName("longitude").item(0);
+		Element latitude = (Element) origin.getElementsByTagName("latitude").item(0);
+		
+		String date = getValueElement(time);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'.'SSS'Z'", Locale.US);
+		Date quakeDate = new Date();
+		try {
+			quakeDate = format.parse(date);
+		} catch (ParseException e) {
+			Log.d(TAG, "Date parsing exception.", e);
+		}
+		
+		Location loc = new Location("dummyGPS");
+		loc.setLongitude(Double.parseDouble(getValueElement(longitude)));
+		loc.setLatitude(Double.parseDouble(getValueElement(latitude)));
+		
+		String link = origin.getAttribute("publicID");
+		link = link.replace("quakeml:", "http://");
+		
+		EarthQuake quake = new EarthQuake(quakeDate, details, loc, mag, link);
+
+		return quake;
+	}
+	
+	/**
+	 * Get the "value" node's data, of a Element
+	 * @param e the element of query.
+	 * @return the string of "value" node.
+	 */
+	private String getValueElement(Element e) {
+		Element value = (Element) e.getElementsByTagName("value").item(0);
+		String str = value.getFirstChild().getNodeValue();
+		
+		return str;
+	}
+	
+	/**
+	 * Create and broadcast a new notification of earthquake.
+	 * @param quake the earthquake instance.
+	 */
+	private void broadcastNotification(EarthQuake quake) {
+		PendingIntent launchIntent = 
+				PendingIntent.getActivity(this, 0, new Intent(this, EarthquakeActivity.class), 0);
+		
+		Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+		earthquakeNotificationBuilder
+			.setSound(ringURI)
+			.setContentIntent(launchIntent)
+			.setWhen(quake.getDate().getTime())
+			.setContentTitle("M:" + quake.getMagnitude())
+			.setContentText(quake.getDetails());
+		
+		NotificationManager notificationManager = 
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.notify(NOTIFICATION_ID, earthquakeNotificationBuilder.build());
+	}
+}
