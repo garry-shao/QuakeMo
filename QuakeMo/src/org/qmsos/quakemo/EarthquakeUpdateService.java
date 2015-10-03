@@ -89,7 +89,6 @@ public class EarthquakeUpdateService extends IntentService {
 				prefs.getString(EarthquakePreferences.PREF_UPDATE_FREQ, "60"));
 		boolean autoUpdateChecked = 
 				prefs.getBoolean(EarthquakePreferences.PREF_AUTO_UPDATE, false);
-		
 		if (autoUpdateChecked) {
 			int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
 			int intervalMillis = updateFreq * 60 * 1000;
@@ -113,12 +112,12 @@ public class EarthquakeUpdateService extends IntentService {
 	}
 
 	/**
-	 * Refresh UI to show new earthquakes.
+	 * Query source for new earthquakes.
 	 */
 	public void refreshEarthquakes() {
 		URL url;
 		try {
-			String quakeFeed = queryQuakeString();
+			String quakeFeed = queryEarthquakeString();
 			url = new URL(quakeFeed);
 			
 			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
@@ -138,9 +137,9 @@ public class EarthquakeUpdateService extends IntentService {
 				NodeList list = eventParameters.getElementsByTagName("event");
 				if ((list != null) && (list.getLength() > 0)) {
 					for (int i = 0; i < list.getLength(); i++) {
-						final EarthQuake quake = parseQuake(list, i);
+						final Earthquake quake = parseEarthquake(list, i);
 
-						addNewQuake(quake);
+						addNewEarthquake(quake);
 					}
 				}
 			}
@@ -158,7 +157,7 @@ public class EarthquakeUpdateService extends IntentService {
 	 * Add new Quake instance to the database.
 	 * @param quake the instance to add.
 	 */
-	private void addNewQuake(EarthQuake quake) {
+	private void addNewEarthquake(Earthquake quake) {
 		ContentResolver resolver = getContentResolver();
 		
 		String where = EarthquakeProvider.KEY_DATE + " = " + quake.getDate().getTime();
@@ -182,27 +181,27 @@ public class EarthquakeUpdateService extends IntentService {
 	}
 
 	/**
-	 * Making query String.
+	 * Make query string for USGS.
 	 * @return the query string.
 	 */
-	private String queryQuakeString() {
+	private String queryEarthquakeString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 		Date date = new Date();
 		String dateString = dateFormat.format(date);
 		
 		String queryString = "http://earthquake.usgs.gov/fdsnws/event/1/query?" +
-				"format=xml" + "&" + "starttime=" + dateString + "&" + "minmagnitude=3";
+				"format=xml" + "&" + "starttime=" + dateString + "&" + "minmagnitude=2.5";
 
 		return queryString;
 	}
 	
 	/**
-	 * Parsing a single quake in a NodeList
+	 * Parse a single quake in a NodeList
 	 * @param list the NodeList contains quake instance.
 	 * @param i the index.
 	 * @return parsed quake.
 	 */
-	private EarthQuake parseQuake(NodeList list, int i) {
+	private Earthquake parseEarthquake(NodeList list, int i) {
 		Element event = (Element) list.item(i);
 		Element description = (Element) event.getElementsByTagName("description").item(0);
 		Element origin = (Element) event.getElementsByTagName("origin").item(0);
@@ -233,7 +232,7 @@ public class EarthquakeUpdateService extends IntentService {
 		String link = origin.getAttribute("publicID");
 		link = link.replace("quakeml:", "http://");
 		
-		EarthQuake quake = new EarthQuake(quakeDate, details, loc, mag, link);
+		Earthquake quake = new Earthquake(quakeDate, details, loc, mag, link);
 
 		return quake;
 	}
@@ -254,7 +253,7 @@ public class EarthquakeUpdateService extends IntentService {
 	 * Create and broadcast a new notification of earthquake.
 	 * @param quake the earthquake instance.
 	 */
-	private void broadcastNotification(EarthQuake quake) {
+	private void broadcastNotification(Earthquake quake) {
 		PendingIntent launchIntent = 
 				PendingIntent.getActivity(this, 0, new Intent(this, EarthquakeActivity.class), 0);
 		
@@ -270,5 +269,18 @@ public class EarthquakeUpdateService extends IntentService {
 		NotificationManager notificationManager = 
 				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.notify(NOTIFICATION_ID, earthquakeNotificationBuilder.build());
+	}
+	
+	/**
+	 * Purge all earthquakes stored in content provider.
+	 * @param purgeEarthquakes TRUE to purge stored earthquake events.
+	 */
+	@SuppressWarnings("unused")
+	private void purgeAllEarthquakes(boolean purgeEarthquakes) {
+		ContentResolver resolver = getContentResolver();
+		
+		if (purgeEarthquakes) {
+			resolver.delete(EarthquakeProvider.CONTENT_URI, null, null);
+		}
 	}
 }

@@ -1,13 +1,20 @@
 package org.qmsos.quakemo;
 
+import java.util.Date;
+
+import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.SearchManager;
+import android.content.ContentUris;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class EarthquakeSearchResults extends ListActivity implements LoaderCallbacks<Cursor> {
@@ -30,8 +37,42 @@ public class EarthquakeSearchResults extends ListActivity implements LoaderCallb
 		
 		parseIntent(getIntent());
 	}
-
 	
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		
+		Cursor result = getContentResolver().query(
+				ContentUris.withAppendedId(EarthquakeProvider.CONTENT_URI, id), null, null, null, null);
+		
+		if (result.moveToFirst()) {
+			Date date = new Date(result.getLong(
+					result.getColumnIndex(EarthquakeProvider.KEY_DATE)));
+			
+			String details = result.getString(
+					result.getColumnIndex(EarthquakeProvider.KEY_DETAILS));
+			
+			double magnitude = result.getDouble(
+					result.getColumnIndex(EarthquakeProvider.KEY_MAGNITUDE));
+			
+			String link = result.getString(
+					result.getColumnIndex(EarthquakeProvider.KEY_LINK));
+			
+			double location_la = result.getDouble(
+					result.getColumnIndex(EarthquakeProvider.KEY_LOCATION_LA));
+			double location_lo = result.getDouble(
+					result.getColumnIndex(EarthquakeProvider.KEY_LOCATION_LO));
+			Location location = new Location("db");
+			location.setLatitude(location_la);
+			location.setLongitude(location_lo);
+			
+			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
+			
+			DialogFragment dialogFragment = EarthquakeDialog.newInstance(this, quake);
+			dialogFragment.show(getFragmentManager(), "dialog");
+		}
+	}
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);

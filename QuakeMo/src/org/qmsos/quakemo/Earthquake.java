@@ -10,7 +10,7 @@ import android.location.Location;
  * Description of an earthquake instance.
  *
  */
-public class EarthQuake {
+public class Earthquake {
 	private Date date;
 	private String details;
 	private Location location;
@@ -25,7 +25,7 @@ public class EarthQuake {
 	 * @param magnitude magnitude of this earthquake.
 	 * @param link link to USGS about this earthquake.
 	 */
-	public EarthQuake(Date date, String details, Location location, 
+	public Earthquake(Date date, String details, Location location, 
 			Double magnitude, String link) {
 		this.date = date;
 		this.details = details;
@@ -74,6 +74,19 @@ public class EarthQuake {
 		return link;
 	}
 
+	/**
+	 * Get dialog-suitable details of this earthquake.
+	 * @return the details string.
+	 */
+	public String getDialogDetails() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US);
+		String dateString = dateFormat.format(date);
+		String earthquakeDialogDetailsText = dateString + "\n" + "Magnitude " + magnitude + 
+				"\n" + details + "\n" + link;
+	
+		return earthquakeDialogDetailsText;
+	}
+	
 	@Override
 	public String toString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH.mm", Locale.US);

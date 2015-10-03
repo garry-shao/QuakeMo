@@ -36,15 +36,6 @@ public class EarthquakeListFragment extends ListFragment implements LoaderCallba
 		refreshEarthquakes();
 	}
 	
-	/**
-	 * Refresh UI to show newer earthquakes.
-	 */
-	public void refreshEarthquakes() {
-		getLoaderManager().restartLoader(0, null, this);
-		
-		getActivity().startService(new Intent(getActivity(), EarthquakeUpdateService.class));
-	}
-	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
@@ -75,7 +66,7 @@ public class EarthquakeListFragment extends ListFragment implements LoaderCallba
 			location.setLatitude(location_la);
 			location.setLongitude(location_lo);
 			
-			EarthQuake quake = new EarthQuake(date, details, location, magnitude, link);
+			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
 			
 			DialogFragment dialogFragment = EarthquakeDialog.newInstance(getActivity(), quake);
 			dialogFragment.show(getFragmentManager(), "dialog");
@@ -107,6 +98,15 @@ public class EarthquakeListFragment extends ListFragment implements LoaderCallba
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		adapter.swapCursor(null);
+	}
+
+	/**
+	 * Refresh UI to show newer earthquakes.
+	 */
+	public void refreshEarthquakes() {
+		getLoaderManager().restartLoader(0, null, this);
+		
+		getActivity().startService(new Intent(getActivity(), EarthquakeUpdateService.class));
 	}
 
 }

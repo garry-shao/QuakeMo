@@ -1,8 +1,5 @@
 package org.qmsos.quakemo;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -12,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+/**
+ * Show a specific earthquake's detail as a dialog.
+ *
+ */
 public class EarthquakeDialog extends DialogFragment {
 	private static final String DIALOG_STRING = "DIALOG_STRING";
 	
@@ -21,16 +22,11 @@ public class EarthquakeDialog extends DialogFragment {
 	 * @param quake The particular earthquake to show. 
 	 * @return
 	 */
-	public static EarthquakeDialog newInstance(Context context, EarthQuake quake) {
+	public static EarthquakeDialog newInstance(Context context, Earthquake quake) {
 		EarthquakeDialog fragment = new EarthquakeDialog();
 		Bundle args = new Bundle();
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US);
-		String dateString = dateFormat.format(quake.getDate());
-		String quakeText = dateString + "\n" + "Magnitude " + quake.getMagnitude() + 
-				"\n" + quake.getDetails() + "\n" + quake.getLink();
-		
-		args.putString(DIALOG_STRING, quakeText);
+		args.putString(DIALOG_STRING, quake.getDialogDetails());
 		fragment.setArguments(args);
 		
 		return fragment;
@@ -39,7 +35,7 @@ public class EarthquakeDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Dialog dialog = super.onCreateDialog(savedInstanceState);
-		dialog.setTitle("Earthquake Details");
+		dialog.setTitle(R.string.dialog_title);
 		
 		return dialog;
 	}

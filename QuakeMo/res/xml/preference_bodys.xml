@@ -23,5 +23,4 @@
         android:key="PREF_MIN_MAG"
         android:summary="@string/pref_min_mag_summary"
         android:title="@string/pref_min_mag_title" />
-
-</PreferenceScreen>
+</PreferenceScreen>

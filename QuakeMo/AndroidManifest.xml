@@ -34,7 +34,7 @@
         </activity>
         <activity
             android:name=".EarthquakeSearchResults"
-            android:label="Earthquake Search"
+            android:label="@string/search_name"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
