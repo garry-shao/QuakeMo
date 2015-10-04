@@ -169,7 +169,7 @@ public class EarthquakeActivity extends Activity {
 		super.onCreateOptionsMenu(menu);
 		
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(R.menu.main_option_menu, menu);
 		
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
@@ -208,7 +208,16 @@ public class EarthquakeActivity extends Activity {
 			return true;
 		}
 		case (R.id.menu_refresh): {
-			startService(new Intent(this, EarthquakeUpdateService.class));
+			Intent i = new Intent(this, EarthquakeUpdateService.class);
+			i.putExtra(EarthquakeUpdateService.MANUAL_REFRESH, true);
+			startService(i);
+			
+			return true;
+		}
+		case (R.id.menu_purge): {
+			Intent i = new Intent(this, EarthquakeUpdateService.class);
+			i.putExtra(EarthquakeUpdateService.PURGE_DATABASE, true);
+			startService(i);
 			
 			return true;
 		}

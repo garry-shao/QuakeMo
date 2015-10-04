@@ -41,6 +41,8 @@ import android.util.Log;
 public class EarthquakeUpdateService extends IntentService {
 	public static final String TAG = "EARTHQUAKE_UPDATE_SERVICE";
 	public static final String QUAKES_REFRESHED = "org.qmsos.quakemo.QUAKES_REFRESHED";
+	public static final String MANUAL_REFRESH = "org.qmsos.quakemo.MANUAL_REFRESH";
+	public static final String PURGE_DATABASE = "org.qmsos.quakemo.PURGE_DATABASE";
 	public static final int NOTIFICATION_ID = 1;
 	
 	private AlarmManager alarmManager;
@@ -94,14 +96,25 @@ public class EarthquakeUpdateService extends IntentService {
 			int intervalMillis = updateFreq * 60 * 1000;
 			long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
 			
+			refreshEarthquakes();
+			sendBroadcast(new Intent(QUAKES_REFRESHED));
+
 			alarmManager.setInexactRepeating(
 					alarmType, timeToRefresh, intervalMillis, alarmIntent);
 		} else {
 			alarmManager.cancel(alarmIntent);
 		}
 		
-		refreshEarthquakes();
-		sendBroadcast(new Intent(QUAKES_REFRESHED));
+		boolean refresh = intent.getBooleanExtra(MANUAL_REFRESH, false);
+		if (refresh) {
+			refreshEarthquakes();
+			sendBroadcast(new Intent(QUAKES_REFRESHED));
+		}
+		
+		boolean purge = intent.getBooleanExtra(PURGE_DATABASE, false);
+		if (purge) {
+			purgeAllEarthquakes();
+		}
 		
 		Context context = getApplicationContext();
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -273,14 +286,10 @@ public class EarthquakeUpdateService extends IntentService {
 	
 	/**
 	 * Purge all earthquakes stored in content provider.
-	 * @param purgeEarthquakes TRUE to purge stored earthquake events.
 	 */
-	@SuppressWarnings("unused")
-	private void purgeAllEarthquakes(boolean purgeEarthquakes) {
+	private void purgeAllEarthquakes() {
 		ContentResolver resolver = getContentResolver();
 		
-		if (purgeEarthquakes) {
-			resolver.delete(EarthquakeProvider.CONTENT_URI, null, null);
-		}
+		resolver.delete(EarthquakeProvider.CONTENT_URI, null, null);
 	}
 }

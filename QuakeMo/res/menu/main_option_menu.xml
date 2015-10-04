@@ -18,5 +18,10 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_refresh">
     </item>
+    <item
+        android:id="@+id/menu_purge"
+        android:showAsAction="never"
+        android:title="@string/menu_purge">
+    </item>
 
 </menu>

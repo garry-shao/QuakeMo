@@ -13,8 +13,6 @@
     <string name="pref_min_mag_dialog_title">Magnitude</string>
     <string name="pref_min_mag_summary">Select the minimum magnitude earthquake to report</string>
     <string name="pref_min_mag_title">Minimum magnitude</string>
-    <string name="pref_purge_earthquakes_summary">Select to purge all earthquakes stored</string>
-    <string name="pref_purge_earthquakes_title">Purge Earthquakes</string>
     <string name="header_summary">Earthquake Refresh Settings</string>
     <string name="header_title">Settings</string>
     <string name="dialog_title">Earthquake Details</string>
@@ -22,6 +20,7 @@
     <string name="search_description">Searth earthquake locations</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_search">Search</string>
+    <string name="menu_purge">Purge</string>
     <string name="widget_name">QuakeMo</string>
     <string name="widget_list_name">QuakeMo List</string>
     <string name="widget_empty">No Earthquakes!</string>
