@@ -78,7 +78,7 @@ public class EarthquakeUpdateService extends IntentService {
 		earthquakeNotificationBuilder = new Notification.Builder(this);
 		earthquakeNotificationBuilder
 			.setAutoCancel(true)
-			.setTicker("Earthquake detected")
+			.setTicker(getBaseContext().getString(R.string.notification_ticker))
 			.setSmallIcon(R.drawable.notification_icon);
 	}
 
@@ -105,14 +105,12 @@ public class EarthquakeUpdateService extends IntentService {
 			alarmManager.cancel(alarmIntent);
 		}
 		
-		boolean refresh = intent.getBooleanExtra(MANUAL_REFRESH, false);
-		if (refresh) {
+		if (intent.getBooleanExtra(MANUAL_REFRESH, false)) {
 			refreshEarthquakes();
 			sendBroadcast(new Intent(QUAKES_REFRESHED));
 		}
 		
-		boolean purge = intent.getBooleanExtra(PURGE_DATABASE, false);
-		if (purge) {
+		if (intent.getBooleanExtra(PURGE_DATABASE, false)) {
 			purgeAllEarthquakes();
 		}
 		
@@ -167,26 +165,26 @@ public class EarthquakeUpdateService extends IntentService {
 	}
 	
 	/**
-	 * Add new Quake instance to the database.
-	 * @param quake the instance to add.
+	 * Add new earthquake instance to the database.
+	 * @param earthquake the instance to add.
 	 */
-	private void addNewEarthquake(Earthquake quake) {
+	private void addNewEarthquake(Earthquake earthquake) {
 		ContentResolver resolver = getContentResolver();
 		
-		String where = EarthquakeProvider.KEY_DATE + " = " + quake.getDate().getTime();
+		String where = EarthquakeProvider.KEY_DATE + " = " + earthquake.getDate().getTime();
 		
 		Cursor query = resolver.query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
 		if (query.getCount() == 0) {
 			ContentValues values = new ContentValues();
-			values.put(EarthquakeProvider.KEY_DATE, quake.getDate().getTime());
-			values.put(EarthquakeProvider.KEY_DETAILS, quake.getDetails());
-			values.put(EarthquakeProvider.KEY_SUMMARY, quake.toString());
-			values.put(EarthquakeProvider.KEY_LOCATION_LA, quake.getLocation().getLatitude());
-			values.put(EarthquakeProvider.KEY_LOCATION_LO, quake.getLocation().getLongitude());
-			values.put(EarthquakeProvider.KEY_LINK, quake.getLink());
-			values.put(EarthquakeProvider.KEY_MAGNITUDE, quake.getMagnitude());
+			values.put(EarthquakeProvider.KEY_DATE, earthquake.getDate().getTime());
+			values.put(EarthquakeProvider.KEY_DETAILS, earthquake.getDetails());
+			values.put(EarthquakeProvider.KEY_SUMMARY, earthquake.toString());
+			values.put(EarthquakeProvider.KEY_LOCATION_LA, earthquake.getLocation().getLatitude());
+			values.put(EarthquakeProvider.KEY_LOCATION_LO, earthquake.getLocation().getLongitude());
+			values.put(EarthquakeProvider.KEY_LINK, earthquake.getLink());
+			values.put(EarthquakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
 			
-			broadcastNotification(quake);
+			broadcastNotification(earthquake);
 			
 			resolver.insert(EarthquakeProvider.CONTENT_URI, values);
 		}
@@ -209,79 +207,47 @@ public class EarthquakeUpdateService extends IntentService {
 	}
 	
 	/**
-	 * Parse a single quake in a NodeList
-	 * @param list the NodeList contains quake instance.
+	 * Parse specific earthquake in the nodeList
+	 * @param list the nodeList that contains earthquake instance.
 	 * @param i the index.
-	 * @return parsed quake.
+	 * @return the parsed earthquake.
 	 */
 	private Earthquake parseEarthquake(NodeList list, int i) {
 		Element event = (Element) list.item(i);
-		Element description = (Element) event.getElementsByTagName("description").item(0);
+		
 		Element origin = (Element) event.getElementsByTagName("origin").item(0);
-		Element magnitude = (Element) event.getElementsByTagName("magnitude").item(0);
-		
-		Element text = (Element) description.getElementsByTagName("text").item(0);
-		String details = text.getFirstChild().getNodeValue();
-		
-		double mag = Double.parseDouble(getValueElement(magnitude));
-		
 		Element time = (Element) origin.getElementsByTagName("time").item(0);
-		Element longitude = (Element) origin.getElementsByTagName("longitude").item(0);
-		Element latitude = (Element) origin.getElementsByTagName("latitude").item(0);
-		
-		String date = getValueElement(time);
+		Element value = (Element) time.getElementsByTagName("value").item(0);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'.'SSS'Z'", Locale.US);
-		Date quakeDate = new Date();
+		Date earthquakeDate = new Date();
 		try {
-			quakeDate = format.parse(date);
+			earthquakeDate = format.parse(value.getFirstChild().getNodeValue());
 		} catch (ParseException e) {
 			Log.d(TAG, "Date parsing exception.", e);
 		}
 		
+		Element description = (Element) event.getElementsByTagName("description").item(0);
+		Element text = (Element) description.getElementsByTagName("text").item(0);
+		String details = text.getFirstChild().getNodeValue();
+
 		Location loc = new Location("dummyGPS");
-		loc.setLongitude(Double.parseDouble(getValueElement(longitude)));
-		loc.setLatitude(Double.parseDouble(getValueElement(latitude)));
+		Element longitude = (Element) origin.getElementsByTagName("longitude").item(0);
+		value = (Element) longitude.getElementsByTagName("value").item(0);
+		loc.setLongitude(Double.parseDouble(value.getFirstChild().getNodeValue()));
+		Element latitude = (Element) origin.getElementsByTagName("latitude").item(0);
+		value = (Element) latitude.getElementsByTagName("value").item(0);
+		loc.setLatitude(Double.parseDouble(value.getFirstChild().getNodeValue()));
 		
+		Element magnitude = (Element) event.getElementsByTagName("magnitude").item(0);
+		value = (Element) magnitude.getElementsByTagName("value").item(0);
+		double mag = Double.parseDouble(value.getFirstChild().getNodeValue());
+
 		String link = origin.getAttribute("publicID");
 		link = link.replace("quakeml:", "http://");
 		
-		Earthquake quake = new Earthquake(quakeDate, details, loc, mag, link);
+		Earthquake earthquake = new Earthquake(earthquakeDate, details, loc, mag, link);
 
-		return quake;
-	}
-	
-	/**
-	 * Get the "value" node's data, of a Element
-	 * @param e the element of query.
-	 * @return the string of "value" node.
-	 */
-	private String getValueElement(Element e) {
-		Element value = (Element) e.getElementsByTagName("value").item(0);
-		String str = value.getFirstChild().getNodeValue();
-		
-		return str;
-	}
-	
-	/**
-	 * Create and broadcast a new notification of earthquake.
-	 * @param quake the earthquake instance.
-	 */
-	private void broadcastNotification(Earthquake quake) {
-		PendingIntent launchIntent = 
-				PendingIntent.getActivity(this, 0, new Intent(this, EarthquakeActivity.class), 0);
-		
-		Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-		earthquakeNotificationBuilder
-			.setSound(ringURI)
-			.setContentIntent(launchIntent)
-			.setWhen(quake.getDate().getTime())
-			.setContentTitle("M:" + quake.getMagnitude())
-			.setContentText(quake.getDetails());
-		
-		NotificationManager notificationManager = 
-				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		notificationManager.notify(NOTIFICATION_ID, earthquakeNotificationBuilder.build());
+		return earthquake;
 	}
 	
 	/**
@@ -291,5 +257,35 @@ public class EarthquakeUpdateService extends IntentService {
 		ContentResolver resolver = getContentResolver();
 		
 		resolver.delete(EarthquakeProvider.CONTENT_URI, null, null);
+	}
+
+	/**
+	 * Create and broadcast a new notification of earthquake.
+	 * @param earthquake the earthquake to notify.
+	 */
+	private void broadcastNotification(Earthquake earthquake) {
+		final int minMagnitudeWithSound = 6;
+		
+		PendingIntent launchIntent = 
+				PendingIntent.getActivity(this, 0, new Intent(this, EarthquakeActivity.class), 0);
+
+		earthquakeNotificationBuilder
+			.setContentIntent(launchIntent)
+			.setWhen(earthquake.getDate().getTime())
+			.setContentTitle("M:" + earthquake.getMagnitude())
+			.setContentText(earthquake.getDetails());
+		
+		double vibrateLength = 100 * Math.exp(0.53 * earthquake.getMagnitude());
+		earthquakeNotificationBuilder.setVibrate(new long[] { 100, 100, (long) vibrateLength });
+		
+		if (earthquake.getMagnitude() > minMagnitudeWithSound) {
+			Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			
+			earthquakeNotificationBuilder.setSound(ringURI);
+		}
+		
+		NotificationManager notificationManager = 
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.notify(NOTIFICATION_ID, earthquakeNotificationBuilder.build());
 	}
 }

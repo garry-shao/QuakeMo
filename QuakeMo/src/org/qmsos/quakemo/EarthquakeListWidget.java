@@ -21,7 +21,7 @@ public class EarthquakeListWidget extends AppWidgetProvider {
 			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 			
 			RemoteViews views = new RemoteViews(context.getPackageName(), 
-					R.layout.earthquake_collection_widget);
+					R.layout.earthquake_list_widget);
 			views.setRemoteAdapter(R.id.widget_list_view, intent);
 			views.setEmptyView(R.id.widget_list_view, R.id.widget_empty_text);
 			

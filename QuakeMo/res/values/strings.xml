@@ -16,6 +16,7 @@
     <string name="header_summary">Earthquake Refresh Settings</string>
     <string name="header_title">Settings</string>
     <string name="dialog_title">Earthquake Details</string>
+    <string name="notification_ticker">Earthquake detected</string>
     <string name="search_name">Earthquake Search</string>
     <string name="search_description">Searth earthquake locations</string>
     <string name="menu_refresh">Refresh</string>
