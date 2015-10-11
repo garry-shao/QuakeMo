@@ -1,7 +1,5 @@
 package org.qmsos.quakemo;
 
-import org.osmdroid.views.MapView;
-
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -13,26 +11,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.SearchView.OnSuggestionListener;
 
 @SuppressWarnings("deprecation")
-public class EarthquakeActivity extends Activity {
-	private static final int SHOW_PREFERENCES = 1;
+public class MainActivity extends Activity {
+	protected static final int SHOW_PREFERENCES = 1;
+
 	private static final String ACTION_BAR_INDEX = "ACTION_BAR_INDEX";
 	
-	public boolean autoUpdateChecked = false;
-	public int minMagnitude = 0;
-	public int updateFreq = 0;
-	MapView mapView;
-	
-	TabListener<EarthquakeListFragment> listTabListener;
-	TabListener<EarthquakeMapFragment> mapTabListener;
+	private TabListener<EarthquakeListFragment> listTabListener;
+	private TabListener<EarthquakeMapFragment> mapTabListener;
 	
 	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
 		private Fragment fragment;
@@ -76,14 +67,7 @@ public class EarthquakeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.earthquake_main);
-		
-		mapView = new MapView(getApplicationContext(), null);
-		mapView.setBuiltInZoomControls(true);
-		mapView.setTilesScaledToDpi(true);
-		mapView.getController().setZoom(1);
-		
-		updateFromPreferences();
+		setContentView(R.layout.main_activity);
 		
 		ActionBar actionBar = getActionBar();
 		
@@ -117,8 +101,8 @@ public class EarthquakeActivity extends Activity {
 		View fragmentContainer = findViewById(R.id.EarthquakeFragmentContainer);
 		
 		if (fragmentContainer != null) {
-			SharedPreferences sp = getPreferences(Context.MODE_PRIVATE);
-			int actionBarIndex = sp.getInt(ACTION_BAR_INDEX, 0);
+			SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+			int actionBarIndex = prefs.getInt(ACTION_BAR_INDEX, 0);
 			getActionBar().setSelectedNavigationItem(actionBarIndex);
 		}
 	}
@@ -168,8 +152,7 @@ public class EarthquakeActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_option_menu, menu);
+		getMenuInflater().inflate(R.menu.main_options_menu, menu);
 		
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
@@ -197,59 +180,12 @@ public class EarthquakeActivity extends Activity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		
-		switch (item.getItemId()) {
-		case (R.id.menu_preferences): {
-			Intent i = new Intent(this, EarthquakePreferences.class);
-			startActivityForResult(i, SHOW_PREFERENCES);
-		
-			return true;
-		}
-		case (R.id.menu_refresh): {
-			Intent i = new Intent(this, EarthquakeUpdateService.class);
-			i.putExtra(EarthquakeUpdateService.MANUAL_REFRESH, true);
-			startService(i);
-			
-			return true;
-		}
-		case (R.id.menu_purge): {
-			Intent i = new Intent(this, EarthquakeUpdateService.class);
-			i.putExtra(EarthquakeUpdateService.PURGE_DATABASE, true);
-			startService(i);
-			
-			return true;
-		}
-		default:
-			return false;
-		}
-	}
-	
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if (requestCode == SHOW_PREFERENCES) {
-			updateFromPreferences();
-			
 			startService(new Intent(this, EarthquakeUpdateService.class));
 		}
 	}
 
-	/**
-	 * Get new values from shared preferences.
-	 */
-	private void updateFromPreferences() {
-		Context context = getApplicationContext();
-		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(context);
-
-		autoUpdateChecked = 
-				prefs.getBoolean(EarthquakePreferences.PREF_AUTO_UPDATE, false);
-		minMagnitude = Integer.parseInt(
-				prefs.getString(EarthquakePreferences.PREF_MIN_MAG, "3"));
-		updateFreq = Integer.parseInt(
-				prefs.getString(EarthquakePreferences.PREF_UPDATE_FREQ, "60"));
-	}
 }

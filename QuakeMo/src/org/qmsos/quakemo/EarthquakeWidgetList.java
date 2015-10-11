@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-public class EarthquakeListWidget extends AppWidgetProvider {
+public class EarthquakeWidgetList extends AppWidgetProvider {
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, 
@@ -17,15 +17,14 @@ public class EarthquakeListWidget extends AppWidgetProvider {
 		for (int i = 0; i < N; i++) {
 			int appWidgetId = appWidgetIds[i];
 			
-			Intent intent = new Intent(context, EarthquakeRemoteViewService.class);
+			Intent intent = new Intent(context, EarthquakeViewsService.class);
 			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 			
-			RemoteViews views = new RemoteViews(context.getPackageName(), 
-					R.layout.earthquake_list_widget);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
 			views.setRemoteAdapter(R.id.widget_list_view, intent);
-			views.setEmptyView(R.id.widget_list_view, R.id.widget_empty_text);
+			views.setEmptyView(R.id.widget_list_view, R.id.widget_list_empty_text);
 			
-			Intent templateIntent = new Intent(context, EarthquakeActivity.class);
+			Intent templateIntent = new Intent(context, MainActivity.class);
 			templateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 			
 			PendingIntent templatePendingIntent = PendingIntent.getActivity(

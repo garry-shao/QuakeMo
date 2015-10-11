@@ -10,7 +10,8 @@ import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-public class EarthquakeRemoteViewService extends RemoteViewsService {
+public class EarthquakeViewsService extends RemoteViewsService {
+	
 	@Override
 	public RemoteViewsFactory onGetViewFactory(Intent intent) {
 		return new EarthquakeRemoteViewsFactory(getApplicationContext());
@@ -66,15 +67,15 @@ public class EarthquakeRemoteViewService extends RemoteViewsService {
 			String magnitude = quakeCursor.getString(magnitudeIndex) + "M";
 			String details = quakeCursor.getString(detailsIndex);
 			
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.earthquake_widget);
-			views.setTextViewText(R.id.widget_magnitude, magnitude);
-			views.setTextViewText(R.id.widget_details, details);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_single);
+			views.setTextViewText(R.id.widget_single_magnitude, magnitude);
+			views.setTextViewText(R.id.widget_single_details, details);
 			
 			Intent fillInIntent = new Intent();
 			fillInIntent.setData(Uri.withAppendedPath(EarthquakeProvider.CONTENT_URI, id));
 			
-			views.setOnClickFillInIntent(R.id.widget_magnitude, fillInIntent);
-			views.setOnClickFillInIntent(R.id.widget_details, fillInIntent);
+			views.setOnClickFillInIntent(R.id.widget_single_magnitude, fillInIntent);
+			views.setOnClickFillInIntent(R.id.widget_single_details, fillInIntent);
 			
 			return views;
 		}
@@ -110,18 +111,16 @@ public class EarthquakeRemoteViewService extends RemoteViewsService {
 		 * @return Cursor to the list of current earthquakes.
 		 */
 		private Cursor executeQuery() {
-			String[] projection = new String[] {
-				EarthquakeProvider.KEY_ID,
-				EarthquakeProvider.KEY_MAGNITUDE,
-				EarthquakeProvider.KEY_DETAILS,
-			};
+			String[] projection = new String[] { 
+					EarthquakeProvider.KEY_ID, 
+					EarthquakeProvider.KEY_MAGNITUDE, 
+					EarthquakeProvider.KEY_DETAILS };
 			
 			SharedPreferences prefs = PreferenceManager.
 					getDefaultSharedPreferences(getApplicationContext());
 			
 			int minMagnitude = Integer.parseInt(
-					prefs.getString(EarthquakePreferences.PREF_MIN_MAG, "3"));
-			
+					prefs.getString(MainPreferenceActivity.PREF_MIN_MAG, "3"));
 			String where = EarthquakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
 			
 			return context.getContentResolver().query(

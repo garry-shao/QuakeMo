@@ -94,7 +94,7 @@ public class EarthquakeProvider extends ContentProvider {
 		
 	}
 	
-	EarthquakeDatabaseHelper dbHelper ;
+	private EarthquakeDatabaseHelper dbHelper ;
 	
 	@Override
 	public boolean onCreate() {

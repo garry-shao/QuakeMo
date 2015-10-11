@@ -17,8 +17,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-public class EarthquakeSearchResults extends ListActivity implements LoaderCallbacks<Cursor> {
-
+public class MainSearchActivity extends ListActivity implements LoaderCallbacks<Cursor> {
+	
 	private static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";
 	
 	private SimpleCursorAdapter adapter;
@@ -39,11 +39,33 @@ public class EarthquakeSearchResults extends ListActivity implements LoaderCallb
 	}
 	
 	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		
+		parseIntent(getIntent());
+	}
+
+	/**
+	 * Parse and process any search intent.
+	 * @param intent The intent to parse.
+	 */
+	private void parseIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			String searchQuery = intent.getStringExtra(SearchManager.QUERY);
+			
+			Bundle args = new Bundle();
+			args.putString(QUERY_EXTRA_KEY, searchQuery);
+			
+			getLoaderManager().restartLoader(0, args, this);
+		}
+	}
+
+	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		
-		Cursor result = getContentResolver().query(
-				ContentUris.withAppendedId(EarthquakeProvider.CONTENT_URI, id), null, null, null, null);
+		Cursor result = getContentResolver().query(ContentUris.withAppendedId(
+				EarthquakeProvider.CONTENT_URI, id), null, null, null, null);
 		
 		if (result.moveToFirst()) {
 			Date date = new Date(result.getLong(
@@ -68,29 +90,8 @@ public class EarthquakeSearchResults extends ListActivity implements LoaderCallb
 			
 			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
 			
-			DialogFragment dialogFragment = EarthquakeDialog.newInstance(this, quake);
+			DialogFragment dialogFragment = EarthquakeDetailsDialog.newInstance(this, quake);
 			dialogFragment.show(getFragmentManager(), "dialog");
-		}
-	}
-
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		parseIntent(getIntent());
-	}
-
-	/**
-	 * Parse and process any search intent.
-	 * @param intent The intent to parse.
-	 */
-	private void parseIntent(Intent intent) {
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			String searchQuery = intent.getStringExtra(SearchManager.QUERY);
-			
-			Bundle args = new Bundle();
-			args.putString(QUERY_EXTRA_KEY, searchQuery);
-			
-			getLoaderManager().restartLoader(0, args, this);
 		}
 	}
 
@@ -102,16 +103,15 @@ public class EarthquakeSearchResults extends ListActivity implements LoaderCallb
 			query = args.getString(QUERY_EXTRA_KEY);
 		}
 		
-		String[] projection = {
-			EarthquakeProvider.KEY_ID, 
-			EarthquakeProvider.KEY_SUMMARY	
-		};
+		String[] projection = { 
+				EarthquakeProvider.KEY_ID, 
+				EarthquakeProvider.KEY_SUMMARY };
+		
 		String where = EarthquakeProvider.KEY_SUMMARY + " LIKE \"%" + query + "%\"";
-		String[] whereArgs = null;
 		String sortOrder = EarthquakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
 		
 		return new CursorLoader(this, EarthquakeProvider.CONTENT_URI, 
-				projection, where, whereArgs, sortOrder);
+				projection, where, null, sortOrder);
 	}
 
 	@Override

@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * Show a specific earthquake's detail as a dialog.
+ * 
+ * Show a dialog of specific earthquake's details.
  *
  */
-public class EarthquakeDialog extends DialogFragment {
-	private static final String DIALOG_STRING = "DIALOG_STRING";
+public class EarthquakeDetailsDialog extends DialogFragment {
+	private static final String DIALOG_DETAILS = "DIALOG_DETAILS";
 	
 	/**
 	 * Create a new instance of dialog that shows particular earthquake details.
@@ -22,11 +23,11 @@ public class EarthquakeDialog extends DialogFragment {
 	 * @param quake The particular earthquake to show. 
 	 * @return
 	 */
-	public static EarthquakeDialog newInstance(Context context, Earthquake quake) {
-		EarthquakeDialog fragment = new EarthquakeDialog();
-		Bundle args = new Bundle();
+	public static EarthquakeDetailsDialog newInstance(Context context, Earthquake quake) {
+		EarthquakeDetailsDialog fragment = new EarthquakeDetailsDialog();
 		
-		args.putString(DIALOG_STRING, quake.getDialogDetails());
+		Bundle args = new Bundle();
+		args.putString(DIALOG_DETAILS, quake.getDialogDetails());
 		fragment.setArguments(args);
 		
 		return fragment;
@@ -35,18 +36,18 @@ public class EarthquakeDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Dialog dialog = super.onCreateDialog(savedInstanceState);
-		dialog.setTitle(R.string.dialog_title);
+		dialog.setTitle(R.string.dialog_details_title);
 		
 		return dialog;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.earthquake_details, container, false);
+		View view = inflater.inflate(R.layout.dialog_details, container, false);
 		
-		String details = getArguments().getString(DIALOG_STRING);
+		String details = getArguments().getString(DIALOG_DETAILS);
 		
-		TextView textView = (TextView) view.findViewById(R.id.quakeDetailsTextView);
+		TextView textView = (TextView) view.findViewById(R.id.earthquakeDetailsTextView);
 		textView.setText(details);
 		
 		return view;

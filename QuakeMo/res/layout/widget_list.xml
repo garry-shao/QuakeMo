@@ -10,7 +10,7 @@
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/widget_empty_text"
+        android:id="@+id/widget_list_empty_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

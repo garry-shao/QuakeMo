@@ -7,6 +7,7 @@ import java.util.Locale;
 import android.location.Location;
 
 /**
+ * 
  * Description of an earthquake instance.
  *
  */

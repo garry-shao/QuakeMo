@@ -4,28 +4,29 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
-public class EarthquakeWidget extends AppWidgetProvider {
+public class EarthquakeWidgetSingle extends AppWidgetProvider {
 	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
 		
-		Intent intent = new Intent(context, EarthquakeActivity.class);
+		Intent intent = new Intent(context, MainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 		
-		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.earthquake_widget);
-		views.setOnClickPendingIntent(R.id.widget_magnitude, pendingIntent);
-		views.setOnClickPendingIntent(R.id.widget_details, pendingIntent);
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_single);
+		views.setOnClickPendingIntent(R.id.widget_single_magnitude, pendingIntent);
+		views.setOnClickPendingIntent(R.id.widget_single_details, pendingIntent);
 		
 		appWidgetManager.updateAppWidget(appWidgetIds, views);
 		
-		updateQuake(context, appWidgetManager, appWidgetIds);
+		updateEarthquake(context, appWidgetManager, appWidgetIds);
 	}
 
 	@Override
@@ -33,7 +34,10 @@ public class EarthquakeWidget extends AppWidgetProvider {
 		super.onReceive(context, intent);
 		
 		if (EarthquakeUpdateService.QUAKES_REFRESHED.equals(intent.getAction())) {
-			updateQuake(context);
+			updateEarthquake(context);
+		}
+		if (EarthquakeUpdateService.PURGE_DATABASE.equals(intent.getAction())) {
+			updateEarthquake(context);
 		}
 	}
 
@@ -43,18 +47,24 @@ public class EarthquakeWidget extends AppWidgetProvider {
 	 * @param appWidgetManager The AppWidget Manager.
 	 * @param appWidgetIds The AppWidge IDs.
 	 */
-	public void updateQuake(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+	public void updateEarthquake(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
-		Cursor lastEarthquake;
-		ContentResolver resolver = context.getContentResolver();
-		lastEarthquake = resolver.query(EarthquakeProvider.CONTENT_URI, null, null, null, null);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		int minMagnitude = Integer.parseInt(
+				prefs.getString(MainPreferenceActivity.PREF_MIN_MAG, "3"));
+		
+		String where = EarthquakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+		
+		Cursor lastEarthquake = context.getContentResolver().query(
+				EarthquakeProvider.CONTENT_URI, null, where, null, null);
 		
 		String magnitude = "--M";
 		String details = "-- None --";
 		
 		if (lastEarthquake != null) {
 			try {
-				if (lastEarthquake.moveToFirst()) {
+				if (lastEarthquake.moveToLast()) {
 					int magnitudeIndex = 
 							lastEarthquake.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE);
 					int detailsIndex = 
@@ -72,9 +82,9 @@ public class EarthquakeWidget extends AppWidgetProvider {
 		for (int i = 0; i < N; i++) {
 			int appWidgetId = appWidgetIds[i];
 			
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.earthquake_widget);
-			views.setTextViewText(R.id.widget_magnitude, magnitude);
-			views.setTextViewText(R.id.widget_details, details);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_single);
+			views.setTextViewText(R.id.widget_single_magnitude, magnitude);
+			views.setTextViewText(R.id.widget_single_details, details);
 			
 			appWidgetManager.updateAppWidget(appWidgetId, views);
 		}
@@ -84,12 +94,12 @@ public class EarthquakeWidget extends AppWidgetProvider {
 	 * Update AppWidget using Context only.
 	 * @param context The context this AppWidget provider is in. 
 	 */
-	public void updateQuake(Context context) {
-		ComponentName appWidget = new ComponentName(context, EarthquakeWidget.class);
+	public void updateEarthquake(Context context) {
+		ComponentName appWidget = new ComponentName(context, EarthquakeWidgetSingle.class);
 		
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
 		
-		updateQuake(context, appWidgetManager, appWidgetIds);
+		updateEarthquake(context, appWidgetManager, appWidgetIds);
 	}
 }

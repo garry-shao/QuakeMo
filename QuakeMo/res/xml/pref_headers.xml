@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <header
+        android:fragment="org.qmsos.quakemo.PrefUpdateFragment"
+        android:summary="@string/pref_update_summary"
+        android:title="@string/pref_update_title" />
+    <header
+        android:fragment="org.qmsos.quakemo.PrefUIFragment"
+        android:summary="@string/pref_ui_summary"
+        android:title="@string/pref_ui_title" />
+
+</preference-headers>

@@ -2,9 +2,11 @@
 <resources>
 
     <string name="app_name">QuakeMo</string>
-    <string name="magnitude_unit">Magnitude</string>
     <string name="menu_preferences">Preferences</string>
-    <string name="preferences_name">Earthquake Preferences</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_purge">Purge</string>
+    <string name="pref_name">QuakeMo Preferences</string>
     <string name="pref_auto_update_summary">Select to turn on automatic updating</string>
     <string name="pref_auto_update_title">Auto refresh</string>
     <string name="pref_update_freq_summary">Frequency at which to refresh earthquake list</string>
@@ -13,16 +15,30 @@
     <string name="pref_min_mag_dialog_title">Magnitude</string>
     <string name="pref_min_mag_summary">Select the minimum magnitude earthquake to report</string>
     <string name="pref_min_mag_title">Minimum magnitude</string>
-    <string name="header_summary">Earthquake Refresh Settings</string>
-    <string name="header_title">Settings</string>
-    <string name="dialog_title">Earthquake Details</string>
-    <string name="notification_ticker">Earthquake detected</string>
-    <string name="search_name">Earthquake Search</string>
+    <string name="pref_notification_enable_summary">Enable notification on new earthquakes</string>
+    <string name="pref_notification_enable_title">Enable notification</string>
+    <string name="pref_notification_sound_summary">Notification with sound on new earthquakes</string>
+    <string name="pref_notification_sound_title">Notification with sound</string>
+    <string name="pref_notification_vibrate_summary">Notification with vibrate on new earthquakes</string>
+    <string name="pref_notification_vibrate_title">Notification with vibrate</string>
+    <string name="pref_use_widget_summary">Register widgets to android</string>
+    <string name="pref_use_widget_title">Add widgets</string>
+    <string name="pref_update_summary">Update Settings</string>
+    <string name="pref_update_title">Update</string>
+    <string name="pref_ui_summary">UI Settings</string>
+    <string name="pref_ui_title">UI</string>
+    <string name="pref_ui_category_display_title">Display</string>
+    <string name="pref_ui_category_widget_title">Widget</string>
+    <string name="pref_ui_category_notification_title">Notification</string>
+    <string name="map_download_view_area_title">Download area</string>
+    <string name="map_clear_view_area_title">Clear area</string>
+    <string name="map_cache_usage_title">Cache usage</string>
+    <string name="search_name">QuakeMo Search</string>
     <string name="search_description">Searth earthquake locations</string>
-    <string name="menu_refresh">Refresh</string>
-    <string name="menu_search">Search</string>
-    <string name="menu_purge">Purge</string>
-    <string name="widget_name">QuakeMo</string>
-    <string name="widget_list_name">QuakeMo List</string>
+    <string name="widget_name_single">QuakeMo</string>
+    <string name="widget_name_list">QuakeMo List</string>
     <string name="widget_empty">No Earthquakes!</string>
+    <string name="dialog_details_title">Earthquake Details</string>
+    <string name="notification_ticker">Earthquake!</string>
+    <string name="magnitude_unit">Magnitude</string>
 </resources>

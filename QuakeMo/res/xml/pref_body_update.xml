@@ -9,18 +9,11 @@
 
     <ListPreference
         android:defaultValue="60"
+        android:dependency="PREF_AUTO_UPDATE"
         android:dialogTitle="@string/pref_update_freq_dialog_title"
         android:entries="@array/update_freq_options"
         android:entryValues="@array/update_freq_values"
         android:key="PREF_UPDATE_FREQ"
         android:summary="@string/pref_update_freq_summary"
         android:title="@string/pref_update_freq_title" />
-    <ListPreference
-        android:defaultValue="3"
-        android:dialogTitle="@string/pref_min_mag_dialog_title"
-        android:entries="@array/magnitude_options"
-        android:entryValues="@array/magnitude_values"
-        android:key="PREF_MIN_MAG"
-        android:summary="@string/pref_min_mag_summary"
-        android:title="@string/pref_min_mag_title" />
 </PreferenceScreen>

@@ -14,23 +14,24 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
 
-public class EarthquakeOverlay extends Overlay {
+public class EarthquakeMapOverlay extends Overlay {
+	
 	private static final int RADIUS = 3;
 	
-	Cursor earthquakes;
-	ArrayList<GeoPoint> quakeLocations;
+	private Cursor earthquakes;
+	private ArrayList<GeoPoint> earthquakeLocations;
 	
 	/**
 	 * Constructor of earthquake overlay.
 	 * @param context Context of this overlay associated to.
 	 * @param cursor The cursor that iterates each earthquake.
 	 */
-	public EarthquakeOverlay(Context context, Cursor cursor) {
+	public EarthquakeMapOverlay(Context context, Cursor cursor) {
 		super(context);
 
 		earthquakes = cursor;
 		
-		quakeLocations = new ArrayList<GeoPoint>();
+		earthquakeLocations = new ArrayList<GeoPoint>();
 		
 		refreshEarthquakeLocations();
 	}
@@ -45,7 +46,7 @@ public class EarthquakeOverlay extends Overlay {
 		paint.setFakeBoldText(true);
 		
 		if (shadow == false) {
-			for (GeoPoint geoPoint : quakeLocations) {
+			for (GeoPoint geoPoint : earthquakeLocations) {
 				Point point = new Point();
 				projection.toPixels(geoPoint, point);
 				
@@ -72,7 +73,7 @@ public class EarthquakeOverlay extends Overlay {
 	 * Iterating and extracting the location of each earthquake.
 	 */
 	private void refreshEarthquakeLocations() {
-		quakeLocations.clear();
+		earthquakeLocations.clear();
 		
 		if (earthquakes != null && earthquakes.moveToFirst()) {
 			do {
@@ -86,7 +87,7 @@ public class EarthquakeOverlay extends Overlay {
 				
 				GeoPoint geoPoint = new GeoPoint(la.intValue(), lo.intValue());
 				
-				quakeLocations.add(geoPoint);
+				earthquakeLocations.add(geoPoint);
 			} while (earthquakes.moveToNext());
 		}
 	}
