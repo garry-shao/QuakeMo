@@ -10,6 +10,11 @@ import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+/**
+ * 
+ * Providing remote views service of earthquakes for updating widgets.
+ *
+ */
 public class EarthquakeViewsService extends RemoteViewsService {
 	
 	@Override
@@ -17,6 +22,11 @@ public class EarthquakeViewsService extends RemoteViewsService {
 		return new EarthquakeRemoteViewsFactory(getApplicationContext());
 	}
 
+	/**
+	 * 
+	 * Factory class used for managing remote views.
+	 *
+	 */
 	public class EarthquakeRemoteViewsFactory implements RemoteViewsFactory {
 		private Context context;
 		private Cursor quakeCursor;

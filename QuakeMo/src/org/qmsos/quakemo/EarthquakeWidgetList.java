@@ -7,6 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+/**
+ * 
+ * Widget of this application shown as a list of earthquakes. 
+ *
+ */
 public class EarthquakeWidgetList extends AppWidgetProvider {
 
 	@Override

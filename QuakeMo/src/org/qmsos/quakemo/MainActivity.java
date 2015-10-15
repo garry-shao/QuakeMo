@@ -16,6 +16,11 @@ import android.view.View;
 import android.widget.SearchView;
 import android.widget.SearchView.OnSuggestionListener;
 
+/**
+ * 
+ * Main activity of this application.
+ *
+ */
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
 	protected static final int SHOW_PREFERENCES = 1;
@@ -25,6 +30,12 @@ public class MainActivity extends Activity {
 	private TabListener<EarthquakeListFragment> listTabListener;
 	private TabListener<EarthquakeMapFragment> mapTabListener;
 	
+	/**
+	 * 
+	 * Used to manage fragments in activity as tabs.
+	 *
+	 * @param <T> extends Fragment class.
+	 */
 	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
 		private Fragment fragment;
 		private Activity activity;
@@ -79,17 +90,13 @@ public class MainActivity extends Activity {
 			listTabListener = new TabListener<EarthquakeListFragment>(
 					this, EarthquakeListFragment.class, R.id.EarthquakeFragmentContainer);
 			Tab listTab = actionBar.newTab();
-			listTab.setText("List")
-					.setContentDescription("List of earthquakes")
-					.setTabListener(listTabListener);
+			listTab.setText(R.string.tab_list).setTabListener(listTabListener);
 			actionBar.addTab(listTab);
 
 			mapTabListener = new TabListener<EarthquakeMapFragment>(
 					this, EarthquakeMapFragment.class, R.id.EarthquakeFragmentContainer);
 			Tab mapTab = actionBar.newTab();
-			mapTab.setText("Map")
-			.setContentDescription("Map of earthquakes")
-			.setTabListener(mapTabListener);
+			mapTab.setText(R.string.tab_map).setTabListener(mapTabListener);
 			actionBar.addTab(mapTab);
 		}
 	}

@@ -8,6 +8,11 @@ import android.content.pm.PackageManager;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+/**
+ * 
+ * The main activity managing preferences.
+ *
+ */
 public class MainPreferenceActivity extends PreferenceActivity {
 	
 	public static final String PREF_MIN_MAG = "PREF_MIN_MAG";

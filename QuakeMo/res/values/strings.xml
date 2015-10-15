@@ -2,10 +2,15 @@
 <resources>
 
     <string name="app_name">QuakeMo</string>
-    <string name="menu_preferences">Preferences</string>
-    <string name="menu_refresh">Refresh</string>
     <string name="menu_search">Search</string>
-    <string name="menu_purge">Purge</string>
+    <string name="tab_list">LIST</string>
+    <string name="tab_map">MAP</string>
+    <string name="list_preferences">Preferences</string>
+    <string name="list_refresh">Refresh</string>
+    <string name="list_purge">Purge</string>
+    <string name="map_download_view_area_title">Download area</string>
+    <string name="map_clear_view_area_title">Clear area</string>
+    <string name="map_cache_usage_title">Cache usage</string>
     <string name="pref_name">QuakeMo Preferences</string>
     <string name="pref_auto_update_summary">Select to turn on automatic updating</string>
     <string name="pref_auto_update_title">Auto refresh</string>
@@ -30,9 +35,6 @@
     <string name="pref_ui_category_display_title">Display</string>
     <string name="pref_ui_category_widget_title">Widget</string>
     <string name="pref_ui_category_notification_title">Notification</string>
-    <string name="map_download_view_area_title">Download area</string>
-    <string name="map_clear_view_area_title">Clear area</string>
-    <string name="map_cache_usage_title">Cache usage</string>
     <string name="search_name">QuakeMo Search</string>
     <string name="search_description">Searth earthquake locations</string>
     <string name="widget_name_single">QuakeMo</string>

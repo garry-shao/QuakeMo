@@ -4,17 +4,17 @@
     <item
         android:id="@+id/menu_preferences"
         android:showAsAction="never"
-        android:title="@string/menu_preferences">
+        android:title="@string/list_preferences">
     </item>
     <item
         android:id="@+id/menu_refresh"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_refresh">
+        android:showAsAction="never"
+        android:title="@string/list_refresh">
     </item>
     <item
         android:id="@+id/menu_purge"
         android:showAsAction="never"
-        android:title="@string/menu_purge">
+        android:title="@string/list_purge">
     </item>
 
 </menu>

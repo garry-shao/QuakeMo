@@ -22,6 +22,11 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+/**
+ * 
+ * Show earthquakes as list.
+ *
+ */
 public class EarthquakeListFragment extends ListFragment implements LoaderCallbacks<Cursor> {
 
 	protected SimpleCursorAdapter adapter;

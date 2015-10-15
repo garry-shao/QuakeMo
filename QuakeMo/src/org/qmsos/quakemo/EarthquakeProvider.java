@@ -18,6 +18,11 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+/**
+ * 
+ * Content provider storing all earthquakes.
+ *
+ */
 public class EarthquakeProvider extends ContentProvider {
 	
 	public static final Uri CONTENT_URI = 
@@ -38,6 +43,9 @@ public class EarthquakeProvider extends ContentProvider {
 	private static final HashMap<String, String> SEARCH_PROJECTION_MAP;
 	private static final UriMatcher uriMatcher;
 	
+	/**
+	 * Initializing the complex object fields.
+	 */
 	static {
 		SEARCH_PROJECTION_MAP = new HashMap<String, String>();
 		SEARCH_PROJECTION_MAP.put(SearchManager.SUGGEST_COLUMN_TEXT_1, 
@@ -57,6 +65,11 @@ public class EarthquakeProvider extends ContentProvider {
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SEARCH);
 	}
 	
+	/**
+	 * 
+	 * Helper class using for managing the earthquake database.
+	 *
+	 */
 	private static class EarthquakeDatabaseHelper extends SQLiteOpenHelper {
 
 		private static final String TAG = "EarthquakeProvider";

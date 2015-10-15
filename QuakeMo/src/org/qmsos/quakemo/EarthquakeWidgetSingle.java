@@ -11,6 +11,11 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
+/**
+ * 
+ * Widget of this application show a single earthquake.
+ *
+ */
 public class EarthquakeWidgetSingle extends AppWidgetProvider {
 	
 	@Override

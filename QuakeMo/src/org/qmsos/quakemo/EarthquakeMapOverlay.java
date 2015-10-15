@@ -14,6 +14,11 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
 
+/**
+ * 
+ * Overlay on the map of earthquakes.
+ *
+ */
 public class EarthquakeMapOverlay extends Overlay {
 	
 	private static final int RADIUS = 3;

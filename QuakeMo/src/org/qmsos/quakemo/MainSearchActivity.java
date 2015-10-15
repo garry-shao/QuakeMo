@@ -17,6 +17,11 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+/**
+ * 
+ * The activity show search results.
+ *
+ */
 public class MainSearchActivity extends ListActivity implements LoaderCallbacks<Cursor> {
 	
 	private static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";

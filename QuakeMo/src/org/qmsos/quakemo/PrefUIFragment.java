@@ -3,6 +3,11 @@ package org.qmsos.quakemo;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
+/**
+ * 
+ * The fragment show the UI part of preferences.
+ *
+ */
 public class PrefUIFragment extends PreferenceFragment {
 
 	@Override

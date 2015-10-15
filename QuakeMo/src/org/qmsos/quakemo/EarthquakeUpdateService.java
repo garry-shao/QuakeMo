@@ -40,6 +40,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
+ * 
  * The service performing earthquake update.
  *
  */
