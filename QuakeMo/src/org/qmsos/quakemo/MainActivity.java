@@ -1,18 +1,17 @@
 package org.qmsos.quakemo;
 
-import android.app.ActionBar;
-import android.app.ActionBar.Tab;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
-import android.view.View;
 import android.widget.SearchView;
 import android.widget.SearchView.OnSuggestionListener;
 
@@ -21,138 +20,21 @@ import android.widget.SearchView.OnSuggestionListener;
  * Main activity of this application.
  *
  */
-@SuppressWarnings("deprecation")
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
+
 	protected static final int SHOW_PREFERENCES = 1;
-
-	private static final String ACTION_BAR_INDEX = "ACTION_BAR_INDEX";
 	
-	private TabListener<EarthquakeListFragment> listTabListener;
-	private TabListener<EarthquakeMapFragment> mapTabListener;
+	List<Fragment> fragmentList = new ArrayList<Fragment>();
 	
-	/**
-	 * 
-	 * Used to manage fragments in activity as tabs.
-	 *
-	 * @param <T> extends Fragment class.
-	 */
-	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
-		private Fragment fragment;
-		private Activity activity;
-		private Class<T> fragmentClass;
-		private int fragmentContainer;
-		
-		public TabListener(Activity activity, Class<T> fragmentClass, int fragmentContainer) {
-			this.activity = activity;
-			this.fragmentClass = fragmentClass;
-			this.fragmentContainer = fragmentContainer;
-		}
-	
-		@Override
-		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			if (fragment == null) {
-				String fragmentName = fragmentClass.getName();
-				fragment = Fragment.instantiate(activity, fragmentName);
-				
-				ft.add(fragmentContainer, fragment, fragmentName);
-			} else {
-				ft.attach(fragment);
-			}
-		}
-	
-		@Override
-		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-			if (fragment != null) {
-				ft.detach(fragment);
-			}
-		}
-	
-		@Override
-		public void onTabReselected(Tab tab, FragmentTransaction ft) {
-			if (fragment != null) {
-				ft.attach(fragment);
-			}
-		}
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
 		
-		ActionBar actionBar = getActionBar();
-		
-		View fragmentContainer = findViewById(R.id.EarthquakeFragmentContainer);
-		if (fragmentContainer != null) {
-			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			actionBar.setDisplayShowTitleEnabled(false);
-			
-			listTabListener = new TabListener<EarthquakeListFragment>(
-					this, EarthquakeListFragment.class, R.id.EarthquakeFragmentContainer);
-			Tab listTab = actionBar.newTab();
-			listTab.setText(R.string.tab_list).setTabListener(listTabListener);
-			actionBar.addTab(listTab);
-
-			mapTabListener = new TabListener<EarthquakeMapFragment>(
-					this, EarthquakeMapFragment.class, R.id.EarthquakeFragmentContainer);
-			Tab mapTab = actionBar.newTab();
-			mapTab.setText(R.string.tab_map).setTabListener(mapTabListener);
-			actionBar.addTab(mapTab);
-		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		View fragmentContainer = findViewById(R.id.EarthquakeFragmentContainer);
-		
-		if (fragmentContainer != null) {
-			SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-			int actionBarIndex = prefs.getInt(ACTION_BAR_INDEX, 0);
-			getActionBar().setSelectedNavigationItem(actionBarIndex);
-		}
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		View fragmentContainer = findViewById(R.id.EarthquakeFragmentContainer);
-		if (fragmentContainer != null) {
-			listTabListener.fragment = getFragmentManager().
-					findFragmentByTag(EarthquakeListFragment.class.getName());
-			mapTabListener.fragment = getFragmentManager().
-					findFragmentByTag(EarthquakeMapFragment.class.getName());
-			
-			SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-			int actionBarIndex = prefs.getInt(ACTION_BAR_INDEX, 0);
-			getActionBar().setSelectedNavigationItem(actionBarIndex);
-		}
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		View fragmentContainer = findViewById(R.id.EarthquakeFragmentContainer);
-		
-		if (fragmentContainer != null) {
-			int actionBarIndex = getActionBar().getSelectedTab().getPosition();
-			
-			SharedPreferences.Editor editor = getPreferences(Context.MODE_PRIVATE).edit();
-			editor.putInt(ACTION_BAR_INDEX, actionBarIndex);
-			editor.apply();
-			
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			if (listTabListener.fragment != null) {
-				ft.detach(listTabListener.fragment);
-			}
-			if (mapTabListener.fragment != null) {
-				ft.detach(mapTabListener.fragment);
-			}
-			ft.commit();
-		}
-		
-		super.onSaveInstanceState(outState);
+		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+		fragmentList.add(new EarthquakeListFragment());
+		fragmentList.add(new EarthquakeMapFragment());
+		viewPager.setAdapter(new ListPagerAdapter(getSupportFragmentManager(), fragmentList));
 	}
 
 	@Override

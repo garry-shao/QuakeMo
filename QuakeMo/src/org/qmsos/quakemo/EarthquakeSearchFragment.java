@@ -2,40 +2,30 @@ package org.qmsos.quakemo;
 
 import java.util.Date;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-/**
- * 
- * Show earthquakes as list.
- *
- */
-public class EarthquakeListFragment extends ListFragment implements LoaderCallbacks<Cursor> {
-
-	protected SimpleCursorAdapter adapter;
+public class EarthquakeSearchFragment extends ListFragment implements LoaderCallbacks<Cursor> {
+	
+	public static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";
+	
+	private SimpleCursorAdapter adapter;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public void onResume() {
+		super.onResume();
 		
-		setHasOptionsMenu(true);
+		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
 	@Override
@@ -49,54 +39,13 @@ public class EarthquakeListFragment extends ListFragment implements LoaderCallba
 		setListAdapter(adapter);
 		
 		getLoaderManager().initLoader(0, null, this);
-		
-		refreshEarthquakes();
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		
-		inflater.inflate(R.menu.list_options_menu, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		
-		switch (item.getItemId()) {
-		case (R.id.menu_preferences): {
-			Intent i = new Intent(getActivity(), MainPreferenceActivity.class);
-			startActivityForResult(i, MainActivity.SHOW_PREFERENCES);
-		
-			return true;
-		}
-		case (R.id.menu_refresh): {
-			Intent i = new Intent(getActivity(), EarthquakeUpdateService.class);
-			i.putExtra(EarthquakeUpdateService.MANUAL_REFRESH, true);
-			getActivity().startService(i);
-			
-			return true;
-		}
-		case (R.id.menu_purge): {
-			Intent i = new Intent(getActivity(), EarthquakeUpdateService.class);
-			i.putExtra(EarthquakeUpdateService.PURGE_DATABASE, true);
-			getActivity().startService(i);
-			
-			return true;
-		}
-		default:
-			return false;
-		}
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		
-		ContentResolver resolver = getActivity().getContentResolver();
-		
-		Cursor result = resolver.query(ContentUris.withAppendedId(
+		Cursor result = getActivity().getContentResolver().query(ContentUris.withAppendedId(
 				EarthquakeProvider.CONTENT_URI, id), null, null, null, null);
 		
 		if (result.moveToFirst()) {
@@ -129,39 +78,31 @@ public class EarthquakeListFragment extends ListFragment implements LoaderCallba
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = new String[] { 
+		String query = "0";
+		
+		if (args != null) {
+			query = args.getString(QUERY_EXTRA_KEY);
+		}
+		
+		String[] projection = { 
 				EarthquakeProvider.KEY_ID, 
 				EarthquakeProvider.KEY_SUMMARY };
 		
-		SharedPreferences prefs = PreferenceManager.
-				getDefaultSharedPreferences(getActivity().getApplicationContext());
-		int minMagnitude = Integer.parseInt(
-				prefs.getString(MainPreferenceActivity.PREF_MIN_MAG, "3"));
-		String where = EarthquakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+		String where = EarthquakeProvider.KEY_SUMMARY + " LIKE \"%" + query + "%\"";
+		String sortOrder = EarthquakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
 		
-		CursorLoader loader = new CursorLoader(getActivity(), 
-				EarthquakeProvider.CONTENT_URI, projection, where, null, null);
-		
-		return loader;
+		return new CursorLoader(getActivity(), EarthquakeProvider.CONTENT_URI, 
+				projection, where, null, sortOrder);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		adapter.swapCursor(data);
+		adapter.swapCursor(data);		
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		adapter.swapCursor(null);
-	}
-
-	/**
-	 * Refresh UI to show newer earthquakes.
-	 */
-	public void refreshEarthquakes() {
-		getLoaderManager().restartLoader(0, null, this);
-		
-		getActivity().startService(new Intent(getActivity(), EarthquakeUpdateService.class));
+		adapter.swapCursor(null);		
 	}
 
 }
