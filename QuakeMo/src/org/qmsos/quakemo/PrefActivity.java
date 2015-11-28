@@ -51,7 +51,7 @@ public class PrefActivity extends PreferenceActivity {
 				prefs.getBoolean(PrefActivity.PREF_USE_WIDGETS, false);
 		
 		getPackageManager().setComponentEnabledSetting(
-				new ComponentName(this, QuakeWidgetSingle.class), 
+				new ComponentName(this, QuakeWidgetSingleton.class), 
 				(useWidgetChecked ? 
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
 							PackageManager.COMPONENT_ENABLED_STATE_DISABLED), 

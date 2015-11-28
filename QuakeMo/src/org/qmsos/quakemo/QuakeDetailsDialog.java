@@ -53,7 +53,7 @@ public class QuakeDetailsDialog extends DialogFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dialog_details, container, false);
 
-		TextView textView = (TextView) view.findViewById(R.id.earthquakeDetailsTextView);
+		TextView textView = (TextView) view.findViewById(R.id.view_quake_details);
 
 		String details = getArguments().getString(DIALOG_DETAILS);
 		textView.setText(details);

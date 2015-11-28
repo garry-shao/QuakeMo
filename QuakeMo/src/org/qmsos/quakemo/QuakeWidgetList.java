@@ -24,15 +24,15 @@ public class QuakeWidgetList extends AppWidgetProvider {
 			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
-			views.setRemoteAdapter(R.id.widget_list_view, intent);
-			views.setEmptyView(R.id.widget_list_view, R.id.widget_list_empty_text);
+			views.setRemoteAdapter(R.id.widget_list_full, intent);
+			views.setEmptyView(R.id.widget_list_full, R.id.widget_list_empty);
 
 			Intent templateIntent = new Intent(context, MainActivity.class);
 			templateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
 			PendingIntent templatePendingIntent = PendingIntent.getActivity(context, 0, templateIntent,
 					PendingIntent.FLAG_UPDATE_CURRENT);
-			views.setPendingIntentTemplate(R.id.widget_list_view, templatePendingIntent);
+			views.setPendingIntentTemplate(R.id.widget_list_full, templatePendingIntent);
 
 			appWidgetManager.updateAppWidget(appWidgetId, views);
 		}

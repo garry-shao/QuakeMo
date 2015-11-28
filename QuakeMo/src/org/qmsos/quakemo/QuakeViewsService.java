@@ -78,15 +78,15 @@ public class QuakeViewsService extends RemoteViewsService {
 			String magnitude = quakeCursor.getString(magnitudeIndex) + "M";
 			String details = quakeCursor.getString(detailsIndex);
 
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_single);
-			views.setTextViewText(R.id.widget_single_magnitude, magnitude);
-			views.setTextViewText(R.id.widget_single_details, details);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_singleton);
+			views.setTextViewText(R.id.widget_singleton_magnitude, magnitude);
+			views.setTextViewText(R.id.widget_singleton_details, details);
 
 			Intent fillInIntent = new Intent();
 			fillInIntent.setData(Uri.withAppendedPath(QuakeProvider.CONTENT_URI, id));
 
-			views.setOnClickFillInIntent(R.id.widget_single_magnitude, fillInIntent);
-			views.setOnClickFillInIntent(R.id.widget_single_details, fillInIntent);
+			views.setOnClickFillInIntent(R.id.widget_singleton_magnitude, fillInIntent);
+			views.setOnClickFillInIntent(R.id.widget_singleton_details, fillInIntent);
 
 			return views;
 		}

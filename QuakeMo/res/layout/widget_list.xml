@@ -5,12 +5,12 @@
     android:padding="5dp" >
 
     <ListView
-        android:id="@+id/widget_list_view"
+        android:id="@+id/widget_list_full"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/widget_list_empty_text"
+        android:id="@+id/widget_list_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

@@ -16,7 +16,7 @@ import android.widget.RemoteViews;
  * Widget of this application show a single earthquake.
  *
  */
-public class QuakeWidgetSingle extends AppWidgetProvider {
+public class QuakeWidgetSingleton extends AppWidgetProvider {
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -25,9 +25,9 @@ public class QuakeWidgetSingle extends AppWidgetProvider {
 		Intent intent = new Intent(context, MainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_single);
-		views.setOnClickPendingIntent(R.id.widget_single_magnitude, pendingIntent);
-		views.setOnClickPendingIntent(R.id.widget_single_details, pendingIntent);
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_singleton);
+		views.setOnClickPendingIntent(R.id.widget_singleton_magnitude, pendingIntent);
+		views.setOnClickPendingIntent(R.id.widget_singleton_details, pendingIntent);
 
 		appWidgetManager.updateAppWidget(appWidgetIds, views);
 
@@ -84,9 +84,9 @@ public class QuakeWidgetSingle extends AppWidgetProvider {
 		}
 
 		for (int i = 0; i < appWidgetIds.length; i++) {
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_single);
-			views.setTextViewText(R.id.widget_single_magnitude, magnitude);
-			views.setTextViewText(R.id.widget_single_details, details);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_singleton);
+			views.setTextViewText(R.id.widget_singleton_magnitude, magnitude);
+			views.setTextViewText(R.id.widget_singleton_details, details);
 
 			appWidgetManager.updateAppWidget(appWidgetIds[i], views);
 		}
@@ -99,7 +99,7 @@ public class QuakeWidgetSingle extends AppWidgetProvider {
 	 *            The context this AppWidget provider is in.
 	 */
 	private void updateEarthquake(Context context) {
-		ComponentName appWidget = new ComponentName(context, QuakeWidgetSingle.class);
+		ComponentName appWidget = new ComponentName(context, QuakeWidgetSingleton.class);
 
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);

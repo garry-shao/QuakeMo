@@ -288,7 +288,7 @@ public class QuakeUpdateService extends IntentService {
 		ComponentName earthquakeWidget = new ComponentName(context, QuakeWidgetList.class);
 		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(earthquakeWidget);
 	
-		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_full);
 	}
 
 }

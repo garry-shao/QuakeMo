@@ -78,7 +78,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".QuakeWidgetSingle"
+            android:name=".QuakeWidgetSingleton"
             android:enabled="true"
             android:label="@string/widget_name_single" >
             <intent-filter>
@@ -93,7 +93,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_single_info" />
+                android:resource="@xml/widget_singleton_info" />
         </receiver>
         <receiver
             android:name=".QuakeWidgetList"
