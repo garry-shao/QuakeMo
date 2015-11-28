@@ -2,12 +2,11 @@
 <resources>
 
     <string name="app_name">QuakeMo</string>
+    <string name="magnitude_unit">Magnitude</string>
     <string name="menu_search">Search</string>
-    <string name="tab_list">LIST</string>
-    <string name="tab_map">MAP</string>
-    <string name="list_preferences">Preferences</string>
-    <string name="list_refresh">Refresh</string>
-    <string name="list_purge">Purge</string>
+    <string name="list_preferences_title">Preferences</string>
+    <string name="list_refresh_title">Refresh</string>
+    <string name="list_purge_title">Purge</string>
     <string name="map_download_view_area_title">Download area</string>
     <string name="map_clear_view_area_title">Clear area</string>
     <string name="map_cache_usage_title">Cache usage</string>
@@ -42,5 +41,5 @@
     <string name="widget_empty">No Earthquakes!</string>
     <string name="dialog_details_title">Earthquake Details</string>
     <string name="notification_ticker">Earthquake!</string>
-    <string name="magnitude_unit">Magnitude</string>
+
 </resources>

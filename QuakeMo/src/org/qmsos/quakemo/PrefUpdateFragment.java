@@ -14,7 +14,7 @@ public class PrefUpdateFragment extends PreferenceFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		addPreferencesFromResource(R.xml.pref_body_update);
+		addPreferencesFromResource(R.xml.preference_update);
 	}
 
 }

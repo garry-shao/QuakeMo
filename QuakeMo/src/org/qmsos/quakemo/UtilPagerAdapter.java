@@ -9,14 +9,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 /**
  * Utility class.
  * 
- * @author SS
  *
  */
-public class ListPagerAdapter extends FragmentPagerAdapter {
+public class UtilPagerAdapter extends FragmentPagerAdapter {
 	
 	private List<Fragment> fragmentList;
 
-	public ListPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
+	public UtilPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
 		super(fm);
 		this.fragmentList = fragmentList;
 	}

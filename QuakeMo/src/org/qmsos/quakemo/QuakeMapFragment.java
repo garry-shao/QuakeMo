@@ -24,10 +24,17 @@ import android.widget.Toast;
  * Show earthquakes on map.
  *
  */
-public class EarthquakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
 	
-	private EarthquakeMapOverlay mapOverlay;
-	protected MapView mapView;
+	/**
+	 * The overlay on each map.
+	 */
+	private QuakeMapOverlay mapOverlay;
+	
+	/**
+	 * Defined as there is only one view on this fragment.
+	 */
+	private MapView mapView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +50,7 @@ public class EarthquakeMapFragment extends Fragment implements LoaderCallbacks<C
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mapOverlay = new EarthquakeMapOverlay(getActivity(), null);
+		mapOverlay = new QuakeMapOverlay(getActivity(), null);
 		mapView.getOverlays().add(mapOverlay);
 		
 		return mapView;
@@ -60,7 +67,7 @@ public class EarthquakeMapFragment extends Fragment implements LoaderCallbacks<C
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		
-		inflater.inflate(R.menu.map_options_menu, menu);
+		inflater.inflate(R.menu.menu_map_options, menu);
 	}
 
 	@Override
@@ -103,19 +110,19 @@ public class EarthquakeMapFragment extends Fragment implements LoaderCallbacks<C
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] projection = new String[] {
-				EarthquakeProvider.KEY_ID, 
-				EarthquakeProvider.KEY_LOCATION_LA, 
-				EarthquakeProvider.KEY_LOCATION_LO };
+				QuakeProvider.KEY_ID, 
+				QuakeProvider.KEY_LOCATION_LA, 
+				QuakeProvider.KEY_LOCATION_LO };
 		
 		SharedPreferences prefs = PreferenceManager.
 				getDefaultSharedPreferences(getActivity().getApplicationContext());
 		
 		int minMagnitude = Integer.parseInt(
-				prefs.getString(MainPreferenceActivity.PREF_MIN_MAG, "3"));
-		String where = EarthquakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+				prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
 				
 		CursorLoader loader = new CursorLoader(getActivity(), 
-				EarthquakeProvider.CONTENT_URI, projection, where, null, null);
+				QuakeProvider.CONTENT_URI, projection, where, null, null);
 				
 		return loader;
 	}

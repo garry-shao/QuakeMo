@@ -12,22 +12,47 @@ import android.location.Location;
  *
  */
 public class Earthquake {
+
+	/**
+	 * Date of this earthquake.
+	 */
 	private Date date;
+
+	/**
+	 * Details description of this earthquake.
+	 */
 	private String details;
+
+	/**
+	 * The spot of this earthquake as Location.class.
+	 */
 	private Location location;
+
+	/**
+	 * The magnitude of this earthquake as "Ms".
+	 */
 	private Double magnitude;
+
+	/**
+	 * An URL link to usgs.gov about this earthquake.
+	 */
 	private String link;
-	
+
 	/**
 	 * Construct an earthquake instance.
-	 * @param date date of this earthquake.
-	 * @param details details of this earthquake.
-	 * @param location location of this earthquake.
-	 * @param magnitude magnitude of this earthquake.
-	 * @param link link to USGS about this earthquake.
+	 * 
+	 * @param date
+	 *            date of this earthquake.
+	 * @param details
+	 *            details of this earthquake.
+	 * @param location
+	 *            location of this earthquake.
+	 * @param magnitude
+	 *            magnitude of this earthquake.
+	 * @param link
+	 *            link to usgs.gov about this earthquake.
 	 */
-	public Earthquake(Date date, String details, Location location, 
-			Double magnitude, String link) {
+	public Earthquake(Date date, String details, Location location, Double magnitude, String link) {
 		this.date = date;
 		this.details = details;
 		this.location = location;
@@ -37,6 +62,7 @@ public class Earthquake {
 
 	/**
 	 * Get the date of this earthquake.
+	 * 
 	 * @return date of this earthquake.
 	 */
 	public Date getDate() {
@@ -45,6 +71,7 @@ public class Earthquake {
 
 	/**
 	 * Get details of this earthquake.
+	 * 
 	 * @return details of this earthquake.
 	 */
 	public String getDetails() {
@@ -53,6 +80,7 @@ public class Earthquake {
 
 	/**
 	 * Get location of this earthquake.
+	 * 
 	 * @return location of this earthquake.
 	 */
 	public Location getLocation() {
@@ -61,6 +89,7 @@ public class Earthquake {
 
 	/**
 	 * Get magnitude of this earthquake.
+	 * 
 	 * @return magnitude of this earthquake.
 	 */
 	public Double getMagnitude() {
@@ -69,6 +98,7 @@ public class Earthquake {
 
 	/**
 	 * Link to USGS about this earthquake.
+	 * 
 	 * @return link to this earthquake.
 	 */
 	public String getLink() {
@@ -77,23 +107,22 @@ public class Earthquake {
 
 	/**
 	 * Get dialog-suitable details of this earthquake.
-	 * @return the details string.
+	 * 
+	 * @return the dialog-suitable details string.
 	 */
 	public String getDialogDetails() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US);
 		String dateString = dateFormat.format(date);
-		String earthquakeDialogDetailsText = dateString + "\n" + "Magnitude " + magnitude + 
-				"\n" + details + "\n" + link;
-	
-		return earthquakeDialogDetailsText;
+
+		return dateString + "\n" + "Magnitude " + magnitude + "\n" + details + "\n" + link;
 	}
-	
+
 	@Override
 	public String toString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH.mm", Locale.US);
 		String dateString = dateFormat.format(date);
-		
+
 		return dateString + ": " + magnitude + "M: " + details;
 	}
-	
+
 }

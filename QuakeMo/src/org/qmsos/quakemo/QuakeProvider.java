@@ -23,10 +23,10 @@ import android.util.Log;
  * Content provider storing all earthquakes.
  *
  */
-public class EarthquakeProvider extends ContentProvider {
+public class QuakeProvider extends ContentProvider {
 	
 	public static final Uri CONTENT_URI = 
-			Uri.parse("content://org.qmsos.earthquakeprovider/earthquakes");
+			Uri.parse("content://org.qmsos.quakeprovider/earthquakes");
 	public static final String KEY_ID = "_id";
 	public static final String KEY_DATE = "date";
 	public static final String KEY_DETAILS = "datails";
@@ -53,15 +53,15 @@ public class EarthquakeProvider extends ContentProvider {
 		SEARCH_PROJECTION_MAP.put("_id", KEY_ID + " AS " + "_id");
 		
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI("org.qmsos.earthquakeprovider", "earthquakes", QUAKES);
-		uriMatcher.addURI("org.qmsos.earthquakeprovider", "earthquakes/#", QUAKE_ID);
-		uriMatcher.addURI("org.qmsos.earthquakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakeprovider", "earthquakes", QUAKES);
+		uriMatcher.addURI("org.qmsos.quakeprovider", "earthquakes/#", QUAKE_ID);
+		uriMatcher.addURI("org.qmsos.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH);
-		uriMatcher.addURI("org.qmsos.earthquakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH);
-		uriMatcher.addURI("org.qmsos.earthquakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT, SEARCH);
-		uriMatcher.addURI("org.qmsos.earthquakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SEARCH);
 	}
 	
@@ -70,7 +70,7 @@ public class EarthquakeProvider extends ContentProvider {
 	 * Helper class using for managing the earthquake database.
 	 *
 	 */
-	private static class EarthquakeDatabaseHelper extends SQLiteOpenHelper {
+	private static class QuakeDatabaseHelper extends SQLiteOpenHelper {
 
 		private static final String TAG = "EarthquakeProvider";
 		
@@ -86,7 +86,7 @@ public class EarthquakeProvider extends ContentProvider {
 				KEY_LOCATION_LO + " FLOAT, " + KEY_MAGNITUDE + " FLOAT, " + 
 				KEY_LINK + " TEXT);";
 		
-		public EarthquakeDatabaseHelper(Context context, String name, 
+		public QuakeDatabaseHelper(Context context, String name, 
 				CursorFactory factory, int version) {
 			super(context, name, factory, version);
 		}
@@ -107,13 +107,13 @@ public class EarthquakeProvider extends ContentProvider {
 		
 	}
 	
-	private EarthquakeDatabaseHelper dbHelper ;
+	private QuakeDatabaseHelper dbHelper ;
 	
 	@Override
 	public boolean onCreate() {
-		dbHelper = new EarthquakeDatabaseHelper(getContext(), 
-				EarthquakeDatabaseHelper.DATABASE_NAME, null, 
-				EarthquakeDatabaseHelper.DATABASE_VERSION);
+		dbHelper = new QuakeDatabaseHelper(getContext(), 
+				QuakeDatabaseHelper.DATABASE_NAME, null, 
+				QuakeDatabaseHelper.DATABASE_VERSION);
 		
 		return true;
 	}
@@ -124,7 +124,7 @@ public class EarthquakeProvider extends ContentProvider {
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(EarthquakeDatabaseHelper.EARTHQUAKE_TABLE);
+		queryBuilder.setTables(QuakeDatabaseHelper.EARTHQUAKE_TABLE);
 		
 		switch (uriMatcher.match(uri)) {
 		case QUAKE_ID:
@@ -173,7 +173,7 @@ public class EarthquakeProvider extends ContentProvider {
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
 		long rowID = database.insert(
-				EarthquakeDatabaseHelper.EARTHQUAKE_TABLE, "quake", values);
+				QuakeDatabaseHelper.EARTHQUAKE_TABLE, "quake", values);
 		if (rowID > 0) {
 			Uri resultUri = ContentUris.withAppendedId(CONTENT_URI, rowID);
 			getContext().getContentResolver().notifyChange(resultUri, null);
@@ -192,13 +192,13 @@ public class EarthquakeProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)) {
 		case QUAKES:
 			count = database.delete(
-					EarthquakeDatabaseHelper.EARTHQUAKE_TABLE, selection, selectionArgs);
+					QuakeDatabaseHelper.EARTHQUAKE_TABLE, selection, selectionArgs);
 			break;
 		case QUAKE_ID:
 			String where = KEY_ID + "=" + uri.getPathSegments().get(1) + 
 					(!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
 			count = database.delete(
-					EarthquakeDatabaseHelper.EARTHQUAKE_TABLE, where, selectionArgs);
+					QuakeDatabaseHelper.EARTHQUAKE_TABLE, where, selectionArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -217,13 +217,13 @@ public class EarthquakeProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)) {
 		case QUAKES:
 			count = database.update(
-					EarthquakeDatabaseHelper.EARTHQUAKE_TABLE, values, selection, selectionArgs);
+					QuakeDatabaseHelper.EARTHQUAKE_TABLE, values, selection, selectionArgs);
 			break;
 		case QUAKE_ID:
 			String where = KEY_ID + "=" + uri.getPathSegments().get(1) + 
 					(!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
 			count = database.update(
-					EarthquakeDatabaseHelper.EARTHQUAKE_TABLE, values, where, selectionArgs);
+					QuakeDatabaseHelper.EARTHQUAKE_TABLE, values, where, selectionArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);

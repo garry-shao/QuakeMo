@@ -14,7 +14,7 @@ public class PrefUIFragment extends PreferenceFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		addPreferencesFromResource(R.xml.pref_body_ui);
+		addPreferencesFromResource(R.xml.preference_ui);
 	}
 
 }

@@ -44,135 +44,123 @@ import android.util.Log;
  * The service performing earthquake update.
  *
  */
-public class EarthquakeUpdateService extends IntentService {
-	
-	public static final String TAG = "EARTHQUAKE_UPDATE_SERVICE";
-	
+public class QuakeUpdateService extends IntentService {
+
+	/**
+	 * Class name tag. Debug use only.
+	 */
+	private static final String TAG = QuakeUpdateService.class.getSimpleName();
+
 	public static final String QUAKES_REFRESHED = "org.qmsos.quakemo.QUAKES_REFRESHED";
 	public static final String MANUAL_REFRESH = "org.qmsos.quakemo.MANUAL_REFRESH";
 	public static final String PURGE_DATABASE = "org.qmsos.quakemo.PURGE_DATABASE";
-	
+
 	public static final int NOTIFICATION_ID = 1;
-	
+
 	private AlarmManager alarmManager;
 	private PendingIntent alarmIntent;
 	private Notification.Builder notificationBuilder;
-	
+
 	/**
 	 * Default constructor of this service.
 	 */
-	public EarthquakeUpdateService() {
+	public QuakeUpdateService() {
 		super(TAG);
 	}
 
 	/**
 	 * Constructor with a debug-purpose name of this service.
-	 * @param workThreadName Tag name for debug.
+	 * 
+	 * @param workThreadName
+	 *            Tag name for debug.
 	 */
-	public EarthquakeUpdateService(String workThreadName) {
+	public QuakeUpdateService(String workThreadName) {
 		super(workThreadName);
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-	
+
 		alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		
-		Intent intentToFire = new Intent(EarthquakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM);
+
+		Intent intentToFire = new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM);
 		alarmIntent = PendingIntent.getBroadcast(this, 0, intentToFire, 0);
-		
+
 		notificationBuilder = new Notification.Builder(this);
-		notificationBuilder
-			.setAutoCancel(true)
-			.setTicker(getBaseContext().getString(R.string.notification_ticker))
-			.setSmallIcon(R.drawable.notification_icon);
+		notificationBuilder.setAutoCancel(true).setTicker(getBaseContext().getString(R.string.notification_ticker))
+				.setSmallIcon(R.drawable.ic_notification);
 	}
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		
-		int updateFreq = Integer.parseInt(
-				prefs.getString(MainPreferenceActivity.PREF_UPDATE_FREQ, "60"));
-		boolean autoUpdateChecked = 
-				prefs.getBoolean(MainPreferenceActivity.PREF_AUTO_UPDATE, false);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		int updateFreq = Integer.parseInt(prefs.getString(PrefActivity.PREF_UPDATE_FREQ, "60"));
+		boolean autoUpdateChecked = prefs.getBoolean(PrefActivity.PREF_AUTO_UPDATE, false);
 		if (autoUpdateChecked) {
 			int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
 			int intervalMillis = updateFreq * 60 * 1000;
 			long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
-			
-			refreshEarthquakes();
+
+			queryQuakes();
 			sendBroadcast(new Intent(QUAKES_REFRESHED));
 
-			alarmManager.setInexactRepeating(
-					alarmType, timeToRefresh, intervalMillis, alarmIntent);
+			alarmManager.setInexactRepeating(alarmType, timeToRefresh, intervalMillis, alarmIntent);
 		} else {
 			alarmManager.cancel(alarmIntent);
 		}
-		
+
 		if (intent.getBooleanExtra(MANUAL_REFRESH, false)) {
-			refreshEarthquakes();
+			queryQuakes();
 			sendBroadcast(new Intent(QUAKES_REFRESHED));
 		}
-		
+
 		if (intent.getBooleanExtra(PURGE_DATABASE, false)) {
-			purgeAllEarthquakes();
+			purgeQuakes();
 			sendBroadcast(new Intent(PURGE_DATABASE));
 		}
-		
-		Context context = getApplicationContext();
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-		ComponentName earthquakeWidget = new ComponentName(context, EarthquakeWidgetList.class);
-		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(earthquakeWidget);
-		
-		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+
+		notifyWidget();
 	}
 
 	/**
 	 * Query source for new earthquakes.
 	 */
-	public void refreshEarthquakes() {
+	private void queryQuakes() {
 		URL url;
-		
+
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 			String dateString = dateFormat.format(new Date());
-			
-			SharedPreferences prefs = 
-					PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-			int minMagnitude = Integer.parseInt(
-					prefs.getString(MainPreferenceActivity.PREF_MIN_MAG, "3"));
-			
-			String quakeFeed = 
-					"http://earthquake.usgs.gov/fdsnws/event/1/query?" +
-					"format=xml" + "&" + 
-					"starttime=" + dateString + "&" + 
-					"minmagnitude=" + minMagnitude;
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+
+			String quakeFeed = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=xml" + "&" + "starttime="
+					+ dateString + "&" + "minmagnitude=" + minMagnitude;
 			url = new URL(quakeFeed);
-			
+
 			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 			int responseCode = httpConnection.getResponseCode();
 			if (responseCode == HttpURLConnection.HTTP_OK) {
 				InputStream inStream = httpConnection.getInputStream();
-				
+
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = factory.newDocumentBuilder();
-				
+
 				Document dom = builder.parse(inStream);
 				Element domElement = dom.getDocumentElement();
-				
-				Element eventParameters = (Element) 
-						domElement.getElementsByTagName("eventParameters").item(0);
-				
+
+				Element eventParameters = (Element) domElement.getElementsByTagName("eventParameters").item(0);
+
 				dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'.'SSS'Z'", Locale.US);
 				NodeList list = eventParameters.getElementsByTagName("event");
 				if ((list != null) && (list.getLength() > 0)) {
 					for (int i = 0; i < list.getLength(); i++) {
 						Element event = (Element) list.item(i);
-						
+
 						Element origin = (Element) event.getElementsByTagName("origin").item(0);
 						Element time = (Element) origin.getElementsByTagName("time").item(0);
 						Element value = (Element) time.getElementsByTagName("value").item(0);
@@ -182,11 +170,11 @@ public class EarthquakeUpdateService extends IntentService {
 						} catch (ParseException e) {
 							Log.d(TAG, "Date parsing exception.", e);
 						}
-						
+
 						Element description = (Element) event.getElementsByTagName("description").item(0);
 						Element text = (Element) description.getElementsByTagName("text").item(0);
 						String details = text.getFirstChild().getNodeValue();
-					
+
 						Location loc = new Location("dummyGPS");
 						Element longitude = (Element) origin.getElementsByTagName("longitude").item(0);
 						value = (Element) longitude.getElementsByTagName("value").item(0);
@@ -194,17 +182,17 @@ public class EarthquakeUpdateService extends IntentService {
 						Element latitude = (Element) origin.getElementsByTagName("latitude").item(0);
 						value = (Element) latitude.getElementsByTagName("value").item(0);
 						loc.setLatitude(Double.parseDouble(value.getFirstChild().getNodeValue()));
-						
+
 						Element magnitude = (Element) event.getElementsByTagName("magnitude").item(0);
 						value = (Element) magnitude.getElementsByTagName("value").item(0);
 						double mag = Double.parseDouble(value.getFirstChild().getNodeValue());
-					
+
 						String link = origin.getAttribute("publicID");
 						link = link.replace("quakeml:", "http://");
-						
+
 						Earthquake earthquake = new Earthquake(earthquakeDate, details, loc, mag, link);
 
-						addNewEarthquake(earthquake);
+						addQuake(earthquake);
 					}
 				}
 			}
@@ -217,30 +205,32 @@ public class EarthquakeUpdateService extends IntentService {
 		} finally {
 		}
 	}
-	
+
 	/**
 	 * Add new earthquake instance to the earthquake content provider.
-	 * @param earthquake the instance to add.
+	 * 
+	 * @param earthquake
+	 *            the instance to add.
 	 */
-	private void addNewEarthquake(Earthquake earthquake) {
+	private void addQuake(Earthquake earthquake) {
 		ContentResolver resolver = getContentResolver();
-		
-		String where = EarthquakeProvider.KEY_DATE + " = " + earthquake.getDate().getTime();
-		
-		Cursor query = resolver.query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
+
+		String where = QuakeProvider.KEY_DATE + " = " + earthquake.getDate().getTime();
+
+		Cursor query = resolver.query(QuakeProvider.CONTENT_URI, null, where, null, null);
 		if (query.getCount() == 0) {
 			ContentValues values = new ContentValues();
-			values.put(EarthquakeProvider.KEY_DATE, earthquake.getDate().getTime());
-			values.put(EarthquakeProvider.KEY_DETAILS, earthquake.getDetails());
-			values.put(EarthquakeProvider.KEY_SUMMARY, earthquake.toString());
-			values.put(EarthquakeProvider.KEY_LOCATION_LA, earthquake.getLocation().getLatitude());
-			values.put(EarthquakeProvider.KEY_LOCATION_LO, earthquake.getLocation().getLongitude());
-			values.put(EarthquakeProvider.KEY_LINK, earthquake.getLink());
-			values.put(EarthquakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
-			
-			resolver.insert(EarthquakeProvider.CONTENT_URI, values);
-			
-			broadcastNotification(earthquake);
+			values.put(QuakeProvider.KEY_DATE, earthquake.getDate().getTime());
+			values.put(QuakeProvider.KEY_DETAILS, earthquake.getDetails());
+			values.put(QuakeProvider.KEY_SUMMARY, earthquake.toString());
+			values.put(QuakeProvider.KEY_LOCATION_LA, earthquake.getLocation().getLatitude());
+			values.put(QuakeProvider.KEY_LOCATION_LO, earthquake.getLocation().getLongitude());
+			values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
+			values.put(QuakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
+
+			resolver.insert(QuakeProvider.CONTENT_URI, values);
+
+			notifyQuake(earthquake);
 		}
 		query.close();
 	}
@@ -248,39 +238,33 @@ public class EarthquakeUpdateService extends IntentService {
 	/**
 	 * Purge all earthquakes stored in content provider.
 	 */
-	private void purgeAllEarthquakes() {
+	private void purgeQuakes() {
 		ContentResolver resolver = getContentResolver();
-		
-		resolver.delete(EarthquakeProvider.CONTENT_URI, null, null);
+
+		resolver.delete(QuakeProvider.CONTENT_URI, null, null);
 	}
 
 	/**
 	 * Create and broadcast a new notification of earthquake.
-	 * @param earthquake the earthquake to notify.
+	 * 
+	 * @param earthquake
+	 *            the earthquake to notify.
 	 */
-	private void broadcastNotification(Earthquake earthquake) {
-		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		boolean notificationEnable = 
-				prefs.getBoolean(MainPreferenceActivity.PREF_NOTIFICATION_ENABLE, true);
-		boolean notificationSound = 
-				prefs.getBoolean(MainPreferenceActivity.PREF_NOTIFICATION_SOUND, true);
-		boolean notificationVibrate = 
-				prefs.getBoolean(MainPreferenceActivity.PREF_NOTIFICATION_VIBRATE, true);
-		
-		if (notificationEnable) {
-			PendingIntent launchIntent = 
-					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+	private void notifyQuake(Earthquake earthquake) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		boolean notificationEnable = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_ENABLE, false);
+		boolean notificationSound = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_SOUND, false);
+		boolean notificationVibrate = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_VIBRATE, false);
 
-			notificationBuilder
-				.setContentIntent(launchIntent)
-				.setWhen(earthquake.getDate().getTime())
-				.setContentTitle("M:" + earthquake.getMagnitude())
-				.setContentText(earthquake.getDetails());
-		
+		if (notificationEnable) {
+			PendingIntent launchIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+
+			notificationBuilder.setContentIntent(launchIntent).setWhen(earthquake.getDate().getTime())
+					.setContentTitle("M:" + earthquake.getMagnitude()).setContentText(earthquake.getDetails());
+
 			if (notificationVibrate) {
 				double vibrateLength = 100 * Math.exp(0.53 * earthquake.getMagnitude());
-				
+
 				notificationBuilder.setVibrate(new long[] { 100, 100, (long) vibrateLength });
 			}
 			if (notificationSound) {
@@ -288,11 +272,23 @@ public class EarthquakeUpdateService extends IntentService {
 
 				notificationBuilder.setSound(ringURI);
 			}
-		
-			NotificationManager notificationManager = 
-					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+			NotificationManager notificationManager = (NotificationManager) getSystemService(
+					Context.NOTIFICATION_SERVICE);
 			notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
 		}
 	}
+
+	/**
+	 * Notify widget of data changed.
+	 */
+	private void notifyWidget() {
+		Context context = getApplicationContext();
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+		ComponentName earthquakeWidget = new ComponentName(context, QuakeWidgetList.class);
+		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(earthquakeWidget);
 	
+		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+	}
+
 }

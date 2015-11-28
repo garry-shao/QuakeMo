@@ -24,28 +24,33 @@ public class MainActivity extends FragmentActivity {
 
 	protected static final int SHOW_PREFERENCES = 1;
 	
-	List<Fragment> fragmentList = new ArrayList<Fragment>();
+	/**
+	 * Stored fragments used for page flip.
+	 */
+	private List<Fragment> fragmentList = new ArrayList<Fragment>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_activity);
+		setContentView(R.layout.activity_main);
 		
+		fragmentList.add(new QuakeListFragment());
+		fragmentList.add(new QuakeMapFragment());
+
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		fragmentList.add(new EarthquakeListFragment());
-		fragmentList.add(new EarthquakeMapFragment());
-		viewPager.setAdapter(new ListPagerAdapter(getSupportFragmentManager(), fragmentList));
+		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList));
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		
-		getMenuInflater().inflate(R.menu.main_options_menu, menu);
+		getMenuInflater().inflate(R.menu.menu_main_options, menu);
 		
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
 		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
 		searchView.setOnSuggestionListener(new OnSuggestionListener() {
 
 			@Override
@@ -73,7 +78,7 @@ public class MainActivity extends FragmentActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if (requestCode == SHOW_PREFERENCES) {
-			startService(new Intent(this, EarthquakeUpdateService.class));
+			startService(new Intent(this, QuakeUpdateService.class));
 		}
 	}
 

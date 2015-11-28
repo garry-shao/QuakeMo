@@ -12,37 +12,40 @@ import android.support.v4.app.FragmentTransaction;
  * The activity show search results.
  *
  */
-public class MainSearchActivity extends FragmentActivity  {
-	
+public class QuakeSearchActivity extends FragmentActivity {
+
 	@Override
-	protected void onCreate(Bundle arg0) {
-		super.onCreate(arg0);
-		
+	protected void onCreate(Bundle args) {
+		super.onCreate(args);
+
 		parseIntent(getIntent());
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		
+
 		parseIntent(intent);
 	}
 
 	/**
 	 * Parse and process any search intent.
-	 * @param intent The intent to parse.
+	 * 
+	 * @param intent
+	 *            The intent to parse.
 	 */
 	private void parseIntent(Intent intent) {
-		EarthquakeSearchFragment searchFragment = new EarthquakeSearchFragment();
+		QuakeSearchFragment searchFragment = new QuakeSearchFragment();
+		
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String searchQuery = intent.getStringExtra(SearchManager.QUERY);
-			
+
 			Bundle args = new Bundle();
-			args.putString(EarthquakeSearchFragment.QUERY_EXTRA_KEY, searchQuery);
-			
+			args.putString(QuakeSearchFragment.QUERY_EXTRA_KEY, searchQuery);
+
 			searchFragment.setArguments(args);
 		}
-		
+
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
 		transaction.add(android.R.id.content, searchFragment);

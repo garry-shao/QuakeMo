@@ -33,11 +33,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainPreferenceActivity"
+            android:name=".PrefActivity"
             android:label="@string/pref_name" >
         </activity>
         <activity
-            android:name=".MainSearchActivity"
+            android:name=".QuakeSearchActivity"
             android:label="@string/search_name"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -53,32 +53,32 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".MainSearchActivity" />
+            android:value=".QuakeSearchActivity" />
 
         <provider
-            android:name=".EarthquakeProvider"
-            android:authorities="org.qmsos.earthquakeprovider"
+            android:name=".QuakeProvider"
+            android:authorities="org.qmsos.quakeprovider"
             android:exported="false" >
         </provider>
 
         <service
-            android:name=".EarthquakeUpdateService"
+            android:name=".QuakeUpdateService"
             android:enabled="true" >
         </service>
         <service
-            android:name=".EarthquakeViewsService"
+            android:name=".QuakeViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" >
         </service>
 
         <receiver
-            android:name=".EarthquakeAlarmReceiver"
+            android:name=".QuakeAlarmReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="org.qmsos.quakemo.ACTION_REFRESH_EARTHQUAKE_ALARM" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".EarthquakeWidgetSingle"
+            android:name=".QuakeWidgetSingle"
             android:enabled="true"
             android:label="@string/widget_name_single" >
             <intent-filter>
@@ -96,7 +96,7 @@
                 android:resource="@xml/widget_single_info" />
         </receiver>
         <receiver
-            android:name=".EarthquakeWidgetList"
+            android:name=".QuakeWidgetList"
             android:enabled="true"
             android:label="@string/widget_name_list" >
             <intent-filter>

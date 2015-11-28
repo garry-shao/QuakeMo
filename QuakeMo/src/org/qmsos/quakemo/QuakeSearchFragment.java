@@ -15,9 +15,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-public class EarthquakeSearchFragment extends ListFragment implements LoaderCallbacks<Cursor> {
+public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks<Cursor> {
 	
-	public static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";
+	/**
+	 * Key used to get extra from a bundle object.
+	 */
+	protected static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";
 	
 	private SimpleCursorAdapter adapter;
 	
@@ -34,7 +37,7 @@ public class EarthquakeSearchFragment extends ListFragment implements LoaderCall
 		
 		adapter = new SimpleCursorAdapter(getActivity(), 
 				android.R.layout.simple_list_item_1, null, 
-				new String[] { EarthquakeProvider.KEY_SUMMARY }, 
+				new String[] { QuakeProvider.KEY_SUMMARY }, 
 				new int[] { android.R.id.text1 }, 0);
 		setListAdapter(adapter);
 		
@@ -46,32 +49,32 @@ public class EarthquakeSearchFragment extends ListFragment implements LoaderCall
 		super.onListItemClick(l, v, position, id);
 		
 		Cursor result = getActivity().getContentResolver().query(ContentUris.withAppendedId(
-				EarthquakeProvider.CONTENT_URI, id), null, null, null, null);
+				QuakeProvider.CONTENT_URI, id), null, null, null, null);
 		
 		if (result.moveToFirst()) {
 			Date date = new Date(result.getLong(
-					result.getColumnIndex(EarthquakeProvider.KEY_DATE)));
+					result.getColumnIndex(QuakeProvider.KEY_DATE)));
 			
 			String details = result.getString(
-					result.getColumnIndex(EarthquakeProvider.KEY_DETAILS));
+					result.getColumnIndex(QuakeProvider.KEY_DETAILS));
 			
 			double magnitude = result.getDouble(
-					result.getColumnIndex(EarthquakeProvider.KEY_MAGNITUDE));
+					result.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
 			
 			String link = result.getString(
-					result.getColumnIndex(EarthquakeProvider.KEY_LINK));
+					result.getColumnIndex(QuakeProvider.KEY_LINK));
 			
 			double location_la = result.getDouble(
-					result.getColumnIndex(EarthquakeProvider.KEY_LOCATION_LA));
+					result.getColumnIndex(QuakeProvider.KEY_LOCATION_LA));
 			double location_lo = result.getDouble(
-					result.getColumnIndex(EarthquakeProvider.KEY_LOCATION_LO));
+					result.getColumnIndex(QuakeProvider.KEY_LOCATION_LO));
 			Location location = new Location("db");
 			location.setLatitude(location_la);
 			location.setLongitude(location_lo);
 			
 			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
 			
-			DialogFragment dialogFragment = EarthquakeDetailsDialog.newInstance(getActivity(), quake);
+			DialogFragment dialogFragment = QuakeDetailsDialog.newInstance(getActivity(), quake);
 			dialogFragment.show(getFragmentManager(), "dialog");
 		}
 	}
@@ -85,13 +88,13 @@ public class EarthquakeSearchFragment extends ListFragment implements LoaderCall
 		}
 		
 		String[] projection = { 
-				EarthquakeProvider.KEY_ID, 
-				EarthquakeProvider.KEY_SUMMARY };
+				QuakeProvider.KEY_ID, 
+				QuakeProvider.KEY_SUMMARY };
 		
-		String where = EarthquakeProvider.KEY_SUMMARY + " LIKE \"%" + query + "%\"";
-		String sortOrder = EarthquakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
+		String where = QuakeProvider.KEY_SUMMARY + " LIKE \"%" + query + "%\"";
+		String sortOrder = QuakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
 		
-		return new CursorLoader(getActivity(), EarthquakeProvider.CONTENT_URI, 
+		return new CursorLoader(getActivity(), QuakeProvider.CONTENT_URI, 
 				projection, where, null, sortOrder);
 	}
 

@@ -13,7 +13,7 @@ import android.preference.PreferenceManager;
  * The main activity managing preferences.
  *
  */
-public class MainPreferenceActivity extends PreferenceActivity {
+public class PrefActivity extends PreferenceActivity {
 	
 	public static final String PREF_MIN_MAG = "PREF_MIN_MAG";
 	public static final String PREF_USE_WIDGETS = "PREF_USE_WIDGETS";
@@ -25,7 +25,7 @@ public class MainPreferenceActivity extends PreferenceActivity {
 	
 	@Override
 	public void onBuildHeaders(List<Header> target) {
-		loadHeadersFromResource(R.xml.pref_headers, target);
+		loadHeadersFromResource(R.xml.preference_headers, target);
 	}
 
 	@Override
@@ -37,21 +37,28 @@ public class MainPreferenceActivity extends PreferenceActivity {
 	protected void onResume() {
 		super.onResume();
 		
+		toggleWidgets();
+	}
+
+	/**
+	 * Toggle if widgets available by user preferences.
+	 */
+	private void toggleWidgets() {
 		SharedPreferences prefs = 
 				PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		boolean useWidgetChecked = 
-				prefs.getBoolean(MainPreferenceActivity.PREF_USE_WIDGETS, false);
+				prefs.getBoolean(PrefActivity.PREF_USE_WIDGETS, false);
 		
 		getPackageManager().setComponentEnabledSetting(
-				new ComponentName(this, EarthquakeWidgetSingle.class), 
+				new ComponentName(this, QuakeWidgetSingle.class), 
 				(useWidgetChecked ? 
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
 							PackageManager.COMPONENT_ENABLED_STATE_DISABLED), 
 				PackageManager.DONT_KILL_APP);
 		
 		getPackageManager().setComponentEnabledSetting(
-				new ComponentName(this, EarthquakeWidgetList.class), 
+				new ComponentName(this, QuakeWidgetList.class), 
 				(useWidgetChecked ? 
 						PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
 							PackageManager.COMPONENT_ENABLED_STATE_DISABLED), 

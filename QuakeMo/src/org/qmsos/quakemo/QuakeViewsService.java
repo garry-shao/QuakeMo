@@ -15,11 +15,11 @@ import android.widget.RemoteViewsService;
  * Providing remote views service of earthquakes for updating widgets.
  *
  */
-public class EarthquakeViewsService extends RemoteViewsService {
-	
+public class QuakeViewsService extends RemoteViewsService {
+
 	@Override
 	public RemoteViewsFactory onGetViewFactory(Intent intent) {
-		return new EarthquakeRemoteViewsFactory(getApplicationContext());
+		return new QuakeViewsFactory(getApplicationContext());
 	}
 
 	/**
@@ -27,11 +27,11 @@ public class EarthquakeViewsService extends RemoteViewsService {
 	 * Factory class used for managing remote views.
 	 *
 	 */
-	public class EarthquakeRemoteViewsFactory implements RemoteViewsFactory {
+	public class QuakeViewsFactory implements RemoteViewsFactory {
 		private Context context;
 		private Cursor quakeCursor;
-		
-		public EarthquakeRemoteViewsFactory(Context context) {
+
+		public QuakeViewsFactory(Context context) {
 			this.context = context;
 		}
 
@@ -42,12 +42,13 @@ public class EarthquakeViewsService extends RemoteViewsService {
 
 		@Override
 		public void onDataSetChanged() {
-//			Working around: 
-//			Change process identity so the manifest don't have to expose provider. 
+			// Working around:
+			// Change process identity so the manifest don't have to expose
+			// provider.
 			final long token = Binder.clearCallingIdentity();
-			
+
 			quakeCursor = executeQuery();
-			
+
 			Binder.restoreCallingIdentity(token);
 		}
 
@@ -68,25 +69,25 @@ public class EarthquakeViewsService extends RemoteViewsService {
 		@Override
 		public RemoteViews getViewAt(int position) {
 			quakeCursor.moveToPosition(position);
-			
-			int idIndex = quakeCursor.getColumnIndex(EarthquakeProvider.KEY_ID);
-			int magnitudeIndex = quakeCursor.getColumnIndex(EarthquakeProvider.KEY_MAGNITUDE);
-			int detailsIndex = quakeCursor.getColumnIndex(EarthquakeProvider.KEY_DETAILS);
-			
+
+			int idIndex = quakeCursor.getColumnIndex(QuakeProvider.KEY_ID);
+			int magnitudeIndex = quakeCursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE);
+			int detailsIndex = quakeCursor.getColumnIndex(QuakeProvider.KEY_DETAILS);
+
 			String id = quakeCursor.getString(idIndex);
 			String magnitude = quakeCursor.getString(magnitudeIndex) + "M";
 			String details = quakeCursor.getString(detailsIndex);
-			
+
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_single);
 			views.setTextViewText(R.id.widget_single_magnitude, magnitude);
 			views.setTextViewText(R.id.widget_single_details, details);
-			
+
 			Intent fillInIntent = new Intent();
-			fillInIntent.setData(Uri.withAppendedPath(EarthquakeProvider.CONTENT_URI, id));
-			
+			fillInIntent.setData(Uri.withAppendedPath(QuakeProvider.CONTENT_URI, id));
+
 			views.setOnClickFillInIntent(R.id.widget_single_magnitude, fillInIntent);
 			views.setOnClickFillInIntent(R.id.widget_single_details, fillInIntent);
-			
+
 			return views;
 		}
 
@@ -103,8 +104,8 @@ public class EarthquakeViewsService extends RemoteViewsService {
 		@Override
 		public long getItemId(int position) {
 			if (quakeCursor != null) {
-				int idIndex = quakeCursor.getColumnIndex(EarthquakeProvider.KEY_ID);
-				
+				int idIndex = quakeCursor.getColumnIndex(QuakeProvider.KEY_ID);
+
 				return quakeCursor.getLong(idIndex);
 			} else {
 				return position;
@@ -118,25 +119,25 @@ public class EarthquakeViewsService extends RemoteViewsService {
 
 		/**
 		 * Query the earthquake provider to get list of current earthquakes.
+		 * 
 		 * @return Cursor to the list of current earthquakes.
 		 */
 		private Cursor executeQuery() {
 			String[] projection = new String[] { 
-					EarthquakeProvider.KEY_ID, 
-					EarthquakeProvider.KEY_MAGNITUDE, 
-					EarthquakeProvider.KEY_DETAILS };
-			
-			SharedPreferences prefs = PreferenceManager.
-					getDefaultSharedPreferences(getApplicationContext());
-			
-			int minMagnitude = Integer.parseInt(
-					prefs.getString(MainPreferenceActivity.PREF_MIN_MAG, "3"));
-			String where = EarthquakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
-			
+					QuakeProvider.KEY_ID, 
+					QuakeProvider.KEY_MAGNITUDE,
+					QuakeProvider.KEY_DETAILS };
+
+			SharedPreferences prefs = 
+					PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+			int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+			String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+
 			return context.getContentResolver().query(
-					EarthquakeProvider.CONTENT_URI, projection, where, null, null);
+					QuakeProvider.CONTENT_URI, projection, where, null, null);
 		}
-		
+
 	}
 
 }
