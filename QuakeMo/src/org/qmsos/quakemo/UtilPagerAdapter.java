@@ -29,5 +29,17 @@ public class UtilPagerAdapter extends FragmentPagerAdapter {
 	public int getCount() {
 		return fragmentList == null ? 0 : fragmentList.size();
 	}
+
+	@Override
+	public CharSequence getPageTitle(int position) {
+		switch (position) {
+		case 0:
+			return "LIST";
+		case 1:
+			return "MAP";
+		default:
+			return "NULL";
+		}
+	}
 	
 }

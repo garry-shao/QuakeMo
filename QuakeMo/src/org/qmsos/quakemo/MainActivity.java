@@ -7,19 +7,21 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnSuggestionListener;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.widget.SearchView;
-import android.widget.SearchView.OnSuggestionListener;
 
 /**
  * 
  * Main activity of this application.
  *
  */
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
 	/**
 	 * Stored fragments used for page flip.
@@ -31,23 +33,28 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		
 		fragmentList.add(new QuakeListFragment());
 		fragmentList.add(new QuakeMapFragment());
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
 		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList));
+		
+		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+		tabLayout.setupWithViewPager(viewPager);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		
+	
 		getMenuInflater().inflate(R.menu.menu_main_options, menu);
 		
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
 		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
 		searchView.setOnSuggestionListener(new OnSuggestionListener() {
 
 			@Override
