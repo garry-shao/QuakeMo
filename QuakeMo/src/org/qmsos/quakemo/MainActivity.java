@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,8 +21,6 @@ import android.widget.SearchView.OnSuggestionListener;
  */
 public class MainActivity extends FragmentActivity {
 
-	protected static final int SHOW_PREFERENCES = 1;
-	
 	/**
 	 * Stored fragments used for page flip.
 	 */
@@ -71,15 +68,6 @@ public class MainActivity extends FragmentActivity {
 		});
 	
 		return true;
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (requestCode == SHOW_PREFERENCES) {
-			startService(new Intent(this, QuakeUpdateService.class));
-		}
 	}
 
 }

@@ -67,7 +67,7 @@ public class QuakeListFragment extends ListFragment implements LoaderCallbacks<C
 		switch (item.getItemId()) {
 		case (R.id.menu_preferences): {
 			Intent i = new Intent(getActivity(), PrefActivity.class);
-			startActivityForResult(i, MainActivity.SHOW_PREFERENCES);
+			startActivity(i);
 		
 			return true;
 		}
