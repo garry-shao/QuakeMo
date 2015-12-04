@@ -6,8 +6,8 @@
         android:summary="@string/pref_update_summary"
         android:title="@string/pref_update_title" />
     <header
-        android:fragment="org.qmsos.quakemo.PrefUIFragment"
-        android:summary="@string/pref_ui_summary"
-        android:title="@string/pref_ui_title" />
+        android:fragment="org.qmsos.quakemo.PrefGraphicFragment"
+        android:summary="@string/pref_graphic_summary"
+        android:title="@string/pref_graphic_title" />
 
 </preference-headers>
