@@ -1,6 +1,5 @@
 package org.qmsos.quakemo;
 
-import org.osmdroid.bonuspack.cachemanager.CacheManager;
 import org.osmdroid.views.MapView;
 
 import android.content.SharedPreferences;
@@ -12,12 +11,8 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 /**
  * 
@@ -42,8 +37,8 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 		
 		setHasOptionsMenu(true);
 		
-		mapView = new MapView(getActivity().getApplicationContext(), null);
-		mapView.setBuiltInZoomControls(true);
+		mapView = new MapView(getActivity().getApplicationContext());
+		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
 		mapView.getController().setZoom(1);
 	}
@@ -61,50 +56,6 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 		super.onActivityCreated(savedInstanceState);
 		
 		getLoaderManager().initLoader(0, null, this);
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		
-		inflater.inflate(R.menu.menu_map_options, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-		
-		switch (item.getItemId()) {
-		case (R.id.menu_download_view_area): {
-			CacheManager cacheManager = new CacheManager(mapView);
-			int zoomMin = mapView.getZoomLevel();
-			int zoomMax = mapView.getZoomLevel() + 4;
-			cacheManager.downloadAreaAsync(getActivity(), mapView.getBoundingBox(), zoomMin, zoomMax);
-			
-			return true;
-		}
-		case (R.id.menu_clear_view_area): {
-			CacheManager cacheManager = new CacheManager(mapView);
-			int zoomMin = mapView.getZoomLevel();
-			int zoomMax = mapView.getZoomLevel() + 7;
-			cacheManager.cleanAreaAsync(getActivity(), mapView.getBoundingBox(), zoomMin, zoomMax);
-			
-			return true;
-		}
-		case (R.id.menu_cache_usage): {
-			CacheManager cacheManager = new CacheManager(mapView);
-			long cacheUsage = cacheManager.currentCacheUsage() / (1024 * 1024);
-			long cacheCapacity = cacheManager.cacheCapacity() / (1024 * 1024);
-			float percent = 100.0f * cacheUsage / cacheCapacity;
-			String message = "Cache usage:\n" + 
-					cacheUsage + " MB / " + cacheCapacity + " MB = " + (int) percent + "%";
-			Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_LONG).show();
-			
-			return true;
-		}
-		default:
-			return false;
-		}
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -15,6 +16,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 
 /**
  * 
@@ -75,6 +77,22 @@ public class MainActivity extends AppCompatActivity {
 		});
 	
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		
+		switch (item.getItemId()) {
+		case (R.id.menu_preferences): {
+			Intent i = new Intent(this, PrefActivity.class);
+			startActivity(i);
+		
+			return true;
+		}
+		default:
+			return false;
+		}
 	}
 
 }

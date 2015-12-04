@@ -2,19 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_preferences"
-        android:showAsAction="never"
-        android:title="@string/list_preferences_title">
-    </item>
-    <item
         android:id="@+id/menu_refresh"
         android:showAsAction="never"
-        android:title="@string/list_refresh_title">
+        android:title="@string/menu_refresh">
     </item>
     <item
         android:id="@+id/menu_purge"
         android:showAsAction="never"
-        android:title="@string/list_purge_title">
+        android:title="@string/menu_purge">
     </item>
 
 </menu>
