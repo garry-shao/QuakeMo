@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 /**
- * Utility class.
+ * Customized PagerAdapter for easy fragment switch.
  * 
  *
  */
