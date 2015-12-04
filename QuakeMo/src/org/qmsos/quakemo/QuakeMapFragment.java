@@ -22,9 +22,9 @@ import android.view.ViewGroup;
 public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
 	
 	/**
-	 * The overlay on each map.
+	 * The earthquake overlay on the map.
 	 */
-	private QuakeMapOverlay mapOverlay;
+	private QuakeMapOverlay quakeMapOverlay;
 	
 	/**
 	 * Defined as there is only one view on this fragment.
@@ -32,21 +32,13 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	private MapView mapView;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setHasOptionsMenu(true);
-		
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mapView = new MapView(getActivity().getApplicationContext());
 		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
+		mapView.setMinZoomLevel(1);
+		
 		mapView.getController().setZoom(1);
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mapOverlay = new QuakeMapOverlay(getActivity(), null);
-		mapView.getOverlays().add(mapOverlay);
 		
 		return mapView;
 	}
@@ -54,6 +46,9 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		
+		quakeMapOverlay = new QuakeMapOverlay(getActivity(), null);
+		mapView.getOverlays().add(quakeMapOverlay);
 		
 		getLoaderManager().initLoader(0, null, this);
 	}
@@ -80,12 +75,12 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mapOverlay.swapCursor(data);
+		quakeMapOverlay.swapCursor(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mapOverlay.swapCursor(null);
+		quakeMapOverlay.swapCursor(null);
 	}
 
 }
