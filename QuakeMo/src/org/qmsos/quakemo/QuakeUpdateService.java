@@ -48,15 +48,25 @@ public class QuakeUpdateService extends IntentService {
 	 */
 	private static final String TAG = QuakeUpdateService.class.getSimpleName();
 
+	/**
+	 * Will send intent indicating content provider of earthquakes is refreshed.
+	 */
 	public static final String QUAKES_REFRESHED = "org.qmsos.quakemo.QUAKES_REFRESHED";
+
+	/**
+	 * Manually refresh for new earthquakes.
+	 */
 	public static final String MANUAL_REFRESH = "org.qmsos.quakemo.MANUAL_REFRESH";
+
+	/**
+	 * Purge all earthquakes in content provider.
+	 */
 	public static final String PURGE_DATABASE = "org.qmsos.quakemo.PURGE_DATABASE";
 
-	public static final int NOTIFICATION_ID = 1;
-
-	private AlarmManager alarmManager;
-	private PendingIntent alarmIntent;
-	private Notification.Builder notificationBuilder;
+	/**
+	 * Notification ID in this application.
+	 */
+	private static final int NOTIFICATION_ID = 1;
 
 	/**
 	 * Default constructor of this service.
@@ -76,39 +86,23 @@ public class QuakeUpdateService extends IntentService {
 	}
 
 	@Override
-	public void onCreate() {
-		super.onCreate();
-
-		alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-		Intent intentToFire = new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM);
-		alarmIntent = PendingIntent.getBroadcast(this, 0, intentToFire, 0);
-
-		notificationBuilder = new Notification.Builder(this);
-		notificationBuilder.setAutoCancel(true).setTicker(getBaseContext().getString(R.string.notification_ticker))
-				.setSmallIcon(R.drawable.ic_notification);
-	}
-
-	@Override
 	protected void onHandleIntent(Intent intent) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-		int updateFreq = Integer.parseInt(prefs.getString(PrefActivity.PREF_UPDATE_FREQ, "60"));
 		boolean autoUpdateChecked = prefs.getBoolean(PrefActivity.PREF_AUTO_UPDATE, false);
 		if (autoUpdateChecked) {
-			int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
-			int intervalMillis = updateFreq * 60 * 1000;
-			long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
+			int updateFreq = Integer.parseInt(prefs.getString(PrefActivity.PREF_UPDATE_FREQ, "60"));
+
+			setupAutoUpdate(updateFreq);
 
 			queryQuakes();
 
 			sendBroadcast(new Intent(QUAKES_REFRESHED));
-
-			alarmManager.setInexactRepeating(alarmType, timeToRefresh, intervalMillis, alarmIntent);
 		} else {
-			alarmManager.cancel(alarmIntent);
+			cancelAutoUpdate();
 		}
 
+		// Extra behaviors of this service, it's important these are behind auto update block.
 		if (intent.getBooleanExtra(MANUAL_REFRESH, false)) {
 			queryQuakes();
 
@@ -125,6 +119,37 @@ public class QuakeUpdateService extends IntentService {
 	}
 
 	/**
+	 * Setting up interval of automatic update.
+	 * 
+	 * @param updateFreq
+	 *            update interval, in minutes.
+	 */
+	private void setupAutoUpdate(int updateFreq) {
+		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
+				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM), 0);
+
+		int intervalMillis = updateFreq * 60 * 1000;
+		long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
+		int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
+
+		alarmManager.setInexactRepeating(alarmType, timeToRefresh, intervalMillis, alarmIntent);
+	}
+
+	/**
+	 * Cancel automatic update.
+	 */
+	private void cancelAutoUpdate() {
+		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
+				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM), 0);
+
+		alarmManager.cancel(alarmIntent);
+	}
+
+	/**
 	 * Query source for new earthquakes.
 	 */
 	private void queryQuakes() {
@@ -136,7 +161,7 @@ public class QuakeUpdateService extends IntentService {
 	}
 
 	/**
-	 * Assemble query string by preference.
+	 * Assemble query string by preferences.
 	 * 
 	 * @return The assembled string.
 	 */
@@ -271,31 +296,35 @@ public class QuakeUpdateService extends IntentService {
 	 *            the earthquake to notify.
 	 */
 	private void notifyQuake(Earthquake earthquake) {
+		Notification.Builder builder = new Notification.Builder(this);
+		builder.setAutoCancel(true).setTicker(getBaseContext().getString(R.string.notification_ticker))
+				.setSmallIcon(R.drawable.ic_notification);
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		boolean notificationEnable = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_ENABLE, false);
-		boolean notificationSound = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_SOUND, false);
-		boolean notificationVibrate = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_VIBRATE, false);
-
 		if (notificationEnable) {
 			PendingIntent launchIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
-			notificationBuilder.setContentIntent(launchIntent).setWhen(earthquake.getDate().getTime())
-					.setContentTitle("M:" + earthquake.getMagnitude()).setContentText(earthquake.getDetails());
+			builder.setContentIntent(launchIntent).setWhen(earthquake.getDate().getTime())
+					.setContentTitle("M " + earthquake.getMagnitude()).setContentText(earthquake.getDetails());
 
+			boolean notificationVibrate = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_VIBRATE, false);
 			if (notificationVibrate) {
 				double vibrateLength = 100 * Math.exp(0.53 * earthquake.getMagnitude());
 
-				notificationBuilder.setVibrate(new long[] { 100, 100, (long) vibrateLength });
+				builder.setVibrate(new long[] { 100, 100, (long) vibrateLength });
 			}
+
+			boolean notificationSound = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_SOUND, false);
 			if (notificationSound) {
 				Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-				notificationBuilder.setSound(ringURI);
+				builder.setSound(ringURI);
 			}
 
 			NotificationManager notificationManager = (NotificationManager) getSystemService(
 					Context.NOTIFICATION_SERVICE);
-			notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+			notificationManager.notify(NOTIFICATION_ID, builder.build());
 		}
 	}
 
@@ -306,8 +335,8 @@ public class QuakeUpdateService extends IntentService {
 		Context context = getApplicationContext();
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		ComponentName earthquakeWidget = new ComponentName(context, QuakeWidgetList.class);
-		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(earthquakeWidget);
 
+		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(earthquakeWidget);
 		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_full);
 	}
 

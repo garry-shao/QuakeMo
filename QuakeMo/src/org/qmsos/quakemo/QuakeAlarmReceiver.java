@@ -11,6 +11,9 @@ import android.content.Intent;
  */
 public class QuakeAlarmReceiver extends BroadcastReceiver {
 	
+	/**
+	 * action flag in intent, being used to set up alarm.
+	 */
 	public static final String ACTION_REFRESH_EARTHQUAKE_ALARM = 
 			"org.qmsos.quakemo.ACTION_REFRESH_EARTHQUAKE_ALARM";
 	

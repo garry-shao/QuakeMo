@@ -111,10 +111,10 @@ public class Earthquake {
 	 * @return the dialog-suitable details string.
 	 */
 	public String getDialogDetails() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
 		String dateString = dateFormat.format(date);
 
-		return dateString + "\n" + "Magnitude " + magnitude + "\n" + details + "\n" + link;
+		return dateString + "\n\n" + "Magnitude: " + magnitude + "\n\n" + details + "\n\n" + link;
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class Earthquake {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH.mm", Locale.US);
 		String dateString = dateFormat.format(date);
 
-		return dateString + ": " + magnitude + "M: " + details;
+		return dateString + ": " + "M " + magnitude + " - " + details;
 	}
 
 }

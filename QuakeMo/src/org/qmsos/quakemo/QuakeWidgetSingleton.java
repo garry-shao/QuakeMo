@@ -66,7 +66,7 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 		Cursor lastEarthquake = 
 				context.getContentResolver().query(QuakeProvider.CONTENT_URI, null, where, null, null);
 
-		String magnitude = "--M";
+		String magnitude = "M --";
 		String details = "-- None --";
 
 		if (lastEarthquake != null) {
@@ -75,7 +75,7 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 					int magnitudeIndex = lastEarthquake.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE);
 					int detailsIndex = lastEarthquake.getColumnIndexOrThrow(QuakeProvider.KEY_DETAILS);
 
-					magnitude = lastEarthquake.getString(magnitudeIndex) + "M";
+					magnitude = "M " + lastEarthquake.getString(magnitudeIndex);
 					details = lastEarthquake.getString(detailsIndex);
 				}
 			} finally {

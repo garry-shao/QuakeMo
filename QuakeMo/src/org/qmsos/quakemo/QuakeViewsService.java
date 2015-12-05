@@ -75,7 +75,7 @@ public class QuakeViewsService extends RemoteViewsService {
 			int detailsIndex = quakeCursor.getColumnIndex(QuakeProvider.KEY_DETAILS);
 
 			String id = quakeCursor.getString(idIndex);
-			String magnitude = quakeCursor.getString(magnitudeIndex) + "M";
+			String magnitude = "M " + quakeCursor.getString(magnitudeIndex);
 			String details = quakeCursor.getString(detailsIndex);
 
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_singleton);
@@ -124,9 +124,7 @@ public class QuakeViewsService extends RemoteViewsService {
 		 */
 		private Cursor executeQuery() {
 			String[] projection = new String[] { 
-					QuakeProvider.KEY_ID, 
-					QuakeProvider.KEY_MAGNITUDE,
-					QuakeProvider.KEY_DETAILS };
+					QuakeProvider.KEY_ID, QuakeProvider.KEY_MAGNITUDE, QuakeProvider.KEY_DETAILS };
 
 			SharedPreferences prefs = 
 					PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
