@@ -25,10 +25,8 @@ import android.view.MenuItem;
  */
 public class MainActivity extends AppCompatActivity {
 
-	/**
-	 * Stored fragments used for page flip.
-	 */
-	private List<Fragment> fragmentList = new ArrayList<Fragment>();
+	private QuakeListFragment quakeList = new QuakeListFragment();
+	private QuakeMapFragment quakeMap = new QuakeMapFragment();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		
-		fragmentList.add(new QuakeListFragment());
-		fragmentList.add(new QuakeMapFragment());
+		List<Fragment> fragmentList = new ArrayList<Fragment>();
+		fragmentList.add(quakeList);
+		fragmentList.add(quakeMap);
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
 		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList));

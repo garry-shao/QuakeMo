@@ -3,6 +3,7 @@ package org.qmsos.quakemo;
 import org.osmdroid.views.MapView;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,13 +20,14 @@ import android.view.ViewGroup;
  * Show earthquakes on map.
  *
  */
-public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
-	
+public class QuakeMapFragment extends Fragment 
+implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
+
 	/**
 	 * The earthquake overlay on the map.
 	 */
-	private QuakeMapOverlay quakeMapOverlay;
-	
+	private QuakeMapOverlay mapOverlay;
+
 	/**
 	 * Defined as there is only one view on this fragment.
 	 */
@@ -37,50 +39,59 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
-		
+
 		mapView.getController().setZoom(1);
-		
+
 		return mapView;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
-		quakeMapOverlay = new QuakeMapOverlay(getActivity(), null);
-		mapView.getOverlays().add(quakeMapOverlay);
-		
+
+
 		getLoaderManager().initLoader(0, null, this);
+
+		SharedPreferences prefs = 
+				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		prefs.registerOnSharedPreferenceChangeListener(this);
+
+		mapOverlay = new QuakeMapOverlay(getActivity(), null);
+		mapView.getOverlays().add(mapOverlay);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = new String[] {
-				QuakeProvider.KEY_ID, 
-				QuakeProvider.KEY_LOCATION_LA, 
+		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_LOCATION_LA,
 				QuakeProvider.KEY_LOCATION_LO };
-		
-		SharedPreferences prefs = PreferenceManager.
-				getDefaultSharedPreferences(getActivity().getApplicationContext());
-		
-		int minMagnitude = Integer.parseInt(
-				prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+
+		SharedPreferences prefs = 
+				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+		int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
 		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
-				
-		CursorLoader loader = new CursorLoader(getActivity(), 
-				QuakeProvider.CONTENT_URI, projection, where, null, null);
-				
+
+		CursorLoader loader = new CursorLoader(
+				getActivity(), QuakeProvider.CONTENT_URI, projection, where, null, null);
+
 		return loader;
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		quakeMapOverlay.swapCursor(data);
+		mapOverlay.swapCursor(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		quakeMapOverlay.swapCursor(null);
+		mapOverlay.swapCursor(null);
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals(PrefActivity.PREF_MIN_MAG)) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
 	}
 
 }

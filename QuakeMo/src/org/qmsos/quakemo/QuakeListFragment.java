@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
@@ -27,10 +28,11 @@ import android.widget.SimpleCursorAdapter;
  * Show earthquakes as list.
  *
  */
-public class QuakeListFragment extends ListFragment implements LoaderCallbacks<Cursor> {
+public class QuakeListFragment extends ListFragment 
+implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 	private SimpleCursorAdapter adapter;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,7 +50,11 @@ public class QuakeListFragment extends ListFragment implements LoaderCallbacks<C
 
 		getLoaderManager().initLoader(0, null, this);
 
-		refreshQuakes();
+		SharedPreferences prefs = 
+				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		prefs.registerOnSharedPreferenceChangeListener(this);
+
+		getActivity().startService(new Intent(getActivity(), QuakeUpdateService.class));
 	}
 
 	@Override
@@ -137,13 +143,11 @@ public class QuakeListFragment extends ListFragment implements LoaderCallbacks<C
 		adapter.swapCursor(null);
 	}
 
-	/**
-	 * Refresh to show newer earthquakes.
-	 */
-	private void refreshQuakes() {
-		getLoaderManager().restartLoader(0, null, this);
-
-		getActivity().startService(new Intent(getActivity(), QuakeUpdateService.class));
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals(PrefActivity.PREF_MIN_MAG)) {
+			getLoaderManager().restartLoader(0, null, this);
+		}
 	}
 
 }
