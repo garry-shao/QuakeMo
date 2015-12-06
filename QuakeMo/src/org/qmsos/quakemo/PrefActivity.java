@@ -5,15 +5,15 @@ import java.util.List;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 
 /**
  * 
  * The main activity managing preferences.
  *
  */
-public class PrefActivity extends PreferenceActivity {
+public class PrefActivity extends UtilPreferenceActivity {
 	
 	public static final String PREF_MIN_MAG = "PREF_MIN_MAG";
 	public static final String PREF_USE_WIDGETS = "PREF_USE_WIDGETS";
@@ -26,11 +26,17 @@ public class PrefActivity extends PreferenceActivity {
 	@Override
 	public void onBuildHeaders(List<Header> target) {
 		loadHeadersFromResource(R.xml.preference_headers, target);
+		
+		setContentView(R.layout.activity_pref);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		toolbar.setTitle(R.string.activity_preferences_title);
+		setSupportActionBar(toolbar);
 	}
 
 	@Override
 	protected boolean isValidFragment(String fragmentName) {
-		return true;
+		return PrefGraphicFragment.class.getName().equals(fragmentName) || 
+				PrefUpdateFragment.class.getName().equals(fragmentName);
 	}
 
 	@Override
