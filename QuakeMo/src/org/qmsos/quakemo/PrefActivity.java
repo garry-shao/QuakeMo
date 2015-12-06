@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.ComponentName;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +14,7 @@ import android.support.v7.widget.Toolbar;
  * The main activity managing preferences.
  *
  */
-public class PrefActivity extends UtilPreferenceActivity {
+public class PrefActivity extends UtilPreferenceActivity implements OnSharedPreferenceChangeListener {
 	
 	public static final String PREF_MIN_MAG = "PREF_MIN_MAG";
 	public static final String PREF_USE_WIDGETS = "PREF_USE_WIDGETS";
@@ -31,6 +32,10 @@ public class PrefActivity extends UtilPreferenceActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle(R.string.activity_preferences_title);
 		setSupportActionBar(toolbar);
+		
+		SharedPreferences prefs = 
+				PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -40,35 +45,24 @@ public class PrefActivity extends UtilPreferenceActivity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		toggleWidgets();
-	}
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals(PrefActivity.PREF_USE_WIDGETS)) {
+			SharedPreferences prefs = 
+					PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-	/**
-	 * Toggle if widgets available by user preferences.
-	 */
-	private void toggleWidgets() {
-		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-		boolean useWidgetChecked = 
-				prefs.getBoolean(PrefActivity.PREF_USE_WIDGETS, false);
-		
-		getPackageManager().setComponentEnabledSetting(
-				new ComponentName(this, QuakeWidgetSingleton.class), 
-				(useWidgetChecked ? 
-						PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
-							PackageManager.COMPONENT_ENABLED_STATE_DISABLED), 
-				PackageManager.DONT_KILL_APP);
-		
-		getPackageManager().setComponentEnabledSetting(
-				new ComponentName(this, QuakeWidgetList.class), 
-				(useWidgetChecked ? 
-						PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
-							PackageManager.COMPONENT_ENABLED_STATE_DISABLED), 
-				PackageManager.DONT_KILL_APP);
+			int newState = 
+					prefs.getBoolean(key, false) ? 
+					PackageManager.COMPONENT_ENABLED_STATE_ENABLED :  
+					PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+			
+			PackageManager manager = getPackageManager();
+			manager.setComponentEnabledSetting(
+					new ComponentName(getApplicationContext(), QuakeWidgetSingleton.class), 
+					newState, PackageManager.DONT_KILL_APP);
+			manager.setComponentEnabledSetting(
+					new ComponentName(getApplicationContext(), QuakeWidgetList.class), 
+					newState, PackageManager.DONT_KILL_APP);
+		}
 	}
 
 }
