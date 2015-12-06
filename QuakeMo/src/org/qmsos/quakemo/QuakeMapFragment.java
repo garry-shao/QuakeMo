@@ -1,5 +1,9 @@
 package org.qmsos.quakemo;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import android.content.SharedPreferences;
@@ -35,7 +39,7 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mapView = new MapView(getActivity().getApplicationContext());
+		mapView = new MapView(getActivity());
 		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
@@ -49,14 +53,13 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-
 		getLoaderManager().initLoader(0, null, this);
 
 		SharedPreferences prefs = 
 				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
-		mapOverlay = new QuakeMapOverlay(getActivity(), null);
+		mapOverlay = new QuakeMapOverlay(getContext());
 		mapView.getOverlays().add(mapOverlay);
 	}
 
@@ -79,12 +82,16 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mapOverlay.swapCursor(data);
+		mapOverlay.setLocations(parseLocations(data));
+
+		mapView.invalidate();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mapOverlay.swapCursor(null);
+		mapOverlay.setLocations(parseLocations(null));
+
+		mapView.invalidate();
 	}
 
 	@Override
@@ -94,4 +101,30 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		}
 	}
 
+	/**
+	 * Parse locations of earthquake from cursor.
+	 * 
+	 * @param cursor
+	 *            The cursor to parse.
+	 * @return The parsed locations as list.
+	 */
+	private List<GeoPoint> parseLocations(Cursor cursor) {
+		LinkedList<GeoPoint> locations = new LinkedList<GeoPoint>();
+
+		if (cursor != null && cursor.moveToFirst()) {
+			do {
+				int LaIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LOCATION_LA);
+				int LoIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LOCATION_LO);
+
+				Double la = (double) cursor.getFloat(LaIndex);
+				Double lo = (double) cursor.getFloat(LoIndex);
+
+				GeoPoint geoPoint = new GeoPoint(la, lo);
+
+				locations.add(geoPoint);
+			} while (cursor.moveToNext());
+		}
+
+		return locations;
+	}
 }
