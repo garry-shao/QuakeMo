@@ -15,8 +15,8 @@
     <string name="pref_update_freq_dialog_title">Refresh frequency</string>
     <string name="pref_update_summary">Change settings about update behaviour</string>
     <string name="pref_update_title">Update</string>
-    <string name="pref_graphic_summary">Change settings related to graphic</string>
-    <string name="pref_graphic_title">Graphic</string>
+    <string name="pref_graphic_summary">Change settings related to graphics</string>
+    <string name="pref_graphic_title">Graphics</string>
     <string name="pref_graphic_category_display_title">Display</string>
     <string name="pref_graphic_category_widget_title">Widget</string>
     <string name="pref_graphic_category_notification_title">Notification</string>
@@ -37,8 +37,6 @@
     <string name="widget_name_list">QuakeMo List</string>
     <string name="widget_empty">No Earthquakes!</string>
     <string name="dialog_details_title">Earthquake Details</string>
-    <string name="activity_preferences_title">Preferences</string>
-    <string name="activity_search_title">Search</string>
     <string name="notification_ticker">Earthquake!</string>
 
 </resources>
