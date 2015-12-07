@@ -39,13 +39,15 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mapView = new MapView(getActivity());
+		mapView = new MapView(getContext());
 		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
-
 		mapView.getController().setZoom(1);
 
+		mapOverlay = new QuakeMapOverlay(getContext());
+		mapView.getOverlays().add(mapOverlay);
+		
 		return mapView;
 	}
 
@@ -58,9 +60,6 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		SharedPreferences prefs = 
 				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		prefs.registerOnSharedPreferenceChangeListener(this);
-
-		mapOverlay = new QuakeMapOverlay(getContext());
-		mapView.getOverlays().add(mapOverlay);
 	}
 
 	@Override
