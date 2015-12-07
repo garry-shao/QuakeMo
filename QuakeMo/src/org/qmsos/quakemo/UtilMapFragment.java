@@ -14,8 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * 
  * A utility map fragment shows only ONE earthquake.
+ * 
  *
  */
 public class UtilMapFragment extends Fragment {

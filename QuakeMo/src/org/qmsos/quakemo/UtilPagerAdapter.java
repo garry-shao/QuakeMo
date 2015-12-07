@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 /**
- * Customized PagerAdapter for easy fragment switch.
+ * Customized PagerAdapter for easier fragment switch.
  * 
  *
  */
@@ -17,6 +17,7 @@ public class UtilPagerAdapter extends FragmentPagerAdapter {
 
 	public UtilPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
 		super(fm);
+		
 		this.fragmentList = fragmentList;
 	}
 

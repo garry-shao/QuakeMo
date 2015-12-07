@@ -112,9 +112,9 @@ public class UtilPreferenceActivity extends PreferenceActivity {
 	}
 	
 	private AppCompatDelegate getDelegate() {
-        if (delegate == null) {
-            delegate = AppCompatDelegate.create(this, null);
-        }
-        return delegate;
+		if (delegate == null) {
+			delegate = AppCompatDelegate.create(this, null);
+		}
+		return delegate;
     }
 }
