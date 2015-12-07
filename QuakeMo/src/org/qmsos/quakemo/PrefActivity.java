@@ -30,7 +30,6 @@ public class PrefActivity extends UtilPreferenceActivity implements OnSharedPref
 		
 		setContentView(R.layout.activity_pref);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		toolbar.setTitle(R.string.menu_preferences);
 		setSupportActionBar(toolbar);
 		
 		SharedPreferences prefs = 

@@ -7,7 +7,8 @@
     <string name="menu_preferences">Preferences</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_purge">Purge</string>
-    <string name="pref_name">QuakeMo Preferences</string>
+    <string name="activity_name_pref">Preferences</string>
+    <string name="activity_name_results">Results</string>
     <string name="pref_auto_update_summary">Select to turn on auto refresh</string>
     <string name="pref_auto_update_title">Auto refresh</string>
     <string name="pref_update_freq_summary">Frequency of auto refresh</string>
@@ -31,7 +32,6 @@
     <string name="pref_graphic_notification_sound_title">With sound</string>
     <string name="pref_graphic_notification_vibrate_summary">Notification with vibrate</string>
     <string name="pref_graphic_notification_vibrate_title">with vibrate</string>
-    <string name="search_name">QuakeMo Search</string>
     <string name="search_description">Searth earthquake locations</string>
     <string name="widget_name_single">QuakeMo</string>
     <string name="widget_name_list">QuakeMo List</string>

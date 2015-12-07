@@ -35,11 +35,11 @@
         </activity>
         <activity
             android:name=".PrefActivity"
-            android:label="@string/pref_name" >
+            android:label="@string/activity_name_pref" >
         </activity>
         <activity
-            android:name=".QuakeSearchActivity"
-            android:label="@string/search_name"
+            android:name=".ResultsActivity"
+            android:label="@string/activity_name_results"
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -54,7 +54,7 @@
 
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".QuakeSearchActivity" />
+            android:value=".ResultsActivity" />
 
         <provider
             android:name=".QuakeProvider"
