@@ -37,6 +37,7 @@
     <string name="widget_name_list">QuakeMo List</string>
     <string name="widget_empty">No Earthquakes!</string>
     <string name="dialog_details_title">Earthquake Details</string>
+    <string name="dialog_positive_button">MAP</string>
     <string name="notification_ticker">Earthquake!</string>
 
 </resources>

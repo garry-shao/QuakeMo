@@ -1,7 +1,10 @@
 package org.qmsos.quakemo;
 
+import org.qmsos.quakemo.QuakeDetailsDialog.ShowMapListener;
+
 import android.app.SearchManager;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,7 +16,22 @@ import android.support.v7.widget.Toolbar;
  * The activity show search results.
  *
  */
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity implements ShowMapListener {
+	
+	/**
+	 * TAG used to track fragment of search results.
+	 */
+	private static final String TAG_LIST = "TAG_LIST";
+	
+	/**
+	 * TAG used to track fragment of single earthquake in map.
+	 */
+	private static final String TAG_MAP = "TAG_MAP";
+	
+	/**
+	 * TAG used track weather the search intent has executed at least once.
+	 */
+	private static final String TAG_FIRST = "TAG_FIRST";
 	
 	@Override
 	protected void onCreate(Bundle args) {
@@ -23,7 +41,9 @@ public class ResultsActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		
-		parseIntent(getIntent());
+		if (args == null || args.getBoolean(TAG_FIRST)) {
+			parseIntent(getIntent());
+		}
 	}
 
 	@Override
@@ -33,6 +53,30 @@ public class ResultsActivity extends AppCompatActivity {
 		parseIntent(intent);
 	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		FragmentManager manager = getSupportFragmentManager();
+		if (manager.findFragmentByTag(TAG_LIST) == null) {
+			outState.putBoolean(TAG_FIRST, true);
+		}
+
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onShowMap(Location location) {
+		UtilMapFragment map = new UtilMapFragment();
+		if (location != null) {
+			map.setLocation(location);
+		}
+		
+		FragmentManager manager = getSupportFragmentManager();
+		FragmentTransaction transaction = manager.beginTransaction();
+		transaction.replace(R.id.layout_fragment_container, map, TAG_MAP);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+
 	/**
 	 * Parse and process any search intent.
 	 * 
@@ -40,20 +84,20 @@ public class ResultsActivity extends AppCompatActivity {
 	 *            The intent to parse.
 	 */
 	private void parseIntent(Intent intent) {
-		QuakeSearchFragment quakeSearch = new QuakeSearchFragment();
+		QuakeSearchFragment search = new QuakeSearchFragment();
 		
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String searchQuery = intent.getStringExtra(SearchManager.QUERY);
 
 			Bundle args = new Bundle();
-			args.putString(QuakeSearchFragment.QUERY_EXTRA_KEY, searchQuery);
+			args.putString(QuakeSearchFragment.KEY_QUERY_EXTRA, searchQuery);
 
-			quakeSearch.setArguments(args);
+			search.setArguments(args);
 		}
 
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		FragmentTransaction transaction = fragmentManager.beginTransaction();
-		transaction.replace(R.id.layout_fragment_container, quakeSearch);
+		FragmentManager manager = getSupportFragmentManager();
+		FragmentTransaction transaction = manager.beginTransaction();
+		transaction.replace(R.id.layout_fragment_container, search, TAG_LIST);
 		transaction.commit();
 	}
 

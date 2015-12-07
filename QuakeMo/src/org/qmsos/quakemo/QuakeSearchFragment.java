@@ -18,9 +18,9 @@ import android.widget.SimpleCursorAdapter;
 public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks<Cursor> {
 
 	/**
-	 * Key used to get extra from a bundle object.
+	 * Key used to get query string from incoming intent.
 	 */
-	protected static final String QUERY_EXTRA_KEY = "QUERY_EXTRA_KEY";
+	protected static final String KEY_QUERY_EXTRA = "KEY_QUERY_EXTRA";
 
 	private SimpleCursorAdapter adapter;
 
@@ -66,8 +66,10 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 
 			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
 
-			DialogFragment dialogFragment = QuakeDetailsDialog.newInstance(getActivity(), quake);
-			dialogFragment.show(getFragmentManager(), "dialog");
+			DialogFragment dialog = QuakeDetailsDialog.newInstance(getActivity(), quake);
+			((QuakeDetailsDialog) dialog).setMapEnabled(true);
+			
+			dialog.show(getFragmentManager(), "dialog");
 		}
 	}
 
@@ -76,7 +78,7 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 		String query = "0";
 
 		if (args != null) {
-			query = args.getString(QUERY_EXTRA_KEY);
+			query = args.getString(KEY_QUERY_EXTRA);
 		}
 
 		String[] projection = { QuakeProvider.KEY_ID, QuakeProvider.KEY_SUMMARY };
