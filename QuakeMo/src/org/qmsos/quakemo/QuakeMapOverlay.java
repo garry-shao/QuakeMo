@@ -27,9 +27,9 @@ public class QuakeMapOverlay extends Overlay {
 	private static final int RADIUS = 3;
 
 	/**
-	 * Earthquake locations stored.
+	 * Earthquake geoPoints stored.
 	 */
-	private List<GeoPoint> locations = new LinkedList<GeoPoint>();
+	private List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
 
 	/**
 	 * Constructor of earthquake overlay.
@@ -54,21 +54,21 @@ public class QuakeMapOverlay extends Overlay {
 		paint.setStyle(Style.FILL);
 		
 		Projection projection = mapView.getProjection();
-		for (GeoPoint location : locations) {
+		for (GeoPoint geoPoint : geoPoints) {
 			Point point = new Point();
-			point = projection.toPixels(location, point);
+			point = projection.toPixels(geoPoint, point);
 			
 			canvas.drawCircle(point.x, point.y, RADIUS, paint);
 		}
 		
 	}
 
-	public List<GeoPoint> getLocations() {
-		return locations;
+	public List<GeoPoint> getGeoPoints() {
+		return geoPoints;
 	}
 
-	public void setLocations(List<GeoPoint> locations) {
-		this.locations = locations;
+	public void setGeoPoints(List<GeoPoint> geoPoints) {
+		this.geoPoints = geoPoints;
 	}
 
 }

@@ -20,44 +20,47 @@ import android.view.ViewGroup;
  */
 public class UtilMapFragment extends Fragment {
 
-	private static final String KEY_LOCATION = "KEY_LOCATION";
+	private static final String KEY_GEOPOINT = "KEY_GEOPOINT";
+	private static final String KEY_CENTER = "KEY_CENTER";
 	private static final String KEY_ZOOMLEVEL = "KEY_ZOOMLEVEL";
 
 	private QuakeMapOverlay mapOverlay;
 	private MapView mapView;
 
 	/**
-	 * The ONLY location to display.
+	 * The ONLY GeoPoint to display.
 	 */
-	private Location location;
+	private GeoPoint geoPoint;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mapView = new MapView(getActivity());
-
 		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
 
-		mapOverlay = new QuakeMapOverlay(getContext());
-		List<GeoPoint> locations = new LinkedList<GeoPoint>();
-		if (location != null) {
-			locations.add(locationToGeoPoint(location));
-		}
-		mapOverlay.setLocations(locations);
-
-		mapView.getOverlays().add(mapOverlay);
-		
 		if (savedInstanceState != null) {
-			mapView.getController().setZoom(savedInstanceState.getInt(KEY_ZOOMLEVEL));
+			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
+			if (center != null) {
+				mapView.getController().setCenter(center);
+			}
+
+			int i = savedInstanceState.getInt(KEY_ZOOMLEVEL);
+			if (i > 0) {
+				mapView.getController().setZoom(i);
+			}
 		} else {
+			mapView.getController().setCenter(geoPoint);
 			mapView.getController().setZoom(3);
 		}
 
-		List<GeoPoint> geoLocations = mapOverlay.getLocations();
-		if (!geoLocations.isEmpty()) {
-			mapView.getController().setCenter(geoLocations.get(0));
+		mapOverlay = new QuakeMapOverlay(getContext());
+		if (geoPoint != null) {
+			List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
+			geoPoints.add(geoPoint);
+			mapOverlay.setGeoPoints(geoPoints);
 		}
+		mapView.getOverlays().add(mapOverlay);
 
 		return mapView;
 	}
@@ -67,24 +70,29 @@ public class UtilMapFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		if (savedInstanceState != null) {
-			location = savedInstanceState.getParcelable(KEY_LOCATION);
+			geoPoint = savedInstanceState.getParcelable(KEY_GEOPOINT);
 		}
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable(KEY_LOCATION, location);
+		outState.putParcelable(KEY_CENTER, (GeoPoint) mapView.getMapCenter());
+		outState.putParcelable(KEY_GEOPOINT, geoPoint);
 		outState.putInt(KEY_ZOOMLEVEL, mapView.getZoomLevel());
 
 		super.onSaveInstanceState(outState);
 	}
 
+	// =====================================================
+	// middle layer, transform here
+	// =====================================================
+	
 	public Location getLocation() {
-		return location;
+		return geoPointToLocation(geoPoint);
 	}
 
 	public void setLocation(Location location) {
-		this.location = location;
+		this.geoPoint = locationToGeoPoint(location);
 	}
 
 	/**
@@ -92,8 +100,8 @@ public class UtilMapFragment extends Fragment {
 	 * 
 	 * @param location
 	 *            The Location instance to convert.
-	 * @return GeoPoint The converted GeoPoint instance or NULL when the
-	 *         location isn't valid.
+	 * @return The converted GeoPoint instance or NULL when the Location isn't
+	 *         valid.
 	 */
 	private GeoPoint locationToGeoPoint(Location location) {
 		if (location != null) {
@@ -103,4 +111,22 @@ public class UtilMapFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * Convert GeoPoint to Location.
+	 * 
+	 * @param geoPoint
+	 *            The GeoPoint instance to convert.
+	 * @return The converted Location instance or NULL when the GeoPoint isn't
+	 *         valid.
+	 */
+	private Location geoPointToLocation(GeoPoint geoPoint) {
+		if (geoPoint != null) {
+			Location location = new Location("GPS");
+			location.setLatitude(geoPoint.getLatitude());
+			location.setLongitude(geoPoint.getLongitude());
+			return location;
+		} else {
+			return null;
+		}
+	}
 }

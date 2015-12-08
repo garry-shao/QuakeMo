@@ -27,6 +27,9 @@ import android.view.ViewGroup;
 public class QuakeMapFragment extends Fragment 
 implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
+	private static final String KEY_CENTER = "KEY_CENTER";
+	private static final String KEY_ZOOMLEVEL = "KEY_ZOOMLEVEL";
+	
 	/**
 	 * The earthquake overlay on the map.
 	 */
@@ -43,7 +46,20 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
-		mapView.getController().setZoom(1);
+		
+		if (savedInstanceState != null) {
+			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
+			if (center != null) {
+				mapView.getController().setCenter(center);
+			}
+
+			int i = savedInstanceState.getInt(KEY_ZOOMLEVEL);
+			if (i > 0) {
+				mapView.getController().setZoom(i);
+			}
+		} else {
+			mapView.getController().setZoom(1);
+		}
 
 		mapOverlay = new QuakeMapOverlay(getContext());
 		mapView.getOverlays().add(mapOverlay);
@@ -60,6 +76,14 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		SharedPreferences prefs = 
 				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		prefs.registerOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putParcelable(KEY_CENTER, (GeoPoint) mapView.getMapCenter());
+		outState.putInt(KEY_ZOOMLEVEL, mapView.getZoomLevel());
+
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -81,14 +105,14 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mapOverlay.setLocations(parseLocations(data));
+		mapOverlay.setGeoPoints(parseGeoPoints(data));
 
 		mapView.invalidate();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mapOverlay.setLocations(parseLocations(null));
+		mapOverlay.setGeoPoints(parseGeoPoints(null));
 
 		mapView.invalidate();
 	}
@@ -101,14 +125,14 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 	}
 
 	/**
-	 * Parse locations of earthquake from cursor.
+	 * Parse GeoPoints of earthquakes from cursor.
 	 * 
 	 * @param cursor
 	 *            The cursor to parse.
-	 * @return The parsed locations as list.
+	 * @return The parsed GeoPoints as list.
 	 */
-	private List<GeoPoint> parseLocations(Cursor cursor) {
-		LinkedList<GeoPoint> locations = new LinkedList<GeoPoint>();
+	private List<GeoPoint> parseGeoPoints(Cursor cursor) {
+		LinkedList<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
 
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
@@ -120,10 +144,10 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 				GeoPoint geoPoint = new GeoPoint(la, lo);
 
-				locations.add(geoPoint);
+				geoPoints.add(geoPoint);
 			} while (cursor.moveToNext());
 		}
 
-		return locations;
+		return geoPoints;
 	}
 }
