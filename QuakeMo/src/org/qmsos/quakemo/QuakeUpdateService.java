@@ -202,7 +202,7 @@ public class QuakeUpdateService extends IntentService {
 					builder.append(line);
 				}
 			} else {
-				Log.d(TAG, "Something wrong with the http connnection!");
+				Log.d(TAG, "Http connnection error! " + "responseCode = " + responseCode);
 			}
 		} catch (IOException e) {
 			Log.d(TAG, "I/O exception");
