@@ -46,8 +46,7 @@ public class PrefActivity extends UtilPreferenceActivity implements OnSharedPref
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		if (key.equals(PrefActivity.PREF_USE_WIDGETS)) {
-			SharedPreferences prefs = 
-					PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 			int newState = 
 					prefs.getBoolean(key, false) ? 
@@ -56,10 +55,10 @@ public class PrefActivity extends UtilPreferenceActivity implements OnSharedPref
 			
 			PackageManager manager = getPackageManager();
 			manager.setComponentEnabledSetting(
-					new ComponentName(getApplicationContext(), QuakeWidgetSingleton.class), 
+					new ComponentName(this, QuakeWidgetSingleton.class), 
 					newState, PackageManager.DONT_KILL_APP);
 			manager.setComponentEnabledSetting(
-					new ComponentName(getApplicationContext(), QuakeWidgetList.class), 
+					new ComponentName(this, QuakeWidgetList.class), 
 					newState, PackageManager.DONT_KILL_APP);
 		}
 	}

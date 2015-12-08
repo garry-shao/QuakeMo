@@ -74,7 +74,7 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		getLoaderManager().initLoader(0, null, this);
 
 		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+				PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
@@ -91,14 +91,12 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_LOCATION_LA,
 				QuakeProvider.KEY_LOCATION_LO };
 
-		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
 		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
 
 		CursorLoader loader = new CursorLoader(
-				getActivity(), QuakeProvider.CONTENT_URI, projection, where, null, null);
+				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);
 
 		return loader;
 	}
@@ -119,7 +117,8 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(PrefActivity.PREF_MIN_MAG)) {
+		if (key.equals(PrefActivity.PREF_MIN_MAG) && isAdded()) {
+			//getLoaderManager() will throw if this fragment not attached to activity.
 			getLoaderManager().restartLoader(0, null, this);
 		}
 	}

@@ -173,8 +173,9 @@ public class QuakeUpdateService extends IntentService {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
 
-		String request = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + "&" + "starttime="
-				+ dateString + "&" + "minmagnitude=" + minMagnitude;
+		String request = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
+				"&" + "starttime=" + dateString + 
+				"&" + "minmagnitude=" + minMagnitude;
 
 		return request;
 	}
@@ -303,10 +304,13 @@ public class QuakeUpdateService extends IntentService {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		boolean notificationEnable = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_ENABLE, false);
 		if (notificationEnable) {
-			PendingIntent launchIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+			PendingIntent launchIntent = 
+					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
-			builder.setContentIntent(launchIntent).setWhen(earthquake.getDate().getTime())
-					.setContentTitle("M " + earthquake.getMagnitude()).setContentText(earthquake.getDetails());
+			builder.setContentIntent(launchIntent)
+					.setWhen(earthquake.getDate().getTime())
+					.setContentTitle("M " + earthquake.getMagnitude())
+					.setContentText(earthquake.getDetails());
 
 			boolean notificationVibrate = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_VIBRATE, false);
 			if (notificationVibrate) {
@@ -322,8 +326,8 @@ public class QuakeUpdateService extends IntentService {
 				builder.setSound(ringURI);
 			}
 
-			NotificationManager notificationManager = (NotificationManager) getSystemService(
-					Context.NOTIFICATION_SERVICE);
+			NotificationManager notificationManager = 
+					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.notify(NOTIFICATION_ID, builder.build());
 		}
 	}
@@ -332,11 +336,11 @@ public class QuakeUpdateService extends IntentService {
 	 * Notify widget of data changed.
 	 */
 	private void notifyWidget() {
-		Context context = getApplicationContext();
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-		ComponentName earthquakeWidget = new ComponentName(context, QuakeWidgetList.class);
+		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 
-		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(earthquakeWidget);
+		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+				new ComponentName(getApplicationContext(), QuakeWidgetList.class));
+		
 		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_full);
 	}
 

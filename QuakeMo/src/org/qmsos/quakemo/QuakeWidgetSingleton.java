@@ -99,10 +99,10 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 	 *            The context this AppWidget provider is in.
 	 */
 	private void updateEarthquake(Context context) {
-		ComponentName appWidget = new ComponentName(context, QuakeWidgetSingleton.class);
-
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(appWidget);
+		
+		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+				new ComponentName(context, QuakeWidgetSingleton.class));
 
 		updateEarthquake(context, appWidgetManager, appWidgetIds);
 	}

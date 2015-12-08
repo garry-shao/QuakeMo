@@ -35,7 +35,7 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_1, null,
+		adapter = new SimpleCursorAdapter(getContext(), android.R.layout.simple_list_item_1, null,
 				new String[] { QuakeProvider.KEY_SUMMARY }, new int[] { android.R.id.text1 }, 0);
 		setListAdapter(adapter);
 
@@ -46,7 +46,7 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Cursor result = getActivity().getContentResolver()
+		Cursor result = getContext().getContentResolver()
 				.query(ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
 
 		if (result.moveToFirst()) {
@@ -60,13 +60,13 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 
 			double location_la = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_LOCATION_LA));
 			double location_lo = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_LOCATION_LO));
-			Location location = new Location("db");
+			Location location = new Location("database");
 			location.setLatitude(location_la);
 			location.setLongitude(location_lo);
 
 			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
 
-			DialogFragment dialog = QuakeDetailsDialog.newInstance(getActivity(), quake);
+			DialogFragment dialog = QuakeDetailsDialog.newInstance(getContext(), quake);
 			((QuakeDetailsDialog) dialog).setMapEnabled(true);
 			
 			dialog.show(getFragmentManager(), "dialog");
@@ -87,7 +87,7 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 		String sortOrder = QuakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
 
 		return new CursorLoader(
-				getActivity(), QuakeProvider.CONTENT_URI, projection, where, null, sortOrder);
+				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, sortOrder);
 	}
 
 	@Override
