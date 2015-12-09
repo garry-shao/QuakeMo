@@ -7,10 +7,10 @@
         android:summary="@string/pref_auto_update_summary"
         android:title="@string/pref_auto_update_title" />
 
-    <ListPreference
+    <org.qmsos.quakemo.UtilListPreference
         android:defaultValue="60"
         android:dependency="PREF_AUTO_UPDATE"
-        android:dialogTitle="@string/pref_update_freq_dialog_title"
+        android:dialogTitle="@string/pref_update_freq_title"
         android:entries="@array/update_freq_options"
         android:entryValues="@array/update_freq_values"
         android:key="PREF_UPDATE_FREQ"
