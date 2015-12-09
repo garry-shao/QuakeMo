@@ -1,7 +1,8 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.util;
 
 import java.lang.reflect.Method;
 
+import org.qmsos.quakemo.R;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;

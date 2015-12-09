@@ -1,6 +1,8 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.QuakeDetailsDialog.ShowMapListener;
+import org.qmsos.quakemo.fragment.QuakeSearchFragment;
+import org.qmsos.quakemo.fragment.QuakeDetailsDialog.ShowMapListener;
+import org.qmsos.quakemo.util.UtilMapFragment;
 
 import android.app.SearchManager;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.util;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +19,7 @@ import android.graphics.Point;
  * Overlay on the map of earthquakes.
  *
  */
-public class QuakeMapOverlay extends Overlay {
+public class UtilQuakeOverlay extends Overlay {
 
 	/**
 	 * Radius of earthquake dot symbol.
@@ -37,7 +37,7 @@ public class QuakeMapOverlay extends Overlay {
 	 * @param context
 	 *            Context of this overlay associated to.
 	 */
-	public QuakeMapOverlay(Context context) {
+	public UtilQuakeOverlay(Context context) {
 		super(context);
 	}
 

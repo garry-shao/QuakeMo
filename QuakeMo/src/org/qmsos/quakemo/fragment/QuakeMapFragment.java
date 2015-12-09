@@ -1,10 +1,13 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.fragment;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.qmsos.quakemo.PrefActivity;
+import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.util.UtilQuakeOverlay;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -33,7 +36,7 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 	/**
 	 * The earthquake overlay on the map.
 	 */
-	private QuakeMapOverlay mapOverlay;
+	private UtilQuakeOverlay quakeOverlay;
 
 	/**
 	 * Defined as there is only one view on this fragment.
@@ -61,8 +64,8 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 			mapView.getController().setZoom(1);
 		}
 
-		mapOverlay = new QuakeMapOverlay(getContext());
-		mapView.getOverlays().add(mapOverlay);
+		quakeOverlay = new UtilQuakeOverlay(getContext());
+		mapView.getOverlays().add(quakeOverlay);
 		
 		return mapView;
 	}
@@ -103,14 +106,14 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mapOverlay.setGeoPoints(parseGeoPoints(data));
+		quakeOverlay.setGeoPoints(parseGeoPoints(data));
 
 		mapView.invalidate();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mapOverlay.setGeoPoints(parseGeoPoints(null));
+		quakeOverlay.setGeoPoints(parseGeoPoints(null));
 
 		mapView.invalidate();
 	}

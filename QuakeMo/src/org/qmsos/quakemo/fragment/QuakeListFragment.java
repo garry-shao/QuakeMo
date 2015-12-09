@@ -1,6 +1,12 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.fragment;
 
 import java.util.Date;
+
+import org.qmsos.quakemo.PrefActivity;
+import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.QuakeUpdateService;
+import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.data.Earthquake;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;

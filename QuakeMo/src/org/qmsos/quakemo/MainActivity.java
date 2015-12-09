@@ -3,6 +3,10 @@ package org.qmsos.quakemo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.qmsos.quakemo.fragment.QuakeListFragment;
+import org.qmsos.quakemo.fragment.QuakeMapFragment;
+import org.qmsos.quakemo.util.UtilPagerAdapter;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;

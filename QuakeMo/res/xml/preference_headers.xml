@@ -2,11 +2,11 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <header
-        android:fragment="org.qmsos.quakemo.PrefUpdateFragment"
+        android:fragment="org.qmsos.quakemo.fragment.PrefUpdateFragment"
         android:summary="@string/pref_update_summary"
         android:title="@string/pref_update_title" />
     <header
-        android:fragment="org.qmsos.quakemo.PrefGraphicFragment"
+        android:fragment="org.qmsos.quakemo.fragment.PrefGraphicFragment"
         android:summary="@string/pref_graphic_summary"
         android:title="@string/pref_graphic_title" />
 

@@ -1,4 +1,4 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.util;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class UtilMapFragment extends Fragment {
 	private static final String KEY_CENTER = "KEY_CENTER";
 	private static final String KEY_ZOOMLEVEL = "KEY_ZOOMLEVEL";
 
-	private QuakeMapOverlay mapOverlay;
+	private UtilQuakeOverlay quakeOverlay;
 	private MapView mapView;
 
 	/**
@@ -54,13 +54,13 @@ public class UtilMapFragment extends Fragment {
 			mapView.getController().setZoom(3);
 		}
 
-		mapOverlay = new QuakeMapOverlay(getContext());
+		quakeOverlay = new UtilQuakeOverlay(getContext());
 		if (geoPoint != null) {
 			List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
 			geoPoints.add(geoPoint);
-			mapOverlay.setGeoPoints(geoPoints);
+			quakeOverlay.setGeoPoints(geoPoints);
 		}
-		mapView.getOverlays().add(mapOverlay);
+		mapView.getOverlays().add(quakeOverlay);
 
 		return mapView;
 	}

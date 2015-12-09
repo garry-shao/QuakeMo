@@ -1,6 +1,9 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.fragment;
 
 import java.util.Date;
+
+import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.data.Earthquake;
 
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -20,7 +23,7 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 	/**
 	 * Key used to get query string from incoming intent.
 	 */
-	protected static final String KEY_QUERY_EXTRA = "KEY_QUERY_EXTRA";
+	public static final String KEY_QUERY_EXTRA = "KEY_QUERY_EXTRA";
 
 	private SimpleCursorAdapter adapter;
 

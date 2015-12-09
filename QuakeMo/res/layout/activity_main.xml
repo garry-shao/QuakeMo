@@ -11,7 +11,7 @@
         android:layout_height="wrap_content" >
     </android.support.v7.widget.Toolbar>
 
-    <org.qmsos.quakemo.UtilViewPager
+    <org.qmsos.quakemo.util.UtilViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
         </FrameLayout>
-    </org.qmsos.quakemo.UtilViewPager>
+    </org.qmsos.quakemo.util.UtilViewPager>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"

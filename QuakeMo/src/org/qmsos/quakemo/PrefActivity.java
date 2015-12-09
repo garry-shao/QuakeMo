@@ -2,6 +2,10 @@ package org.qmsos.quakemo;
 
 import java.util.List;
 
+import org.qmsos.quakemo.fragment.PrefGraphicFragment;
+import org.qmsos.quakemo.fragment.PrefUpdateFragment;
+import org.qmsos.quakemo.util.UtilPreferenceActivity;
+
 import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;

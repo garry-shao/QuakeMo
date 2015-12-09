@@ -1,4 +1,7 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.fragment;
+
+import org.qmsos.quakemo.PrefActivity;
+import org.qmsos.quakemo.R;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

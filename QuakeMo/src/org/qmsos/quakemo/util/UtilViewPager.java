@@ -1,4 +1,4 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.util;
 
 import org.osmdroid.views.MapView;
 

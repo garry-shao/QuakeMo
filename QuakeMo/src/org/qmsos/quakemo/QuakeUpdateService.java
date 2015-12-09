@@ -15,6 +15,7 @@ import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.qmsos.quakemo.data.Earthquake;
 
 import android.app.AlarmManager;
 import android.app.IntentService;

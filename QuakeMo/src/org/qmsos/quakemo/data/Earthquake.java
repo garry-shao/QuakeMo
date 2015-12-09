@@ -1,4 +1,4 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.data;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

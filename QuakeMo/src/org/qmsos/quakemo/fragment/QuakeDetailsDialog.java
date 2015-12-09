@@ -1,4 +1,7 @@
-package org.qmsos.quakemo;
+package org.qmsos.quakemo.fragment;
+
+import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.data.Earthquake;
 
 import android.app.Dialog;
 import android.content.Context;
