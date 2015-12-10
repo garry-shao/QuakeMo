@@ -89,12 +89,23 @@ public class MainActivity extends AppCompatActivity {
 		super.onOptionsItemSelected(item);
 		
 		switch (item.getItemId()) {
-		case (R.id.menu_preferences): {
+		case (R.id.menu_preferences): 
 			Intent i = new Intent(this, PrefActivity.class);
 			startActivity(i);
 		
 			return true;
-		}
+		case (R.id.menu_purge):
+			i = new Intent(this, QuakeUpdateService.class);
+			i.putExtra(QuakeUpdateService.PURGE_DATABASE, true);
+			startService(i);
+		
+			return true;
+		case (R.id.menu_refresh):
+			i = new Intent(this, QuakeUpdateService.class);
+			i.putExtra(QuakeUpdateService.MANUAL_REFRESH, true);
+			startService(i);
+
+			return true;
 		default:
 			return false;
 		}

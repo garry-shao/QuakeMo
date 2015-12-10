@@ -5,7 +5,6 @@ import java.util.Date;
 import org.qmsos.quakemo.PrefActivity;
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.QuakeUpdateService;
-import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.data.Earthquake;
 
 import android.content.ContentUris;
@@ -21,9 +20,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -39,13 +35,6 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 	private SimpleCursorAdapter adapter;
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		setHasOptionsMenu(true);
-	}
-
-	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
@@ -60,35 +49,6 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		getContext().startService(new Intent(getContext(), QuakeUpdateService.class));
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-
-		inflater.inflate(R.menu.menu_list_options, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-
-		Intent i = new Intent(getContext(), QuakeUpdateService.class);
-
-		switch (item.getItemId()) {
-		case (R.id.menu_refresh):
-			i.putExtra(QuakeUpdateService.MANUAL_REFRESH, true);
-			getContext().startService(i);
-
-			return true;
-		case (R.id.menu_purge):
-			i.putExtra(QuakeUpdateService.PURGE_DATABASE, true);
-			getContext().startService(i);
-
-			return true;
-		default:
-			return false;
-		}
 	}
 
 	@Override
