@@ -5,12 +5,11 @@ import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.qmsos.quakemo.PrefActivity;
 import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.util.UtilQuakeOverlay;
 
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,8 +26,7 @@ import android.view.ViewGroup;
  * Show earthquakes on map.
  *
  */
-public class QuakeMapFragment extends Fragment 
-implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
+public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
 	private static final String KEY_CENTER = "KEY_CENTER";
 	private static final String KEY_ZOOMLEVEL = "KEY_ZOOMLEVEL";
@@ -49,7 +47,7 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		mapView.setMultiTouchControls(true);
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
-		
+
 		if (savedInstanceState != null) {
 			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
 			if (center != null) {
@@ -75,10 +73,6 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		super.onActivityCreated(savedInstanceState);
 
 		getLoaderManager().initLoader(0, null, this);
-
-		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
-		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -95,7 +89,7 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 				QuakeProvider.KEY_LOCATION_LO };
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_MINIMUM), "3"));
 		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
 
 		CursorLoader loader = new CursorLoader(
@@ -116,14 +110,6 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		quakeOverlay.setGeoPoints(parseGeoPoints(null));
 
 		mapView.invalidate();
-	}
-
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(PrefActivity.PREF_MIN_MAG) && isAdded()) {
-			//getLoaderManager() will throw if this fragment not attached to activity.
-			getLoaderManager().restartLoader(0, null, this);
-		}
 	}
 
 	/**
@@ -152,4 +138,5 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 
 		return geoPoints;
 	}
+
 }

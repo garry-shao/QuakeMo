@@ -2,15 +2,14 @@ package org.qmsos.quakemo.fragment;
 
 import java.util.Date;
 
-import org.qmsos.quakemo.PrefActivity;
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.QuakeUpdateService;
+import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.data.Earthquake;
 
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
@@ -29,8 +28,7 @@ import android.widget.SimpleCursorAdapter;
  * Show earthquakes as list.
  *
  */
-public class QuakeListFragment extends ListFragment 
-implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
+public class QuakeListFragment extends ListFragment implements LoaderCallbacks<Cursor> {
 
 	private SimpleCursorAdapter adapter;
 	
@@ -43,10 +41,6 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		setListAdapter(adapter);
 
 		getLoaderManager().initLoader(0, null, this);
-
-		SharedPreferences prefs = 
-				PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
-		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		getContext().startService(new Intent(getContext(), QuakeUpdateService.class));
 	}
@@ -71,7 +65,7 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_SUMMARY };
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_MINIMUM), "3"));
 		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
 
 		CursorLoader loader = new CursorLoader(
@@ -88,14 +82,6 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		adapter.swapCursor(null);
-	}
-
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(PrefActivity.PREF_MIN_MAG) && isAdded()) {
-			//getLoaderManager() will throw if this fragment not attached to activity.
-			getLoaderManager().restartLoader(0, null, this);
-		}
 	}
 
 	/**

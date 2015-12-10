@@ -10,8 +10,11 @@ import org.qmsos.quakemo.util.UtilPagerAdapter;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -27,7 +30,7 @@ import android.view.MenuItem;
  * Main activity of this application.
  *
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
 
 	private QuakeListFragment quakeList = new QuakeListFragment();
 	private QuakeMapFragment quakeMap = new QuakeMapFragment();
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
 		List<Fragment> fragmentList = new ArrayList<Fragment>();
 		fragmentList.add(quakeList);
 		fragmentList.add(quakeMap);
+		
+		SharedPreferences prefs = 
+				PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
 		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList));
@@ -108,6 +115,19 @@ public class MainActivity extends AppCompatActivity {
 			return true;
 		default:
 			return false;
+		}
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals(getString(R.string.PREF_MINIMUM))) {
+			//getLoaderManager() will throw if this fragment not attached to activity.
+			if (quakeList.isAdded()) {
+				quakeList.getLoaderManager().restartLoader(0, null, quakeList);
+			}
+			if (quakeMap.isAdded()) {
+				quakeMap.getLoaderManager().restartLoader(0, null, quakeMap);
+			}
 		}
 	}
 
