@@ -8,7 +8,6 @@ import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.data.Earthquake;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -96,33 +95,15 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		ContentResolver resolver = getContext().getContentResolver();
-
-		Cursor result = resolver.query(
+		Cursor result = getContext().getContentResolver().query(
 				ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
-
-		if (result.moveToFirst()) {
-			Date date = new Date(result.getLong(result.getColumnIndex(QuakeProvider.KEY_DATE)));
-
-			String details = result.getString(result.getColumnIndex(QuakeProvider.KEY_DETAILS));
-
-			double magnitude = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
-
-			String link = result.getString(result.getColumnIndex(QuakeProvider.KEY_LINK));
-
-			double location_la = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_LOCATION_LA));
-			double location_lo = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_LOCATION_LO));
-			Location location = new Location("database");
-			location.setLatitude(location_la);
-			location.setLongitude(location_lo);
-
-			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
-
-			DialogFragment dialog = QuakeDetailsDialog.newInstance(getContext(), quake);
+		Earthquake earthquake = queryForQuake(result);
+		result.close();
+		
+		if (earthquake != null) {
+			DialogFragment dialog = QuakeDetailsDialog.newInstance(getContext(), earthquake);
 			dialog.show(getFragmentManager(), "dialog");
 		}
-		
-		result.close();
 	}
 
 	@Override
@@ -154,6 +135,36 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 		if (key.equals(PrefActivity.PREF_MIN_MAG) && isAdded()) {
 			//getLoaderManager() will throw if this fragment not attached to activity.
 			getLoaderManager().restartLoader(0, null, this);
+		}
+	}
+
+	/**
+	 * Help method to get the FIRST Earthquake in cursor out from content provider.
+	 * @param cursor
+	 *            The query cursor.
+	 * @return The first earthquake or NULL if not available.
+	 */
+	private Earthquake queryForQuake(Cursor cursor) {
+		if (cursor.moveToFirst()) {
+			Date date = new Date(cursor.getLong(cursor.getColumnIndex(QuakeProvider.KEY_DATE)));
+
+			String details = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_DETAILS));
+
+			double magnitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
+
+			String link = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_LINK));
+
+			double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LOCATION_LA));
+			double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LOCATION_LO));
+			Location location = new Location("database");
+			location.setLatitude(latitude);
+			location.setLongitude(longitude);
+
+			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
+
+			return quake;
+		} else {
+			return null;
 		}
 	}
 

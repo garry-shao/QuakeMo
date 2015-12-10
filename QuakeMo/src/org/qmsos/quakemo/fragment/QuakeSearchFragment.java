@@ -49,33 +49,17 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Cursor result = getContext().getContentResolver()
-				.query(ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
-
-		if (result.moveToFirst()) {
-			Date date = new Date(result.getLong(result.getColumnIndex(QuakeProvider.KEY_DATE)));
-
-			String details = result.getString(result.getColumnIndex(QuakeProvider.KEY_DETAILS));
-
-			double magnitude = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
-
-			String link = result.getString(result.getColumnIndex(QuakeProvider.KEY_LINK));
-
-			double location_la = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_LOCATION_LA));
-			double location_lo = result.getDouble(result.getColumnIndex(QuakeProvider.KEY_LOCATION_LO));
-			Location location = new Location("database");
-			location.setLatitude(location_la);
-			location.setLongitude(location_lo);
-
-			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
-
-			DialogFragment dialog = QuakeDetailsDialog.newInstance(getContext(), quake);
+		Cursor result = getContext().getContentResolver().query(
+				ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
+		Earthquake earthquake = queryForQuake(result);
+		result.close();
+		
+		if (earthquake != null) {
+			DialogFragment dialog = QuakeDetailsDialog.newInstance(getContext(), earthquake);
 			((QuakeDetailsDialog) dialog).setMapEnabled(true);
 			
 			dialog.show(getFragmentManager(), "dialog");
 		}
-		
-		result.close();
 	}
 
 	@Override
@@ -103,6 +87,36 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		adapter.swapCursor(null);
+	}
+
+	/**
+	 * Help method to get the FIRST Earthquake in cursor out from content provider.
+	 * @param cursor
+	 *            The query cursor.
+	 * @return The first earthquake or NULL if not available.
+	 */
+	private Earthquake queryForQuake(Cursor cursor) {
+		if (cursor.moveToFirst()) {
+			Date date = new Date(cursor.getLong(cursor.getColumnIndex(QuakeProvider.KEY_DATE)));
+
+			String details = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_DETAILS));
+
+			double magnitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
+
+			String link = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_LINK));
+
+			double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LOCATION_LA));
+			double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LOCATION_LO));
+			Location location = new Location("database");
+			location.setLatitude(latitude);
+			location.setLongitude(longitude);
+
+			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
+
+			return quake;
+		} else {
+			return null;
+		}
 	}
 
 }
