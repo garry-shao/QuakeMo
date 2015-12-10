@@ -128,12 +128,16 @@ public class QuakeProvider extends ContentProvider {
 		
 		switch (uriMatcher.match(uri)) {
 		case QUAKE_ID:
-			queryBuilder.appendWhere(
-					KEY_ID + "=" + uri.getPathSegments().get(1));
+			if (uri.getPathSegments().size() > 1) {
+				queryBuilder.appendWhere(
+						KEY_ID + "=" + uri.getPathSegments().get(1));
+			}
 			break;
 		case SEARCH:
-			queryBuilder.appendWhere(
-					KEY_SUMMARY + " LIKE \"%" + uri.getPathSegments().get(1) + "%\"");
+			if (uri.getPathSegments().size() > 1) {
+				queryBuilder.appendWhere(
+						KEY_SUMMARY + " LIKE \"%" + uri.getPathSegments().get(1) + "%\"");
+			}
 			queryBuilder.setProjectionMap(SEARCH_PROJECTION_MAP);
 			break;
 		default:
