@@ -1,5 +1,6 @@
 package org.qmsos.quakemo.data;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -111,7 +112,7 @@ public class Earthquake {
 	 * @return the dialog-suitable details string.
 	 */
 	public String getDialogDetails() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
 		String dateString = dateFormat.format(date);
 
 		return dateString + "\n\n" + "Magnitude: " + magnitude + "\n\n" + details + "\n\n" + link;
@@ -119,10 +120,10 @@ public class Earthquake {
 
 	@Override
 	public String toString() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH.mm", Locale.US);
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
 		String dateString = dateFormat.format(date);
 
-		return dateString + ": " + "M " + magnitude + " - " + details;
+		return dateString + " - " + "M " + magnitude + " - " + details;
 	}
 
 }

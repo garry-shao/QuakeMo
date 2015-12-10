@@ -15,13 +15,13 @@ import android.view.ViewGroup;
  * The fragment show Update part of preferences.
  *
  */
-public class PrefUpdateFragment extends PreferenceFragment {
+public class PrefRefreshFragment extends PreferenceFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		addPreferencesFromResource(R.xml.preference_update);
+		addPreferencesFromResource(R.xml.preference_refresh);
 	}
 	
 	@Override

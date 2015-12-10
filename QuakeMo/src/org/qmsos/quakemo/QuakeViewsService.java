@@ -127,9 +127,9 @@ public class QuakeViewsService extends RemoteViewsService {
 					QuakeProvider.KEY_ID, QuakeProvider.KEY_MAGNITUDE, QuakeProvider.KEY_DETAILS };
 
 			SharedPreferences prefs = 
-					PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+					PreferenceManager.getDefaultSharedPreferences(context);
 
-			int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+			int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_MINIMUM), "3"));
 			String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
 
 			return context.getContentResolver().query(

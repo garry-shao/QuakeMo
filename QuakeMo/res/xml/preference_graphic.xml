@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/pref_graphic_category_display_title" >
+    <PreferenceCategory android:title="@string/pref_cat_display_title" >
         <org.qmsos.quakemo.util.UtilListPreference
-            android:defaultValue="3"
-            android:dialogTitle="@string/pref_graphic_magnitude_title"
-            android:entries="@array/magnitude_options"
-            android:entryValues="@array/magnitude_values"
-            android:key="PREF_MIN_MAG"
-            android:summary="@string/pref_graphic_magnitude_summary"
-            android:title="@string/pref_graphic_magnitude_title" />
+            android:defaultValue="@string/minimum_values_default"
+            android:dialogTitle="@string/pref_minimum_title"
+            android:entries="@array/minimum_entries"
+            android:entryValues="@array/minimum_values"
+            android:key="@string/PREF_MINIMUM"
+            android:summary="@string/pref_minimum_summary"
+            android:title="@string/pref_minimum_title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_graphic_category_widget_title" >
+    <PreferenceCategory android:title="@string/pref_cat_widget_title" >
         <CheckBoxPreference
             android:defaultValue="FALSE"
-            android:key="PREF_USE_WIDGETS"
-            android:summary="@string/pref_graphic_widget_summary"
-            android:title="@string/pref_graphic_widget_title" />
+            android:key="@string/PREF_WIDGET"
+            android:summary="@string/pref_widget_summary"
+            android:title="@string/pref_widget_title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_graphic_category_notification_title" >
+    <PreferenceCategory android:title="@string/pref_cat_notify_title" >
         <CheckBoxPreference
             android:defaultValue="FALSE"
-            android:key="PREF_NOTIFICATION_ENABLE"
-            android:summary="@string/pref_graphic_notification_toggle_summary"
-            android:title="@string/pref_graphic_notification_toggle_title" />
+            android:key="@string/PREF_NOTIFY_TOGGLE"
+            android:summary="@string/pref_notify_toggle_summary"
+            android:title="@string/pref_notify_toggle_title" />
         <CheckBoxPreference
             android:defaultValue="FALSE"
-            android:dependency="PREF_NOTIFICATION_ENABLE"
-            android:key="PREF_NOTIFICATION_SOUND"
-            android:summary="@string/pref_graphic_notification_sound_summary"
-            android:title="@string/pref_graphic_notification_sound_title" />
+            android:dependency="@string/PREF_NOTIFY_TOGGLE"
+            android:key="@string/PREF_NOTIFY_SOUND"
+            android:summary="@string/pref_notify_sound_summary"
+            android:title="@string/pref_notify_sound_title" />
         <CheckBoxPreference
             android:defaultValue="FALSE"
-            android:dependency="PREF_NOTIFICATION_ENABLE"
-            android:key="PREF_NOTIFICATION_VIBRATE"
-            android:summary="@string/pref_graphic_notification_vibrate_summary"
-            android:title="@string/pref_graphic_notification_vibrate_title" />
+            android:dependency="@string/PREF_NOTIFY_TOGGLE"
+            android:key="@string/PREF_NOTIFY_VIBRATE"
+            android:summary="@string/pref_notify_vibrate_summary"
+            android:title="@string/pref_notify_vibrate_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

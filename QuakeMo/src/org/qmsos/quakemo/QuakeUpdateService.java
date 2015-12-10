@@ -88,13 +88,14 @@ public class QuakeUpdateService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		boolean autoUpdateChecked = prefs.getBoolean(PrefActivity.PREF_AUTO_UPDATE, false);
-		if (autoUpdateChecked) {
-			int updateFreq = Integer.parseInt(prefs.getString(PrefActivity.PREF_UPDATE_FREQ, "60"));
+		boolean autoToggle = prefs.getBoolean(getString(R.string.PREF_AUTO_TOGGLE), false);
+		if (autoToggle) {
+			int autoFrequency = Integer.parseInt(
+					prefs.getString(getString(R.string.PREF_AUTO_FREQUENCY), "12"));
 
-			setupAutoUpdate(updateFreq);
+			setupAutoUpdate(autoFrequency);
 
 			queryQuakes();
 
@@ -123,7 +124,7 @@ public class QuakeUpdateService extends IntentService {
 	 * Setting up interval of automatic update.
 	 * 
 	 * @param updateFreq
-	 *            update interval, in minutes.
+	 *            update interval, in hours.
 	 */
 	private void setupAutoUpdate(int updateFreq) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -131,7 +132,7 @@ public class QuakeUpdateService extends IntentService {
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
 				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM), 0);
 
-		int intervalMillis = updateFreq * 60 * 1000;
+		long intervalMillis = updateFreq * 60 * 60 * 1000;
 		long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
 		int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
 
@@ -171,8 +172,8 @@ public class QuakeUpdateService extends IntentService {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		String dateString = dateFormat.format(new Date());
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_MINIMUM), "3"));
 
 		String request = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
 				"&" + "starttime=" + dateString + 
@@ -299,12 +300,13 @@ public class QuakeUpdateService extends IntentService {
 	 */
 	private void notifyQuake(Earthquake earthquake) {
 		Notification.Builder builder = new Notification.Builder(this);
-		builder.setAutoCancel(true).setTicker(getBaseContext().getString(R.string.notification_ticker))
+		builder.setAutoCancel(true)
+				.setTicker(getString(R.string.notification_ticker))
 				.setSmallIcon(R.drawable.ic_notification);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		boolean notificationEnable = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_ENABLE, false);
-		if (notificationEnable) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean notifyToggle = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
+		if (notifyToggle) {
 			PendingIntent launchIntent = 
 					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
@@ -313,15 +315,15 @@ public class QuakeUpdateService extends IntentService {
 					.setContentTitle("M " + earthquake.getMagnitude())
 					.setContentText(earthquake.getDetails());
 
-			boolean notificationVibrate = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_VIBRATE, false);
-			if (notificationVibrate) {
+			boolean notifyVibrate = prefs.getBoolean(getString(R.string.PREF_NOTIFY_VIBRATE), false);
+			if (notifyVibrate) {
 				double vibrateLength = 100 * Math.exp(0.53 * earthquake.getMagnitude());
 
 				builder.setVibrate(new long[] { 100, 100, (long) vibrateLength });
 			}
 
-			boolean notificationSound = prefs.getBoolean(PrefActivity.PREF_NOTIFICATION_SOUND, false);
-			if (notificationSound) {
+			boolean notifySound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
+			if (notifySound) {
 				Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 				builder.setSound(ringURI);

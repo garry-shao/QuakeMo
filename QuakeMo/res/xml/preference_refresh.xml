@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/pref_cat_query_title" >
+        <CheckBoxPreference
+            android:defaultValue="TRUE"
+            android:key="@string/PREF_AUTO_TOGGLE"
+            android:summary="@string/pref_auto_toggle_summary"
+            android:title="@string/pref_auto_toggle_title" />
+
+        <org.qmsos.quakemo.util.UtilListPreference
+            android:defaultValue="@string/frequency_values_default"
+            android:dependency="@string/PREF_AUTO_TOGGLE"
+            android:dialogTitle="@string/pref_auto_frequency_title"
+            android:entries="@array/frequency_entries"
+            android:entryValues="@array/frequency_values"
+            android:key="@string/PREF_AUTO_FREQUENCY"
+            android:summary="@string/pref_auto_frequency_summary"
+            android:title="@string/pref_auto_frequency_title" />
+        <org.qmsos.quakemo.util.UtilListPreference
+            android:defaultValue="@string/range_values_default"
+            android:dialogTitle="@string/pref_range_title"
+            android:entries="@array/range_entries"
+            android:entryValues="@array/range_values"
+            android:key="@string/PREF_RANGE"
+            android:summary="@string/pref_range_summary"
+            android:title="@string/pref_range_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_cat_database_title" >
+        <Preference
+            android:key="@string/PREF_PURGE"
+            android:summary="@string/pref_purge_summary"
+            android:title="@string/pref_purge_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

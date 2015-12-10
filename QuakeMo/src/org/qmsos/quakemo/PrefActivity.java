@@ -3,7 +3,7 @@ package org.qmsos.quakemo;
 import java.util.List;
 
 import org.qmsos.quakemo.fragment.PrefGraphicFragment;
-import org.qmsos.quakemo.fragment.PrefUpdateFragment;
+import org.qmsos.quakemo.fragment.PrefRefreshFragment;
 import org.qmsos.quakemo.util.UtilPreferenceActivity;
 
 import android.content.ComponentName;
@@ -19,14 +19,6 @@ import android.support.v7.widget.Toolbar;
  *
  */
 public class PrefActivity extends UtilPreferenceActivity implements OnSharedPreferenceChangeListener {
-	
-	public static final String PREF_MIN_MAG = "PREF_MIN_MAG";
-	public static final String PREF_USE_WIDGETS = "PREF_USE_WIDGETS";
-	public static final String PREF_NOTIFICATION_ENABLE = "PREF_NOTIFICATION_ENABLE";
-	public static final String PREF_NOTIFICATION_SOUND = "PREF_NOTIFICATION_SOUND";
-	public static final String PREF_NOTIFICATION_VIBRATE = "PREF_NOTIFICATION_VIBRATE";
-	public static final String PREF_UPDATE_FREQ = "PREF_UPDATE_FREQ";
-	public static final String PREF_AUTO_UPDATE = "PREF_AUTO_UPDATE";
 	
 	@Override
 	public void onBuildHeaders(List<Header> target) {
@@ -44,12 +36,12 @@ public class PrefActivity extends UtilPreferenceActivity implements OnSharedPref
 	@Override
 	protected boolean isValidFragment(String fragmentName) {
 		return PrefGraphicFragment.class.getName().equals(fragmentName) || 
-				PrefUpdateFragment.class.getName().equals(fragmentName);
+				PrefRefreshFragment.class.getName().equals(fragmentName);
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(PrefActivity.PREF_USE_WIDGETS)) {
+		if (key.equals(getString(R.string.PREF_WIDGET))) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 			int newState = prefs.getBoolean(key, false) ? 

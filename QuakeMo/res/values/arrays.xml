@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="update_freq_options">
-        <item>Every Minute</item>
-        <item>5 Minutes</item>
-        <item>10 Minutes</item>
-        <item>15 Minutes</item>
-        <item>Every Hour</item>
+    <string-array name="range_entries">
+        <item>One Day</item>
+        <item>Two Days</item>
+        <item>Three Days</item>
+        <item>Four Days</item>
+        <item>Five Days</item>
     </string-array>
-    <string-array name="update_freq_values">
-        <item>1</item>
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-        <item>60</item>
-    </string-array>
-    <string-array name="magnitude_options">
+    <string-array name="range_values">
+        <item>@string/range_values_default</item>
+        <item>2</item>
         <item>3</item>
         <item>4</item>
         <item>5</item>
-        <item>6</item>
-        <item>7</item>
     </string-array>
-    <string-array name="magnitude_values">
+    <string-array name="frequency_entries">
+        <item>Every Hour</item>
+        <item>Two Hours</item>
+        <item>Threee Hours</item>
+        <item>Six Hours</item>
+        <item>Half Day</item>
+    </string-array>
+    <string-array name="frequency_values">
+        <item>1</item>
+        <item>2</item>
         <item>3</item>
+        <item>6</item>
+        <item>@string/frequency_values_default</item>
+    </string-array>
+    <string-array name="minimum_entries">
+        <item>M. 3</item>
+        <item>M. 4</item>
+        <item>M. 5</item>
+        <item>M. 6</item>
+        <item>M. 7</item>
+    </string-array>
+    <string-array name="minimum_values">
+        <item>@string/minimum_values_default</item>
         <item>4</item>
         <item>5</item>
         <item>6</item>

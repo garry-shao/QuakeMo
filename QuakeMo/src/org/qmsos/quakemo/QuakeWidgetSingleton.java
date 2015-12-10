@@ -59,7 +59,8 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 	private void updateEarthquake(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-		int minMagnitude = Integer.parseInt(prefs.getString(PrefActivity.PREF_MIN_MAG, "3"));
+		int minMagnitude = Integer.parseInt(
+				prefs.getString(context.getString(R.string.PREF_MINIMUM), "3"));
 
 		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
 
