@@ -74,6 +74,8 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 			
 			dialog.show(getFragmentManager(), "dialog");
 		}
+		
+		result.close();
 	}
 
 	@Override

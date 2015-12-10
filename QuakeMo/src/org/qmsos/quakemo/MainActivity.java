@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 				
 				searchView.setQuery(suggestion, true);
 				
+				cursor.close();
+				
 				return true;
 			}
 		});

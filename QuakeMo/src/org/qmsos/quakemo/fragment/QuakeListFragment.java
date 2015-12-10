@@ -121,6 +121,8 @@ implements OnSharedPreferenceChangeListener, LoaderCallbacks<Cursor> {
 			DialogFragment dialog = QuakeDetailsDialog.newInstance(getContext(), quake);
 			dialog.show(getFragmentManager(), "dialog");
 		}
+		
+		result.close();
 	}
 
 	@Override
