@@ -52,8 +52,7 @@ public class PrefActivity extends UtilPreferenceActivity implements OnSharedPref
 		if (key.equals(PrefActivity.PREF_USE_WIDGETS)) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-			int newState = 
-					prefs.getBoolean(key, false) ? 
+			int newState = prefs.getBoolean(key, false) ? 
 					PackageManager.COMPONENT_ENABLED_STATE_ENABLED :  
 					PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 			
