@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(getString(R.string.PREF_MINIMUM))) {
+		if (key.equals(getString(R.string.PREF_SHOW_MINIMUM))) {
 			//getLoaderManager() will throw if this fragment not attached to activity.
 			if (quakeList.isAdded()) {
 				quakeList.getLoaderManager().restartLoader(0, null, quakeList);

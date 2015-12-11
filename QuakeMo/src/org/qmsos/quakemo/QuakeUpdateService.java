@@ -68,6 +68,8 @@ public class QuakeUpdateService extends IntentService {
 	 * Notification ID in this application.
 	 */
 	private static final int NOTIFICATION_ID = 1;
+	
+	private static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
 	/**
 	 * Default constructor of this service.
@@ -123,16 +125,16 @@ public class QuakeUpdateService extends IntentService {
 	/**
 	 * Setting up interval of automatic update.
 	 * 
-	 * @param updateFreq
+	 * @param frequency
 	 *            update interval, in hours.
 	 */
-	private void setupAutoUpdate(int updateFreq) {
+	private void setupAutoUpdate(int frequency) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
 				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM), 0);
 
-		long intervalMillis = updateFreq * 60 * 60 * 1000;
+		long intervalMillis = frequency * ONE_HOUR_IN_MILLISECONDS;
 		long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
 		int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
 
@@ -168,15 +170,19 @@ public class QuakeUpdateService extends IntentService {
 	 * @return The assembled string.
 	 */
 	private String assembleRequest() {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		String dateString = dateFormat.format(new Date());
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_MINIMUM), "3"));
+		
+		int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_QUERY_RANGE), "1"));
+		long startMillis = System.currentTimeMillis() - range * 24 * ONE_HOUR_IN_MILLISECONDS;
+		String startTime = dateFormat.format(new Date(startMillis));
+		
+		String minMagnitude = prefs.getString(getString(R.string.PREF_QUERY_MINIMUM), "3");
 
 		String request = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
-				"&" + "starttime=" + dateString + 
+				"&" + "starttime=" + startTime + 
 				"&" + "minmagnitude=" + minMagnitude;
 
 		return request;

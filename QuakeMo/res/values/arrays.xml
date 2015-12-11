@@ -18,7 +18,7 @@
     <string-array name="frequency_entries">
         <item>Every Hour</item>
         <item>Two Hours</item>
-        <item>Threee Hours</item>
+        <item>Three Hours</item>
         <item>Six Hours</item>
         <item>Half Day</item>
     </string-array>

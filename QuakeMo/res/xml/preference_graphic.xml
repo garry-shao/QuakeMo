@@ -4,12 +4,12 @@
     <PreferenceCategory android:title="@string/pref_cat_display_title" >
         <org.qmsos.quakemo.util.UtilListPreference
             android:defaultValue="@string/minimum_values_default"
-            android:dialogTitle="@string/pref_minimum_title"
+            android:dialogTitle="@string/pref_show_minimum_title"
             android:entries="@array/minimum_entries"
             android:entryValues="@array/minimum_values"
-            android:key="@string/PREF_MINIMUM"
-            android:summary="@string/pref_minimum_summary"
-            android:title="@string/pref_minimum_title" />
+            android:key="@string/PREF_SHOW_MINIMUM"
+            android:summary="@string/pref_show_minimum_summary"
+            android:title="@string/pref_show_minimum_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cat_widget_title" >
         <CheckBoxPreference
