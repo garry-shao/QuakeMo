@@ -82,7 +82,7 @@ public class QuakeDetailsDialog extends DialogFragment {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setTitle(R.string.dialog_details_title).setMessage(details);
 		if (mapEnabled) {
-			builder.setPositiveButton(R.string.dialog_positive_button, new OnClickListener() {
+			builder.setPositiveButton(R.string.dialog_details_positive, new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {

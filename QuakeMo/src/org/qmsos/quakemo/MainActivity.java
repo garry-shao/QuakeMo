@@ -101,12 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 			startActivity(i);
 		
 			return true;
-		case (R.id.menu_purge):
-			i = new Intent(this, QuakeUpdateService.class);
-			i.putExtra(QuakeUpdateService.PURGE_DATABASE, true);
-			startService(i);
-		
-			return true;
 		case (R.id.menu_refresh):
 			i = new Intent(this, QuakeUpdateService.class);
 			i.putExtra(QuakeUpdateService.MANUAL_REFRESH, true);

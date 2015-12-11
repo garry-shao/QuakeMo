@@ -37,7 +37,9 @@
             android:title="@string/pref_query_minimum_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cat_database_title" >
-        <Preference
+        <org.qmsos.quakemo.util.UtilDialogPreference
+            android:dialogMessage="@string/pref_purge_dialog_message"
+            android:dialogTitle="@string/pref_purge_title"
             android:key="@string/PREF_PURGE"
             android:summary="@string/pref_purge_summary"
             android:title="@string/pref_purge_title" />

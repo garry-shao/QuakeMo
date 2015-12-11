@@ -7,12 +7,12 @@
     <string name="menu_search">Search</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_refresh">Refresh</string>
-    <string name="menu_purge">Purge</string>
     <string name="widget_name_single">QuakeMo Single</string>
     <string name="widget_name_list">QuakeMo List</string>
     <string name="widget_empty">No Earthquakes!</string>
     <string name="dialog_details_title">Earthquake Details</string>
-    <string name="dialog_positive_button">Map</string>
+    <string name="dialog_details_positive">Map</string>
+    <string name="dialog_positive_button">Confirm</string>
     <string name="dialog_negative_button">Cancel</string>
     <string name="notification_ticker">Earthquake!</string>
     <string name="search_description">Searth earthquake locations</string>
@@ -23,8 +23,8 @@
     <string name="pref_graphic_summary">Change settings related to graphics</string>
     <string name="pref_graphic_title">Graphic</string>
     <string name="pref_cat_display_title">Display</string>
-    <string name="pref_show_minimum_summary">Choose the minimum magnitude to SHOW</string>
-    <string name="pref_show_minimum_title">Minimum to SHOW</string>
+    <string name="pref_show_minimum_summary">Choose the minimum magnitude to show</string>
+    <string name="pref_show_minimum_title">Display Minimum</string>
     <string name="pref_cat_widget_title">Widget</string>
     <string name="pref_widget_summary">Select to register widget to android</string>
     <string name="pref_widget_title">Toggle Widget</string>
@@ -41,13 +41,14 @@
     <string name="pref_auto_frequency_summary">Choose how frequent of auto refresh</string>
     <string name="pref_auto_frequency_title">Refresh Frequency</string>
     <string name="pref_cat_query_title">Query</string>
-    <string name="pref_query_range_summary">Choose range of query</string>
+    <string name="pref_query_range_summary">Choose how many days back to query</string>
     <string name="pref_query_range_title">Query Range</string>
-    <string name="pref_query_minimum_summary">Choose the minimum magnitude to QUERY</string>
-    <string name="pref_query_minimum_title">Minimum to QUERY</string>
+    <string name="pref_query_minimum_summary">Choose the minimum magnitude to query</string>
+    <string name="pref_query_minimum_title">Query Minimum</string>
     <string name="pref_cat_database_title">Database</string>
-    <string name="pref_purge_summary">Click to purge ALL earthquakes stored</string>
-    <string name="pref_purge_title">PURGE!!!</string>
+    <string name="pref_purge_summary">Click to delete ALL stored earthquakes</string>
+    <string name="pref_purge_title">Purge</string>
+    <string name="pref_purge_dialog_message">Are you SURE ?</string>
 
     <!-- Keys for shared preferences. DO NOT MODIFY -->
     <string name="PREF_SHOW_MINIMUM">PREF_SHOW_MINIMUM</string>
