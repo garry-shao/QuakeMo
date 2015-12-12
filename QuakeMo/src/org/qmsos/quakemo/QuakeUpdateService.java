@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.qmsos.quakemo.data.Earthquake;
+import org.qmsos.quakemo.util.UtilResultReceiver;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -33,6 +34,8 @@ import android.database.Cursor;
 import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -109,12 +112,20 @@ public class QuakeUpdateService extends IntentService {
 		// Extra behaviors of this service, it's important these are behind auto update block.
 		if (intent.getBooleanExtra(MANUAL_REFRESH, false)) {
 			queryQuakes();
+			
+			// Send results to caller.
+			ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
+			receiver.send(0, new Bundle());
 
 			sendBroadcast(new Intent(QUAKES_REFRESHED));
 		}
 
 		if (intent.getBooleanExtra(PURGE_DATABASE, false)) {
 			purgeQuakes();
+
+			// Send results to caller.
+			ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
+			receiver.send(0, new Bundle());
 
 			sendBroadcast(new Intent(PURGE_DATABASE));
 		}

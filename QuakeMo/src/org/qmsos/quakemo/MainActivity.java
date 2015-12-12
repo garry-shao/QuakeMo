@@ -6,6 +6,8 @@ import java.util.List;
 import org.qmsos.quakemo.fragment.QuakeListFragment;
 import org.qmsos.quakemo.fragment.QuakeMapFragment;
 import org.qmsos.quakemo.util.UtilPagerAdapter;
+import org.qmsos.quakemo.util.UtilResultReceiver;
+import org.qmsos.quakemo.util.UtilResultReceiver.Receiver;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -14,7 +16,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -24,14 +28,24 @@ import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * 
  * Main activity of this application.
  *
  */
-public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity 
+implements OnSharedPreferenceChangeListener, Receiver {
 
+	private static final String KEY_RECEIVER = "KEY_RECEIVER";
+	
+	/**
+	 * Callback from update service.
+	 */
+	private UtilResultReceiver receiver;
+	
+	// Fragments in this activity. Design principle: same data in different layouts.
 	private QuakeListFragment quakeList = new QuakeListFragment();
 	private QuakeMapFragment quakeMap = new QuakeMapFragment();
 	
@@ -39,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		if (savedInstanceState != null) {
+			receiver = savedInstanceState.getParcelable(KEY_RECEIVER);
+		} else {
+			receiver = new UtilResultReceiver(new Handler());
+		}
 		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -56,6 +76,27 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 		
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
+	}
+
+	@Override
+	protected void onPause() {
+		receiver.setReceiver(null);
+
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		receiver.setReceiver(this);
+
+		super.onResume();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putParcelable(KEY_RECEIVER, receiver);
+
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -104,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 		case (R.id.menu_refresh):
 			i = new Intent(this, QuakeUpdateService.class);
 			i.putExtra(QuakeUpdateService.MANUAL_REFRESH, true);
+			i.putExtra(UtilResultReceiver.RECEIVER, receiver);
+			
 			startService(i);
 
 			return true;
@@ -122,6 +165,14 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 			if (quakeMap.isAdded()) {
 				quakeMap.getLoaderManager().restartLoader(0, null, quakeMap);
 			}
+		}
+	}
+
+	@Override
+	public void onReceiveResult(int resultCode, Bundle resultData) {
+		View linearLayout = findViewById(R.id.linear_layout);
+		if (linearLayout != null) {
+			Snackbar.make(linearLayout, R.string.snackbar_updated, Snackbar.LENGTH_SHORT).show();
 		}
 	}
 

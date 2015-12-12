@@ -2,14 +2,12 @@ package org.qmsos.quakemo.util;
 
 import java.lang.reflect.Method;
 
-import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -26,6 +24,15 @@ import android.util.AttributeSet;
  */
 public class UtilDialogPreference extends DialogPreference {
 
+	/**
+	 * Callback of positive button click.
+	 * 
+	 *
+	 */
+	public interface PositiveClickListener {
+		public void onPositiveClick();
+	}
+	
 	private Context context;
 	private AlertDialog.Builder builder;
 	private AppCompatDialog dialog;
@@ -53,9 +60,9 @@ public class UtilDialogPreference extends DialogPreference {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				Intent i = new Intent(getContext(), QuakeUpdateService.class);
-				i.putExtra(QuakeUpdateService.PURGE_DATABASE, true);
-				getContext().startService(i);
+				if (context instanceof PositiveClickListener) {
+					((PositiveClickListener) context).onPositiveClick();
+				}
 				
 				dialog.dismiss();
 			}
