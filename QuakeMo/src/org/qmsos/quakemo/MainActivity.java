@@ -76,6 +76,11 @@ implements OnSharedPreferenceChangeListener, Receiver {
 		
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
+		
+		// start service for the first time.
+		Intent startIntent = new Intent(this, QuakeUpdateService.class);
+		startIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
+		startService(startIntent);
 	}
 
 	@Override
@@ -144,7 +149,7 @@ implements OnSharedPreferenceChangeListener, Receiver {
 			return true;
 		case (R.id.menu_refresh):
 			i = new Intent(this, QuakeUpdateService.class);
-			i.putExtra(QuakeUpdateService.MANUAL_REFRESH, true);
+			i.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
 			i.putExtra(UtilResultReceiver.RECEIVER, receiver);
 			
 			startService(i);

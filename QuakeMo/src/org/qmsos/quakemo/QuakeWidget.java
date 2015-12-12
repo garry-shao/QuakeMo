@@ -38,10 +38,7 @@ public class QuakeWidget extends AppWidgetProvider {
 	public void onReceive(Context context, Intent intent) {
 		super.onReceive(context, intent);
 
-		if (QuakeUpdateService.QUAKES_REFRESHED.equals(intent.getAction())) {
-			updateEarthquake(context);
-		}
-		if (QuakeUpdateService.PURGE_DATABASE.equals(intent.getAction())) {
+		if (intent.getAction().equals(QuakeUpdateService.ACTION_REFRESH_WIDGET)) {
 			updateEarthquake(context);
 		}
 	}

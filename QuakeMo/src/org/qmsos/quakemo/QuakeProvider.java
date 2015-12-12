@@ -26,26 +26,24 @@ import android.util.Log;
 public class QuakeProvider extends ContentProvider {
 	
 	public static final Uri CONTENT_URI = 
-			Uri.parse("content://org.qmsos.quakeprovider/earthquakes");
+			Uri.parse("content://org.qmsos.quakemo.quakeprovider/earthquakes");
+	
 	public static final String KEY_ID = "_id";
 	public static final String KEY_DATE = "date";
-	public static final String KEY_DETAILS = "datails";
+	public static final String KEY_DETAILS = "details";
 	public static final String KEY_SUMMARY = "summary";
 	public static final String KEY_LOCATION_LA = "latitude";
 	public static final String KEY_LOCATION_LO = "longitude";
 	public static final String KEY_MAGNITUDE = "magnitude";
 	public static final String KEY_LINK = "link";
 	
+	// return code of UriMatcher.
 	private static final int QUAKES = 1;
 	private static final int QUAKE_ID = 2;
 	private static final int SEARCH = 3;
 	
 	private static final HashMap<String, String> SEARCH_PROJECTION_MAP;
 	private static final UriMatcher uriMatcher;
-	
-	/**
-	 * Initializing the complex object fields.
-	 */
 	static {
 		SEARCH_PROJECTION_MAP = new HashMap<String, String>();
 		SEARCH_PROJECTION_MAP.put(SearchManager.SUGGEST_COLUMN_TEXT_1, 
@@ -53,58 +51,16 @@ public class QuakeProvider extends ContentProvider {
 		SEARCH_PROJECTION_MAP.put("_id", KEY_ID + " AS " + "_id");
 		
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI("org.qmsos.quakeprovider", "earthquakes", QUAKES);
-		uriMatcher.addURI("org.qmsos.quakeprovider", "earthquakes/#", QUAKE_ID);
-		uriMatcher.addURI("org.qmsos.quakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", "earthquakes", QUAKES);
+		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", "earthquakes/#", QUAKE_ID);
+		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH);
-		uriMatcher.addURI("org.qmsos.quakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH);
-		uriMatcher.addURI("org.qmsos.quakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT, SEARCH);
-		uriMatcher.addURI("org.qmsos.quakeprovider", 
+		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SEARCH);
-	}
-	
-	/**
-	 * 
-	 * Helper class using for managing the earthquake database.
-	 *
-	 */
-	private static class QuakeDatabaseHelper extends SQLiteOpenHelper {
-
-		private static final String TAG = "EarthquakeProvider";
-		
-		private static final String DATABASE_NAME = "earthquake.db";
-		private static final int DATABASE_VERSION = 1;
-		private static final String EARTHQUAKE_TABLE = "earthquakes";
-		
-		private static final String DATABASE_CREATE = 
-				"create table " + EARTHQUAKE_TABLE + " (" + 
-				KEY_ID + " integer primary key autoincrement, " +
-				KEY_DATE + " INTEGER, " + KEY_DETAILS + " TEXT, " +
-				KEY_SUMMARY + " TEXT, " + KEY_LOCATION_LA + " FLOAT, " +
-				KEY_LOCATION_LO + " FLOAT, " + KEY_MAGNITUDE + " FLOAT, " + 
-				KEY_LINK + " TEXT);";
-		
-		public QuakeDatabaseHelper(Context context, String name, 
-				CursorFactory factory, int version) {
-			super(context, name, factory, version);
-		}
-		
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(DATABASE_CREATE);
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + 
-					newVersion + ", which will destroy all old data");
-			
-			db.execSQL("DROP TABLE IF EXISTS " + EARTHQUAKE_TABLE);
-			onCreate(db);
-		}
-		
 	}
 	
 	private QuakeDatabaseHelper dbHelper ;
@@ -112,8 +68,7 @@ public class QuakeProvider extends ContentProvider {
 	@Override
 	public boolean onCreate() {
 		dbHelper = new QuakeDatabaseHelper(getContext(), 
-				QuakeDatabaseHelper.DATABASE_NAME, null, 
-				QuakeDatabaseHelper.DATABASE_VERSION);
+				QuakeDatabaseHelper.DATABASE_NAME, null, QuakeDatabaseHelper.DATABASE_VERSION);
 		
 		return true;
 	}
@@ -121,6 +76,7 @@ public class QuakeProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, 
 			String[] selectionArgs, String sortOrder) {
+		
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
@@ -129,8 +85,7 @@ public class QuakeProvider extends ContentProvider {
 		switch (uriMatcher.match(uri)) {
 		case QUAKE_ID:
 			if (uri.getPathSegments().size() > 1) {
-				queryBuilder.appendWhere(
-						KEY_ID + "=" + uri.getPathSegments().get(1));
+				queryBuilder.appendWhere(KEY_ID + "=" + uri.getPathSegments().get(1));
 			}
 			break;
 		case SEARCH:
@@ -151,8 +106,8 @@ public class QuakeProvider extends ContentProvider {
 			orderBy = sortOrder;
 		}
 		
-		Cursor cursor = queryBuilder.query(database, projection, 
-				selection, selectionArgs, null, null, orderBy);
+		Cursor cursor = queryBuilder.query(
+				database, projection, selection, selectionArgs, null, null, orderBy);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		
 		return cursor;
@@ -162,9 +117,9 @@ public class QuakeProvider extends ContentProvider {
 	public String getType(Uri uri) {
 		switch (uriMatcher.match(uri)) {
 		case QUAKES:
-			return "vnd.android.cursor.dir/vnd.qmsos.quakemo";
+			return "vnd.android.cursor.dir/vnd.org.qmsos.quakemo";
 		case QUAKE_ID:
-			return "vnd.android.cursor.item/vnd.qmsos.quakemo";
+			return "vnd.android.cursor.item/vnd.org.qmsos.quakemo";
 		case SEARCH:
 			return SearchManager.SUGGEST_MIME_TYPE;
 		default:
@@ -176,8 +131,7 @@ public class QuakeProvider extends ContentProvider {
 	public Uri insert(Uri uri, ContentValues values) {
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
-		long rowID = database.insert(
-				QuakeDatabaseHelper.EARTHQUAKE_TABLE, "quake", values);
+		long rowID = database.insert(QuakeDatabaseHelper.EARTHQUAKE_TABLE, "quake", values);
 		if (rowID > 0) {
 			Uri resultUri = ContentUris.withAppendedId(CONTENT_URI, rowID);
 			getContext().getContentResolver().notifyChange(resultUri, null);
@@ -195,14 +149,14 @@ public class QuakeProvider extends ContentProvider {
 		int count;
 		switch (uriMatcher.match(uri)) {
 		case QUAKES:
-			count = database.delete(
-					QuakeDatabaseHelper.EARTHQUAKE_TABLE, selection, selectionArgs);
+			count = database.delete(QuakeDatabaseHelper.EARTHQUAKE_TABLE, selection, selectionArgs);
+			
 			break;
 		case QUAKE_ID:
 			String where = KEY_ID + "=" + uri.getPathSegments().get(1) + 
 					(!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
-			count = database.delete(
-					QuakeDatabaseHelper.EARTHQUAKE_TABLE, where, selectionArgs);
+			count = database.delete(QuakeDatabaseHelper.EARTHQUAKE_TABLE, where, selectionArgs);
+			
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -236,6 +190,47 @@ public class QuakeProvider extends ContentProvider {
 		getContext().getContentResolver().notifyChange(uri, null);
 		
 		return count;
+	}
+
+	/**
+	 * 
+	 * Helper class using for managing the earthquake database.
+	 *
+	 */
+	private static class QuakeDatabaseHelper extends SQLiteOpenHelper {
+
+		private static final String TAG = QuakeProvider.class.getSimpleName();
+		
+		private static final String DATABASE_NAME = "earthquake.db";
+		private static final int DATABASE_VERSION = 1;
+		private static final String EARTHQUAKE_TABLE = "earthquakes";
+		
+		private static final String DATABASE_CREATE = 
+				"create table " + EARTHQUAKE_TABLE + " (" + 
+				KEY_ID + " integer primary key autoincrement, " +
+				KEY_DATE + " INTEGER, " + KEY_DETAILS + " TEXT, " +
+				KEY_SUMMARY + " TEXT, " + KEY_LOCATION_LA + " FLOAT, " +
+				KEY_LOCATION_LO + " FLOAT, " + KEY_MAGNITUDE + " FLOAT, " + 
+				KEY_LINK + " TEXT);";
+		
+		public QuakeDatabaseHelper(Context context, String name, 
+				CursorFactory factory, int version) {
+			super(context, name, factory, version);
+		}
+		
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			db.execSQL(DATABASE_CREATE);
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + 
+					newVersion + ", which will destroy all old data");
+			
+			db.execSQL("DROP TABLE IF EXISTS " + EARTHQUAKE_TABLE);
+			onCreate(db);
+		}
 	}
 
 }

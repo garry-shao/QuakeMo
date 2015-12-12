@@ -3,12 +3,10 @@ package org.qmsos.quakemo.fragment;
 import java.util.Date;
 
 import org.qmsos.quakemo.QuakeProvider;
-import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.data.Earthquake;
 
 import android.content.ContentUris;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -41,8 +39,6 @@ public class QuakeListFragment extends ListFragment implements LoaderCallbacks<C
 		setListAdapter(adapter);
 
 		getLoaderManager().initLoader(0, null, this);
-
-		getContext().startService(new Intent(getContext(), QuakeUpdateService.class));
 	}
 
 	@Override

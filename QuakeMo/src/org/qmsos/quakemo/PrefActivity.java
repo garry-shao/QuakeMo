@@ -115,7 +115,7 @@ implements OnSharedPreferenceChangeListener, Receiver, PositiveClickListener {
 	@Override
 	public void onPositiveClick() {
 		final Intent i = new Intent(this, QuakeUpdateService.class);
-		i.putExtra(QuakeUpdateService.PURGE_DATABASE, true);
+		i.setAction(QuakeUpdateService.ACTION_PURGE_DATABASE);
 		i.putExtra(UtilResultReceiver.RECEIVER, receiver);
 				
 		View linearLayout = findViewById(R.id.linear_layout);

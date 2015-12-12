@@ -58,7 +58,7 @@
 
         <provider
             android:name=".QuakeProvider"
-            android:authorities="org.qmsos.quakeprovider"
+            android:authorities="org.qmsos.quakemo.quakeprovider"
             android:exported="false" >
         </provider>
 
@@ -71,7 +71,7 @@
             android:name=".QuakeAlarmReceiver"
             android:exported="false" >
             <intent-filter>
-                <action android:name="org.qmsos.quakemo.ACTION_REFRESH_EARTHQUAKE_ALARM" />
+                <action android:name="org.qmsos.quakemo.ACTION_REFRESH_ALARM" />
             </intent-filter>
         </receiver>
         <receiver
@@ -82,10 +82,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <intent-filter>
-                <action android:name="org.qmsos.quakemo.QUAKES_REFRESHED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="org.qmsos.quakemo.PURGE_DATABASE" />
+                <action android:name="org.qmsos.quakemo.ACTION_REFRESH_WIDGET" />
             </intent-filter>
 
             <meta-data

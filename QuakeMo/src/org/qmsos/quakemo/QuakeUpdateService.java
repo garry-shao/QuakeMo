@@ -46,24 +46,29 @@ import android.util.Log;
 public class QuakeUpdateService extends IntentService {
 
 	/**
+	 * The intent action of refreshing widget.
+	 */
+	public static final String ACTION_REFRESH_WIDGET = "org.qmsos.quakemo.ACTION_REFRESH_WIDGET";
+	
+	/**
+	 * The intent action of refreshing manually.
+	 */
+	public static final String ACTION_REFRESH_MANUAL = "org.qmsos.quakemo.ACTION_REFRESH_MANUAL";
+
+	/**
+	 * The intent action of automatic refreshing.
+	 */
+	public static final String ACTION_REFRESH_AUTO = "org.qmsos.quakemo.ACTION_REFRESH_AUTO";
+	
+	/**
+	 * The intent action of purge database.
+	 */
+	public static final String ACTION_PURGE_DATABASE = "org.qmsos.quakemo.ACTION_PURGE_DATABASE";
+
+	/**
 	 * Class name tag. Debug use only.
 	 */
 	private static final String TAG = QuakeUpdateService.class.getSimpleName();
-
-	/**
-	 * Will send intent indicating content provider of earthquakes is refreshed.
-	 */
-	public static final String QUAKES_REFRESHED = "org.qmsos.quakemo.QUAKES_REFRESHED";
-
-	/**
-	 * Manually refresh for new earthquakes.
-	 */
-	public static final String MANUAL_REFRESH = "org.qmsos.quakemo.MANUAL_REFRESH";
-
-	/**
-	 * Purge all earthquakes in content provider.
-	 */
-	public static final String PURGE_DATABASE = "org.qmsos.quakemo.PURGE_DATABASE";
 
 	/**
 	 * Notification ID in this application.
@@ -91,41 +96,35 @@ public class QuakeUpdateService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
 		boolean autoToggle = prefs.getBoolean(getString(R.string.PREF_AUTO_TOGGLE), false);
-		if (autoToggle) {
-			int autoFrequency = Integer.parseInt(
-					prefs.getString(getString(R.string.PREF_AUTO_FREQUENCY), "12"));
+		int autoFrequency = Integer.parseInt(
+				prefs.getString(getString(R.string.PREF_AUTO_FREQUENCY), "12"));
 
-			setupAutoUpdate(autoFrequency);
+		String action = intent.getAction();
+		if (action != null) {
+			if (action.equals(ACTION_REFRESH_AUTO)) {
+				if (autoToggle) {
+					setupAutoUpdate(autoFrequency);
 
-			queryQuakes();
-
-			sendBroadcast(new Intent(QUAKES_REFRESHED));
-		} else {
-			cancelAutoUpdate();
-		}
-
-		// Extra behaviors of this service, it's important these are behind auto update block.
-		if (intent.getBooleanExtra(MANUAL_REFRESH, false)) {
-			queryQuakes();
+					queryQuakes();
+				} else {
+					cancelAutoUpdate();
+				}
+			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
+				queryQuakes();
+			} else if (action.equals(ACTION_PURGE_DATABASE)) {
+				purgeQuakes();
+			}
 			
 			// Send results to caller.
 			ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
-			receiver.send(0, new Bundle());
+			if (receiver != null) {
+				receiver.send(0, new Bundle());
+			}
 
-			sendBroadcast(new Intent(QUAKES_REFRESHED));
-		}
-
-		if (intent.getBooleanExtra(PURGE_DATABASE, false)) {
-			purgeQuakes();
-
-			// Send results to caller.
-			ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
-			receiver.send(0, new Bundle());
-
-			sendBroadcast(new Intent(PURGE_DATABASE));
+			sendBroadcast(new Intent(ACTION_REFRESH_WIDGET));
 		}
 	}
 
@@ -139,7 +138,7 @@ public class QuakeUpdateService extends IntentService {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
-				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM), 0);
+				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM), 0);
 
 		long intervalMillis = frequency * ONE_HOUR_IN_MILLISECONDS;
 		long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
@@ -155,7 +154,7 @@ public class QuakeUpdateService extends IntentService {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
-				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_EARTHQUAKE_ALARM), 0);
+				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM), 0);
 
 		alarmManager.cancel(alarmIntent);
 	}
@@ -218,10 +217,10 @@ public class QuakeUpdateService extends IntentService {
 					builder.append(line);
 				}
 			} else {
-				Log.d(TAG, "Http connnection error! " + "responseCode = " + responseCode);
+				Log.e(TAG, "Http connnection error! " + "responseCode = " + responseCode);
 			}
 		} catch (IOException e) {
-			Log.d(TAG, "I/O exception");
+			Log.e(TAG, "I/O exception");
 		}
 
 		return builder.toString();
@@ -263,7 +262,7 @@ public class QuakeUpdateService extends IntentService {
 				addQuake(earthquake);
 			}
 		} catch (JSONException e) {
-			Log.d(TAG, "JSON Exception");
+			Log.e(TAG, "JSON Exception");
 		}
 	}
 
@@ -300,9 +299,7 @@ public class QuakeUpdateService extends IntentService {
 	 * Purge all earthquakes stored in content provider.
 	 */
 	private void purgeQuakes() {
-		ContentResolver resolver = getContentResolver();
-
-		resolver.delete(QuakeProvider.CONTENT_URI, null, null);
+		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
 	}
 
 	/**
