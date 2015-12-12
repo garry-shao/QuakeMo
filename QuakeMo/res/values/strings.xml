@@ -7,15 +7,14 @@
     <string name="menu_search">Search</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_refresh">Refresh</string>
-    <string name="widget_name_single">QuakeMo Single</string>
-    <string name="widget_name_list">QuakeMo List</string>
-    <string name="widget_empty">No Earthquakes!</string>
+    <string name="widget_name">QuakeMo</string>
+    <string name="widget_empty"></string>
     <string name="dialog_details_title">Earthquake Details</string>
     <string name="dialog_details_positive">Map</string>
     <string name="dialog_positive_button">Confirm</string>
     <string name="dialog_negative_button">Cancel</string>
     <string name="notification_ticker">Earthquake!</string>
-    <string name="search_description">Searth earthquake locations</string>
+    <string name="search_description">Searth earthquakes</string>
     
     <!-- Strings used only in snackbar -->
     <string name="snackbar_updating">Updating\u2026</string>

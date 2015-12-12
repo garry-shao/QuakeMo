@@ -99,11 +99,7 @@ implements OnSharedPreferenceChangeListener, Receiver, PositiveClickListener {
 					PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 			
 			PackageManager manager = getPackageManager();
-			manager.setComponentEnabledSetting(
-					new ComponentName(this, QuakeWidgetSingleton.class), 
-					newState, PackageManager.DONT_KILL_APP);
-			manager.setComponentEnabledSetting(
-					new ComponentName(this, QuakeWidgetList.class), 
+			manager.setComponentEnabledSetting(new ComponentName(this, QuakeWidget.class), 
 					newState, PackageManager.DONT_KILL_APP);
 		}
 	}

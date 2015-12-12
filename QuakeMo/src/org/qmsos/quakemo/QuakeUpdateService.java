@@ -23,8 +23,6 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -129,8 +127,6 @@ public class QuakeUpdateService extends IntentService {
 
 			sendBroadcast(new Intent(PURGE_DATABASE));
 		}
-
-		notifyWidget();
 	}
 
 	/**
@@ -350,18 +346,6 @@ public class QuakeUpdateService extends IntentService {
 					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.notify(NOTIFICATION_ID, builder.build());
 		}
-	}
-
-	/**
-	 * Notify widget of data changed.
-	 */
-	private void notifyWidget() {
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-
-		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
-				new ComponentName(getApplicationContext(), QuakeWidgetList.class));
-		
-		appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_full);
 	}
 
 }

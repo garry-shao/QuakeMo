@@ -16,7 +16,7 @@ import android.widget.RemoteViews;
  * Widget of this application show a single earthquake.
  *
  */
-public class QuakeWidgetSingleton extends AppWidgetProvider {
+public class QuakeWidget extends AppWidgetProvider {
 
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -25,9 +25,9 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 		Intent intent = new Intent(context, MainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_singleton);
-		views.setOnClickPendingIntent(R.id.widget_singleton_magnitude, pendingIntent);
-		views.setOnClickPendingIntent(R.id.widget_singleton_details, pendingIntent);
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_quake);
+		views.setOnClickPendingIntent(R.id.widget_magnitude, pendingIntent);
+		views.setOnClickPendingIntent(R.id.widget_details, pendingIntent);
 
 		appWidgetManager.updateAppWidget(appWidgetIds, views);
 
@@ -67,8 +67,8 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 		Cursor lastEarthquake = 
 				context.getContentResolver().query(QuakeProvider.CONTENT_URI, null, where, null, null);
 
-		String magnitude = "M --";
-		String details = "-- None --";
+		String magnitude = "--";
+		String details = context.getString(R.string.widget_empty);
 
 		if (lastEarthquake != null) {
 			try {
@@ -76,7 +76,7 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 					int magnitudeIndex = lastEarthquake.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE);
 					int detailsIndex = lastEarthquake.getColumnIndexOrThrow(QuakeProvider.KEY_DETAILS);
 
-					magnitude = "M " + lastEarthquake.getString(magnitudeIndex);
+					magnitude = lastEarthquake.getString(magnitudeIndex);
 					details = lastEarthquake.getString(detailsIndex);
 				}
 			} finally {
@@ -85,9 +85,9 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 		}
 
 		for (int i = 0; i < appWidgetIds.length; i++) {
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_singleton);
-			views.setTextViewText(R.id.widget_singleton_magnitude, magnitude);
-			views.setTextViewText(R.id.widget_singleton_details, details);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_quake);
+			views.setTextViewText(R.id.widget_magnitude, "M " + magnitude);
+			views.setTextViewText(R.id.widget_details, details);
 
 			appWidgetManager.updateAppWidget(appWidgetIds[i], views);
 		}
@@ -103,7 +103,7 @@ public class QuakeWidgetSingleton extends AppWidgetProvider {
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		
 		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
-				new ComponentName(context, QuakeWidgetSingleton.class));
+				new ComponentName(context, QuakeWidget.class));
 
 		updateEarthquake(context, appWidgetManager, appWidgetIds);
 	}

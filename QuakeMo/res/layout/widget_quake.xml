@@ -6,7 +6,7 @@
     android:padding="5dp" >
 
     <TextView
-        android:id="@+id/widget_singleton_magnitude"
+        android:id="@+id/widget_magnitude"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
@@ -14,9 +14,10 @@
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/widget_singleton_details"
-        android:layout_width="match_parent"
+        android:id="@+id/widget_details"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:padding="3dp"
         android:textSize="14sp" />

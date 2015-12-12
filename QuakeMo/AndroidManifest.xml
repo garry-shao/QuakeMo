@@ -66,10 +66,6 @@
             android:name=".QuakeUpdateService"
             android:enabled="true" >
         </service>
-        <service
-            android:name=".QuakeViewsService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" >
-        </service>
 
         <receiver
             android:name=".QuakeAlarmReceiver"
@@ -79,9 +75,9 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".QuakeWidgetSingleton"
+            android:name=".QuakeWidget"
             android:enabled="true"
-            android:label="@string/widget_name_single" >
+            android:label="@string/widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -94,19 +90,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_singleton_info" />
-        </receiver>
-        <receiver
-            android:name=".QuakeWidgetList"
-            android:enabled="true"
-            android:label="@string/widget_name_list" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_list_info" />
+                android:resource="@xml/widget_info" />
         </receiver>
     </application>
 
