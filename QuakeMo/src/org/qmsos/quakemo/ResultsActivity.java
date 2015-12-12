@@ -14,12 +14,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 /**
- * 
  * The activity show search results.
+ *
  *
  */
 public class ResultsActivity extends AppCompatActivity implements ShowMapListener {
-	
+
+	/**
+	 * Key used to pass query string in bundle.
+	 */
+	public static final String KEY_QUERY = "KEY_QUERY";
+
 	/**
 	 * TAG used to track fragment of search results.
 	 */
@@ -86,20 +91,20 @@ public class ResultsActivity extends AppCompatActivity implements ShowMapListene
 	 *            The intent to parse.
 	 */
 	private void parseIntent(Intent intent) {
-		QuakeSearchFragment search = new QuakeSearchFragment();
+		QuakeSearchFragment searchFragment = new QuakeSearchFragment();
 		
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			String searchQuery = intent.getStringExtra(SearchManager.QUERY);
+			String query = intent.getStringExtra(SearchManager.QUERY);
 
 			Bundle args = new Bundle();
-			args.putString(QuakeSearchFragment.KEY_QUERY_EXTRA, searchQuery);
+			args.putString(KEY_QUERY, query);
 
-			search.setArguments(args);
+			searchFragment.setArguments(args);
 		}
 
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction transaction = manager.beginTransaction();
-		transaction.replace(R.id.layout_fragment_container, search, TAG_LIST);
+		transaction.replace(R.id.layout_fragment_container, searchFragment, TAG_LIST);
 		transaction.commit();
 	}
 

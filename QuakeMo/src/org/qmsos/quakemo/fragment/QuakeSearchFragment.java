@@ -3,6 +3,7 @@ package org.qmsos.quakemo.fragment;
 import java.util.Date;
 
 import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.ResultsActivity;
 import org.qmsos.quakemo.data.Earthquake;
 
 import android.content.ContentUris;
@@ -18,12 +19,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+/**
+ * Search and display earthquakes stored in content provider.
+ * 
+ *
+ */
 public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks<Cursor> {
-
-	/**
-	 * Key used to get query string from incoming intent.
-	 */
-	public static final String KEY_QUERY_EXTRA = "KEY_QUERY_EXTRA";
 
 	private SimpleCursorAdapter adapter;
 
@@ -67,11 +68,10 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 		String query = "0";
 
 		if (args != null) {
-			query = args.getString(KEY_QUERY_EXTRA);
+			query = args.getString(ResultsActivity.KEY_QUERY);
 		}
 
 		String[] projection = { QuakeProvider.KEY_ID, QuakeProvider.KEY_SUMMARY };
-
 		String where = QuakeProvider.KEY_SUMMARY + " LIKE \"%" + query + "%\"";
 		String sortOrder = QuakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
 
