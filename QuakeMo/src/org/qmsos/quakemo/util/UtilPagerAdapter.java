@@ -2,6 +2,9 @@ package org.qmsos.quakemo.util;
 
 import java.util.List;
 
+import org.qmsos.quakemo.R;
+
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -14,11 +17,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 public class UtilPagerAdapter extends FragmentPagerAdapter {
 	
 	private List<Fragment> fragmentList;
+	private Context context;
 
-	public UtilPagerAdapter(FragmentManager fm, List<Fragment> fragmentList) {
+	public UtilPagerAdapter(FragmentManager fm, List<Fragment> fragmentList, Context context) {
 		super(fm);
 		
 		this.fragmentList = fragmentList;
+		this.context = context;
 	}
 
 	@Override
@@ -35,11 +40,11 @@ public class UtilPagerAdapter extends FragmentPagerAdapter {
 	public CharSequence getPageTitle(int position) {
 		switch (position) {
 		case 0:
-			return "LIST";
+			return context.getString(R.string.tab_list);
 		case 1:
-			return "MAP";
+			return context.getString(R.string.tab_map);
 		default:
-			return "NULL";
+			return context.getString(R.string.tab_null);
 		}
 	}
 	

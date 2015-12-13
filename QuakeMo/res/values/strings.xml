@@ -7,6 +7,11 @@
     <string name="activity_name_pref">Preferences</string>
     <string name="activity_name_results">Results</string>
     
+    <!-- Strings used in tab title -->
+    <string name="tab_list">List</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_null">Null</string>
+    
     <!-- Strings used in on click menu -->
     <string name="menu_search">Search</string>
     <string name="menu_preferences">Preferences</string>

@@ -77,7 +77,7 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList));
+		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList, this));
 		
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
