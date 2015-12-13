@@ -13,8 +13,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 /**
- * 
  * Show a dialog of specific earthquake's details.
+ *
  *
  */
 public class QuakeDetailsDialog extends DialogFragment {

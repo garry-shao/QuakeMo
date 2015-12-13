@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.qmsos.quakemo.fragment.QuakeListFragment;
 import org.qmsos.quakemo.fragment.QuakeMapFragment;
+import org.qmsos.quakemo.fragment.QuakePurgeDialog;
+import org.qmsos.quakemo.fragment.QuakePurgeDialog.ShowSnackbarListener;
 import org.qmsos.quakemo.util.UtilPagerAdapter;
 import org.qmsos.quakemo.util.UtilResultReceiver;
 import org.qmsos.quakemo.util.UtilResultReceiver.Receiver;
@@ -21,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.Snackbar.Callback;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -38,7 +41,7 @@ import android.view.View;
  *
  */
 public class MainActivity extends AppCompatActivity 
-implements OnSharedPreferenceChangeListener, Receiver {
+implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
 
 	private static final String KEY_RECEIVER = "KEY_RECEIVER";
 	
@@ -149,6 +152,11 @@ implements OnSharedPreferenceChangeListener, Receiver {
 			startActivity(i);
 		
 			return true;
+		case (R.id.menu_purge):
+			QuakePurgeDialog dialog = new QuakePurgeDialog();
+			dialog.show(getSupportFragmentManager(), "dialog");
+		
+			return true;
 		case (R.id.menu_refresh):
 			i = new Intent(this, QuakeUpdateService.class);
 			i.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
@@ -191,8 +199,51 @@ implements OnSharedPreferenceChangeListener, Receiver {
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		View coordinatorLayout = findViewById(R.id.coordinator_layout);
 		if (coordinatorLayout != null) {
-			Snackbar.make(coordinatorLayout, R.string.snackbar_updated, Snackbar.LENGTH_SHORT).show();
+			switch (resultCode) {
+			case QuakeUpdateService.RESULT_CODE_REFRESHED:
+				Snackbar.make(coordinatorLayout, R.string.snackbar_updated, Snackbar.LENGTH_SHORT).show();
+				break;
+			case QuakeUpdateService.RESULT_CODE_PURGED:				
+				Snackbar.make(coordinatorLayout, R.string.snackbar_purged, Snackbar.LENGTH_SHORT).show();
+				break;
+			case QuakeUpdateService.RESULT_CODE_CANCELED:				
+				Snackbar.make(coordinatorLayout, R.string.snackbar_canceled, Snackbar.LENGTH_SHORT).show();
+				break;
+			}
 		}
 	}
+
+	@Override
+	public void onShowSnackbar() {
+		final Intent intent = new Intent(this, QuakeUpdateService.class);
+		intent.setAction(QuakeUpdateService.ACTION_PURGE_DATABASE);
+		intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
+
+		View coordinatorLayout = findViewById(R.id.coordinator_layout);
+		if (coordinatorLayout != null) {
+			Snackbar snackbar = Snackbar.make(
+					coordinatorLayout, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
+			snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN, 
+							QuakeUpdateService.EXTRA_PURGE_BURNDOWN_NO);
+				}
+			});
+			snackbar.setCallback(new Callback() {
+
+				@Override
+				public void onDismissed(Snackbar snackbar, int event) {
+					if (event != Callback.DISMISS_EVENT_ACTION) {
+						intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN, 
+								QuakeUpdateService.EXTRA_PURGE_BURNDOWN_YES);
+					}
+					startService(intent);
+				}
+			});
+			snackbar.show();
+		}
+	}	
 
 }

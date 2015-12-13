@@ -65,6 +65,16 @@ public class QuakeUpdateService extends IntentService {
 	 */
 	public static final String ACTION_PURGE_DATABASE = "org.qmsos.quakemo.ACTION_PURGE_DATABASE";
 
+	// Used in undo purge database feature.
+	public static final String EXTRA_PURGE_BURNDOWN = "org.qmsos.quakemo.EXTRA_PURGE_BURNDOWN";
+	public static final String EXTRA_PURGE_BURNDOWN_YES = "YES";
+	public static final String EXTRA_PURGE_BURNDOWN_NO = "NO";
+	
+	// Result code passed in ResultReceiver.
+	public static final int RESULT_CODE_REFRESHED = 1;
+	public static final int RESULT_CODE_PURGED = 2;
+	public static final int RESULT_CODE_CANCELED = 3;
+	
 	/**
 	 * Class name tag. Debug use only.
 	 */
@@ -114,16 +124,25 @@ public class QuakeUpdateService extends IntentService {
 				}
 			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
 				queryQuakes();
+
+				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
+				if (receiver != null) {
+					receiver.send(RESULT_CODE_REFRESHED, new Bundle());
+				}
 			} else if (action.equals(ACTION_PURGE_DATABASE)) {
-				purgeQuakes();
+				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
+				if (receiver != null) {
+					String burndown = intent.getStringExtra(EXTRA_PURGE_BURNDOWN); 
+					if (burndown.equals(EXTRA_PURGE_BURNDOWN_NO)) {
+						receiver.send(RESULT_CODE_CANCELED, new Bundle());
+					} else {
+						purgeQuakes();
+						
+						receiver.send(RESULT_CODE_PURGED, new Bundle());
+					}
+				}
 			}
 			
-			// Send results to caller.
-			ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
-			if (receiver != null) {
-				receiver.send(0, new Bundle());
-			}
-
 			sendBroadcast(new Intent(ACTION_REFRESH_WIDGET));
 		}
 	}
