@@ -34,8 +34,8 @@
     <string name="notification_ticker">Earthquake!</string>
     
     <!-- Strings used only in snackbar -->
-    <string name="snackbar_updating">Updating\u2026</string>
-    <string name="snackbar_updated">Updated</string>
+    <string name="snackbar_refreshing">Refreshing\u2026</string>
+    <string name="snackbar_refreshed">Refreshed</string>
     <string name="snackbar_purging">Purging\u2026</string>
     <string name="snackbar_purged">Purged</string>
     <string name="snackbar_undo">Undo</string>

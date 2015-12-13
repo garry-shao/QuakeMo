@@ -197,19 +197,24 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
 
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
+		String result;
+		switch (resultCode) {
+		case QuakeUpdateService.RESULT_CODE_REFRESHED:
+			result = getString(R.string.snackbar_refreshed);
+			break;
+		case QuakeUpdateService.RESULT_CODE_PURGED:
+			result = getString(R.string.snackbar_purged);
+			break;
+		case QuakeUpdateService.RESULT_CODE_CANCELED:
+			result = getString(R.string.snackbar_canceled);
+			break;
+		default:
+			result = null;
+		}
+		
 		View coordinatorLayout = findViewById(R.id.coordinator_layout);
-		if (coordinatorLayout != null) {
-			switch (resultCode) {
-			case QuakeUpdateService.RESULT_CODE_REFRESHED:
-				Snackbar.make(coordinatorLayout, R.string.snackbar_updated, Snackbar.LENGTH_SHORT).show();
-				break;
-			case QuakeUpdateService.RESULT_CODE_PURGED:				
-				Snackbar.make(coordinatorLayout, R.string.snackbar_purged, Snackbar.LENGTH_SHORT).show();
-				break;
-			case QuakeUpdateService.RESULT_CODE_CANCELED:				
-				Snackbar.make(coordinatorLayout, R.string.snackbar_canceled, Snackbar.LENGTH_SHORT).show();
-				break;
-			}
+		if (coordinatorLayout != null && result != null) {
+			Snackbar.make(coordinatorLayout, result, Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
