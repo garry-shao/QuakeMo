@@ -10,10 +10,12 @@ import org.qmsos.quakemo.util.UtilResultReceiver;
 import org.qmsos.quakemo.util.UtilResultReceiver.Receiver;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -170,6 +172,18 @@ implements OnSharedPreferenceChangeListener, Receiver {
 			if (quakeMap.isAdded()) {
 				quakeMap.getLoaderManager().restartLoader(0, null, quakeMap);
 			}
+		}
+		
+		if (key.equals(getString(R.string.PREF_WIDGET))) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+			int newState = prefs.getBoolean(key, false) ? 
+					PackageManager.COMPONENT_ENABLED_STATE_ENABLED :  
+					PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+			
+			PackageManager manager = getPackageManager();
+			manager.setComponentEnabledSetting(new ComponentName(this, QuakeWidget.class), 
+					newState, PackageManager.DONT_KILL_APP);
 		}
 	}
 
