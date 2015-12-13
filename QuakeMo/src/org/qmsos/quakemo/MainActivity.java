@@ -175,9 +175,9 @@ implements OnSharedPreferenceChangeListener, Receiver {
 
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
-		View linearLayout = findViewById(R.id.linear_layout);
-		if (linearLayout != null) {
-			Snackbar.make(linearLayout, R.string.snackbar_updated, Snackbar.LENGTH_SHORT).show();
+		View coordinatorLayout = findViewById(R.id.coordinator_layout);
+		if (coordinatorLayout != null) {
+			Snackbar.make(coordinatorLayout, R.string.snackbar_updated, Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
