@@ -86,10 +86,8 @@ public class QuakeDetailsDialog extends DialogFragment {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					dismiss();
-					
-					//Pass location info to the containing activity.
 					Location location = getArguments().getParcelable(KEY_LOCATION);
+					
 					((ShowMapListener) getActivity()).onShowMap(location);
 				}
 			});
