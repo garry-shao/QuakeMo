@@ -12,7 +12,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -27,8 +26,7 @@ public class DetailsDialogFragment extends DialogFragment {
 	/**
 	 * Follow keys are things need to be saved on configuration change.
 	 */
-	private static final String KEY_DETAILS = "KEY_DETAILS";
-	private static final String KEY_LOCATION = "KEY_LOCATION";
+	private static final String KEY_EARTHQUAKE = "KEY_EARTHQUAKE";
 	private static final String KEY_ADDMAP = "KEY_ADDMAP";
 
 	/**
@@ -41,7 +39,7 @@ public class DetailsDialogFragment extends DialogFragment {
 	 *
 	 */
 	public interface ShowMapListener {
-		void onShowMap(Location location);
+		void onShowMap(Earthquake earthquake);
 	}
 
 	/**
@@ -49,25 +47,14 @@ public class DetailsDialogFragment extends DialogFragment {
 	 * 
 	 * @param context
 	 *            The context that this dialog within.
-	 * @param quake
+	 * @param earthquake
 	 *            The particular earthquake to show.
 	 * @return The new formed details dialog.
 	 */
-	public static DetailsDialogFragment newInstance(Context context, Earthquake quake) {
-		DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
-		String dialogDetails = dataFormat.format(new Date(quake.getTime())) + 
-				"\n\n" + "Magnitude: " + quake.getMagnitude() + 
-				"\n\n" + "Depth: " + quake.getDepth() + " km" + 
-				"\n\n" + quake.getDetails() + 
-				"\n\n" + quake.getLink();
-		
-		Location location = new Location("TEST");
-		location.setLongitude(quake.getLongitude());
-		location.setLatitude(quake.getLatitude());
-		
+	public static DetailsDialogFragment newInstance(Context context, Earthquake earthquake) {
 		Bundle args = new Bundle();
-		args.putString(KEY_DETAILS, dialogDetails);
-		args.putParcelable(KEY_LOCATION, location);
+		
+		args.putParcelable(KEY_EARTHQUAKE, earthquake);
 		
 		DetailsDialogFragment fragment = new DetailsDialogFragment();
 		fragment.setArguments(args);
@@ -93,7 +80,14 @@ public class DetailsDialogFragment extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		String details = getArguments().getString(KEY_DETAILS);
+		final Earthquake earthquake = getArguments().getParcelable(KEY_EARTHQUAKE);
+
+		DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
+		String details = dataFormat.format(new Date(earthquake.getTime())) + 
+				"\n\n" + "Magnitude: " + earthquake.getMagnitude() + 
+				"\n\n" + "Depth: " + earthquake.getDepth() + " km" + 
+				"\n\n" + earthquake.getDetails() + 
+				"\n\n" + earthquake.getLink();
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setTitle(R.string.dialog_details_title).setMessage(details);
@@ -102,9 +96,7 @@ public class DetailsDialogFragment extends DialogFragment {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Location location = getArguments().getParcelable(KEY_LOCATION);
-					
-					((ShowMapListener) getActivity()).onShowMap(location);
+					((ShowMapListener) getActivity()).onShowMap(earthquake);
 				}
 			});
 		}

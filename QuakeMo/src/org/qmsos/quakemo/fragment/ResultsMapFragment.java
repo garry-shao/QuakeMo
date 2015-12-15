@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.qmsos.quakemo.data.Earthquake;
 import org.qmsos.quakemo.util.UtilQuakeOverlay;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,17 +21,23 @@ import android.view.ViewGroup;
  */
 public class ResultsMapFragment extends Fragment {
 
-	private static final String KEY_GEOPOINT = "KEY_GEOPOINT";
 	private static final String KEY_CENTER = "KEY_CENTER";
+	private static final String KEY_EARTHQUAKE = "KEY_EARTHQUAKE";
 	private static final String KEY_ZOOMLEVEL = "KEY_ZOOMLEVEL";
 
 	private UtilQuakeOverlay quakeOverlay;
 	private MapView mapView;
 
-	/**
-	 * The ONLY GeoPoint to display.
-	 */
-	private GeoPoint geoPoint;
+	private Earthquake earthquake;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+	
+		if (savedInstanceState != null) {
+			earthquake = savedInstanceState.getParcelable(KEY_EARTHQUAKE);
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +46,19 @@ public class ResultsMapFragment extends Fragment {
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
 
+		quakeOverlay = new UtilQuakeOverlay(getContext());
+
+		if (earthquake != null) {
+			GeoPoint geoPoint = new GeoPoint(earthquake.getLatitude(), earthquake.getLongitude());
+			List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
+			geoPoints.add(geoPoint);
+			quakeOverlay.setGeoPoints(geoPoints);
+
+			mapView.getController().setCenter(geoPoint);
+		}
+		
+		mapView.getOverlays().add(quakeOverlay);
+		
 		if (savedInstanceState != null) {
 			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
 			if (center != null) {
@@ -51,83 +70,27 @@ public class ResultsMapFragment extends Fragment {
 				mapView.getController().setZoom(i);
 			}
 		} else {
-			mapView.getController().setCenter(geoPoint);
 			mapView.getController().setZoom(3);
 		}
-
-		quakeOverlay = new UtilQuakeOverlay(getContext());
-		if (geoPoint != null) {
-			List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
-			geoPoints.add(geoPoint);
-			quakeOverlay.setGeoPoints(geoPoints);
-		}
-		mapView.getOverlays().add(quakeOverlay);
 
 		return mapView;
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		if (savedInstanceState != null) {
-			geoPoint = savedInstanceState.getParcelable(KEY_GEOPOINT);
-		}
-	}
-
-	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putParcelable(KEY_CENTER, (GeoPoint) mapView.getMapCenter());
-		outState.putParcelable(KEY_GEOPOINT, geoPoint);
+		outState.putParcelable(KEY_EARTHQUAKE, earthquake);
 		outState.putInt(KEY_ZOOMLEVEL, mapView.getZoomLevel());
 
 		super.onSaveInstanceState(outState);
 	}
 
-	// =====================================================
-	// middle layer, transform here
-	// =====================================================
-	
-	public Location getLocation() {
-		return geoPointToLocation(geoPoint);
+	public Earthquake getEarthquake() {
+		return earthquake;
 	}
 
-	public void setLocation(Location location) {
-		this.geoPoint = locationToGeoPoint(location);
+	public void setEarthquake(Earthquake earthquake) {
+		this.earthquake = earthquake;
 	}
 
-	/**
-	 * Convert Location to GeoPoint.
-	 * 
-	 * @param location
-	 *            The Location instance to convert.
-	 * @return The converted GeoPoint instance or NULL when the Location isn't
-	 *         valid.
-	 */
-	private GeoPoint locationToGeoPoint(Location location) {
-		if (location != null) {
-			return new GeoPoint(location.getLatitude(), location.getLongitude());
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Convert GeoPoint to Location.
-	 * 
-	 * @param geoPoint
-	 *            The GeoPoint instance to convert.
-	 * @return The converted Location instance or NULL when the GeoPoint isn't
-	 *         valid.
-	 */
-	private Location geoPointToLocation(GeoPoint geoPoint) {
-		if (geoPoint != null) {
-			Location location = new Location("GPS");
-			location.setLatitude(geoPoint.getLatitude());
-			location.setLongitude(geoPoint.getLongitude());
-			return location;
-		} else {
-			return null;
-		}
-	}
 }

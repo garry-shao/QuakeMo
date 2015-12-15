@@ -5,12 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Description of an earthquake instance.
  *
  *
  */
-public class Earthquake {
+public class Earthquake implements Parcelable {
 
 	// Basic info of earthquake.
 	private final long time;
@@ -92,6 +95,45 @@ public class Earthquake {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
 
 		return dateFormat.format(new Date(time)) + " - " + "M " + magnitude + " - " + details;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int flags) {
+		parcel.writeLong(time);
+		parcel.writeDouble(magnitude);
+		parcel.writeDouble(longitude);
+		parcel.writeDouble(latitude);
+		parcel.writeDouble(depth);
+		parcel.writeString(details);
+		parcel.writeString(link);
+	}
+
+	public static final Parcelable.Creator<Earthquake> CREATOR = new Parcelable.Creator<Earthquake>() {
+
+		@Override
+		public Earthquake createFromParcel(Parcel source) {
+			return new Earthquake(source);
+		}
+
+		@Override
+		public Earthquake[] newArray(int size) {
+			return new Earthquake[size];
+		}
+	};
+
+	private Earthquake(Parcel parcel) {
+		time = parcel.readLong();
+		magnitude = parcel.readDouble();
+		longitude = parcel.readDouble();
+		latitude = parcel.readDouble();
+		depth = parcel.readDouble();
+		details = parcel.readString();
+		link = parcel.readString();
 	}
 
 }

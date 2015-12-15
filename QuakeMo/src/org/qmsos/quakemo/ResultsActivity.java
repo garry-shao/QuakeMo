@@ -1,12 +1,12 @@
 package org.qmsos.quakemo;
 
+import org.qmsos.quakemo.data.Earthquake;
+import org.qmsos.quakemo.fragment.DetailsDialogFragment.ShowMapListener;
 import org.qmsos.quakemo.fragment.ResultsListFragment;
 import org.qmsos.quakemo.fragment.ResultsMapFragment;
-import org.qmsos.quakemo.fragment.DetailsDialogFragment.ShowMapListener;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -71,10 +71,10 @@ public class ResultsActivity extends AppCompatActivity implements ShowMapListene
 	}
 
 	@Override
-	public void onShowMap(Location location) {
+	public void onShowMap(Earthquake earthquake) {
 		ResultsMapFragment map = new ResultsMapFragment();
-		if (location != null) {
-			map.setLocation(location);
+		if (earthquake != null) {
+			map.setEarthquake(earthquake);
 		}
 		
 		FragmentManager manager = getSupportFragmentManager();
