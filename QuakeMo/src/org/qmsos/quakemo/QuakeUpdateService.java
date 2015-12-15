@@ -118,12 +118,12 @@ public class QuakeUpdateService extends IntentService {
 				if (autoToggle) {
 					setupAutoUpdate(autoFrequency);
 
-					queryQuakes();
+					refreshQuakes();
 				} else {
 					cancelAutoUpdate();
 				}
 			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
-				queryQuakes();
+				refreshQuakes();
 
 				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
 				if (receiver != null) {
@@ -181,12 +181,19 @@ public class QuakeUpdateService extends IntentService {
 	/**
 	 * Query source for new earthquakes.
 	 */
-	private void queryQuakes() {
+	private void refreshQuakes() {
 		String request = assembleRequest();
 		String result = executeQuery(request);
 		if (result != null) {
 			parseResult(result);
 		}
+	}
+
+	/**
+	 * Purge all earthquakes stored in content provider.
+	 */
+	private void purgeQuakes() {
+		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
 	}
 
 	/**
@@ -278,7 +285,9 @@ public class QuakeUpdateService extends IntentService {
 				location.setLatitude(latitude);
 
 				Earthquake earthquake = new Earthquake(date, place, location, magnitude, url);
-				addQuake(earthquake);
+				if (addQuake(earthquake)) {
+					notifyQuake(earthquake);
+				}
 			}
 		} catch (JSONException e) {
 			Log.e(TAG, "JSON Exception");
@@ -291,7 +300,16 @@ public class QuakeUpdateService extends IntentService {
 	 * @param earthquake
 	 *            the instance to add.
 	 */
-	private void addQuake(Earthquake earthquake) {
+	/**
+	 * Add new earthquake instance to the earthquake content provider.
+	 * 
+	 * @param earthquake
+	 *            the instance to add.
+	 * @return TRUE if earthquake successfully added, FALSE otherwise.
+	 */
+	private boolean addQuake(Earthquake earthquake) {
+		boolean result = false;
+		
 		ContentResolver resolver = getContentResolver();
 
 		String where = QuakeProvider.KEY_DATE + " = " + earthquake.getDate().getTime();
@@ -309,16 +327,11 @@ public class QuakeUpdateService extends IntentService {
 
 			resolver.insert(QuakeProvider.CONTENT_URI, values);
 
-			notifyQuake(earthquake);
+			result = true;
 		}
 		query.close();
-	}
-
-	/**
-	 * Purge all earthquakes stored in content provider.
-	 */
-	private void purgeQuakes() {
-		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
+		
+		return result;
 	}
 
 	/**
@@ -332,32 +345,32 @@ public class QuakeUpdateService extends IntentService {
 		builder.setAutoCancel(true)
 				.setTicker(getString(R.string.notification_ticker))
 				.setSmallIcon(R.drawable.ic_notification);
-
+	
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean notifyToggle = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
 		if (notifyToggle) {
 			PendingIntent launchIntent = 
 					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-
+	
 			builder.setContentIntent(launchIntent)
 					.setWhen(earthquake.getDate().getTime())
 					.setContentTitle("M " + earthquake.getMagnitude())
 					.setContentText(earthquake.getDetails());
-
+	
 			boolean notifyVibrate = prefs.getBoolean(getString(R.string.PREF_NOTIFY_VIBRATE), false);
 			if (notifyVibrate) {
 				double vibrateLength = 100 * Math.exp(0.53 * earthquake.getMagnitude());
-
+	
 				builder.setVibrate(new long[] { 100, 100, (long) vibrateLength });
 			}
-
+	
 			boolean notifySound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
 			if (notifySound) {
 				Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
+	
 				builder.setSound(ringURI);
 			}
-
+	
 			NotificationManager notificationManager = 
 					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.notify(NOTIFICATION_ID, builder.build());
