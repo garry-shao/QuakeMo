@@ -15,7 +15,7 @@ import android.support.v7.app.AlertDialog;
  * 
  *
  */
-public class QuakePurgeDialog extends DialogFragment {
+public class PurgeDialogFragment extends DialogFragment {
 
 	public interface ShowSnackbarListener {
 		void onShowSnackbar();

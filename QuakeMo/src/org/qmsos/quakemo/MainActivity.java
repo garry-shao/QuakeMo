@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.qmsos.quakemo.fragment.QuakeListFragment;
 import org.qmsos.quakemo.fragment.QuakeMapFragment;
-import org.qmsos.quakemo.fragment.QuakePurgeDialog;
-import org.qmsos.quakemo.fragment.QuakePurgeDialog.ShowSnackbarListener;
+import org.qmsos.quakemo.fragment.PurgeDialogFragment;
+import org.qmsos.quakemo.fragment.PurgeDialogFragment.ShowSnackbarListener;
 import org.qmsos.quakemo.util.UtilPagerAdapter;
 import org.qmsos.quakemo.util.UtilResultReceiver;
 import org.qmsos.quakemo.util.UtilResultReceiver.Receiver;
@@ -153,7 +153,7 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
 		
 			return true;
 		case (R.id.menu_purge):
-			QuakePurgeDialog dialog = new QuakePurgeDialog();
+			PurgeDialogFragment dialog = new PurgeDialogFragment();
 			dialog.show(getSupportFragmentManager(), "dialog");
 		
 			return true;

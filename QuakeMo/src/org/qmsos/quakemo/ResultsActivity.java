@@ -2,7 +2,7 @@ package org.qmsos.quakemo;
 
 import org.qmsos.quakemo.fragment.ResultsListFragment;
 import org.qmsos.quakemo.fragment.ResultsMapFragment;
-import org.qmsos.quakemo.fragment.QuakeDetailsDialog.ShowMapListener;
+import org.qmsos.quakemo.fragment.DetailsDialogFragment.ShowMapListener;
 
 import android.app.SearchManager;
 import android.content.Intent;

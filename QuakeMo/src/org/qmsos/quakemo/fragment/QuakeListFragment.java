@@ -48,7 +48,7 @@ public class QuakeListFragment extends ListFragment implements LoaderCallbacks<C
 		result.close();
 		
 		if (earthquake != null) {
-			DialogFragment dialog = QuakeDetailsDialog.newInstance(getContext(), earthquake);
+			DialogFragment dialog = DetailsDialogFragment.newInstance(getContext(), earthquake);
 			dialog.show(getFragmentManager(), "dialog");
 		}
 	}

@@ -22,7 +22,7 @@ import android.support.v7.app.AlertDialog;
  *
  *
  */
-public class QuakeDetailsDialog extends DialogFragment {
+public class DetailsDialogFragment extends DialogFragment {
 
 	/**
 	 * Follow keys are things need to be saved on configuration change.
@@ -53,7 +53,7 @@ public class QuakeDetailsDialog extends DialogFragment {
 	 *            The particular earthquake to show.
 	 * @return The new formed details dialog.
 	 */
-	public static QuakeDetailsDialog newInstance(Context context, Earthquake quake) {
+	public static DetailsDialogFragment newInstance(Context context, Earthquake quake) {
 		DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
 		String dialogDetails = dataFormat.format(new Date(quake.getTime())) + 
 				"\n\n" + "Magnitude: " + quake.getMagnitude() + 
@@ -69,7 +69,7 @@ public class QuakeDetailsDialog extends DialogFragment {
 		args.putString(KEY_DETAILS, dialogDetails);
 		args.putParcelable(KEY_LOCATION, location);
 		
-		QuakeDetailsDialog fragment = new QuakeDetailsDialog();
+		DetailsDialogFragment fragment = new DetailsDialogFragment();
 		fragment.setArguments(args);
 
 		return fragment;
