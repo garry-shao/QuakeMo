@@ -158,6 +158,12 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
 		
 			return true;
 		case (R.id.menu_refresh):
+			View coordinatorLayout = findViewById(R.id.coordinator_layout);
+			if (coordinatorLayout != null) {
+				Snackbar.make(coordinatorLayout, 
+						getString(R.string.snackbar_refreshing), Snackbar.LENGTH_INDEFINITE).show();
+			}
+			
 			i = new Intent(this, QuakeUpdateService.class);
 			i.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
 			i.putExtra(UtilResultReceiver.RECEIVER, receiver);
