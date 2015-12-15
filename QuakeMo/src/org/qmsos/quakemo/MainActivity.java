@@ -200,7 +200,8 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
 		String result;
 		switch (resultCode) {
 		case QuakeUpdateService.RESULT_CODE_REFRESHED:
-			result = getString(R.string.snackbar_refreshed);
+			result = resultData.getInt(QuakeUpdateService.BUNDLE_KEY_COUNT) + 
+					" " + getString(R.string.snackbar_refreshed);
 			break;
 		case QuakeUpdateService.RESULT_CODE_PURGED:
 			result = getString(R.string.snackbar_purged);

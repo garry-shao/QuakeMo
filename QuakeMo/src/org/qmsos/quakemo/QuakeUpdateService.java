@@ -75,6 +75,9 @@ public class QuakeUpdateService extends IntentService {
 	public static final int RESULT_CODE_PURGED = 2;
 	public static final int RESULT_CODE_CANCELED = 3;
 	
+	// Bundle keys used in ResultReceiver.
+	public static final String BUNDLE_KEY_COUNT = "BUNDLE_KEY_COUNT";
+	
 	/**
 	 * Class name tag. Debug use only.
 	 */
@@ -123,11 +126,13 @@ public class QuakeUpdateService extends IntentService {
 					cancelAutoUpdate();
 				}
 			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
-				refreshQuakes();
+				int count = refreshQuakes();
 
 				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
 				if (receiver != null) {
-					receiver.send(RESULT_CODE_REFRESHED, new Bundle());
+					Bundle bundle = new Bundle();
+					bundle.putInt(BUNDLE_KEY_COUNT, count);
+					receiver.send(RESULT_CODE_REFRESHED, bundle);
 				}
 			} else if (action.equals(ACTION_PURGE_DATABASE)) {
 				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
@@ -180,13 +185,47 @@ public class QuakeUpdateService extends IntentService {
 
 	/**
 	 * Query source for new earthquakes.
+	 * 
+	 * @return How many entries added.
 	 */
-	private void refreshQuakes() {
-		String request = assembleRequest();
-		String result = executeQuery(request);
+	private int refreshQuakes() {
+		int count = 0;
+		
+		String query = formatQuery();
+		String result = executeQuery(query);
 		if (result != null) {
-			parseResult(result);
+			try {
+				JSONObject reader = new JSONObject(result);
+			
+				JSONArray features = reader.getJSONArray("features");
+				for (int i = 0; i < features.length(); i++) {
+					JSONObject feature = features.getJSONObject(i);
+			
+					JSONObject properties = feature.getJSONObject("properties");
+					double magnitude = properties.getDouble("mag");
+					String place = properties.getString("place");
+					Date date = new Date(properties.getLong("time"));
+					String url = properties.getString("url");
+			
+					JSONObject geometry = feature.getJSONObject("geometry");
+					JSONArray coordinates = geometry.getJSONArray("coordinates");
+					Location location = new Location("database");
+					location.setLongitude(coordinates.getDouble(0));
+					location.setLatitude(coordinates.getDouble(1));
+			
+					Earthquake earthquake = new Earthquake(date, place, location, magnitude, url);
+					if (addQuake(earthquake)) {
+						count++;
+						
+						notifyQuake(earthquake);
+					}
+				}
+			} catch (JSONException e) {
+				Log.e(TAG, "JSON Exception");
+			}
 		}
+		
+		return count;
 	}
 
 	/**
@@ -201,7 +240,7 @@ public class QuakeUpdateService extends IntentService {
 	 * 
 	 * @return The assembled string.
 	 */
-	private String assembleRequest() {
+	private String formatQuery() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -213,25 +252,25 @@ public class QuakeUpdateService extends IntentService {
 		
 		String minMagnitude = prefs.getString(getString(R.string.PREF_QUERY_MINIMUM), "3");
 
-		String request = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
+		String query = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
 				"&" + "starttime=" + startTime + 
 				"&" + "minmagnitude=" + minMagnitude;
 
-		return request;
+		return query;
 	}
 
 	/**
 	 * Query remote server for results.
 	 * 
-	 * @param request
+	 * @param query
 	 *            The query string.
 	 * @return Results of this query, NULL otherwise.
 	 */
-	private String executeQuery(String request) {
+	private String executeQuery(String query) {
 		StringBuilder builder = new StringBuilder();
 
 		try {
-			URL url = new URL(request);
+			URL url = new URL(query);
 			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 			int responseCode = httpConnection.getResponseCode();
 			if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -252,54 +291,6 @@ public class QuakeUpdateService extends IntentService {
 		return builder.toString();
 	}
 
-	/**
-	 * Parse the result JSON string for valid earthquakes.
-	 * 
-	 * @param result
-	 *            the result string as JSON.
-	 */
-	private void parseResult(String result) {
-		try {
-			JSONObject reader = new JSONObject(result);
-
-			JSONArray features = reader.getJSONArray("features");
-			for (int i = 0; i < features.length(); i++) {
-				JSONObject feature = features.getJSONObject(i);
-
-				JSONObject properties = feature.getJSONObject("properties");
-
-				double magnitude = properties.getDouble("mag");
-				String place = properties.getString("place");
-				long time = properties.getLong("time");
-				String url = properties.getString("url");
-
-				JSONObject geometry = feature.getJSONObject("geometry");
-				JSONArray coordinates = geometry.getJSONArray("coordinates");
-				double longitude = coordinates.getDouble(0);
-				double latitude = coordinates.getDouble(1);
-
-				Date date = new Date(time);
-
-				Location location = new Location("GPS");
-				location.setLongitude(longitude);
-				location.setLatitude(latitude);
-
-				Earthquake earthquake = new Earthquake(date, place, location, magnitude, url);
-				if (addQuake(earthquake)) {
-					notifyQuake(earthquake);
-				}
-			}
-		} catch (JSONException e) {
-			Log.e(TAG, "JSON Exception");
-		}
-	}
-
-	/**
-	 * Add new earthquake instance to the earthquake content provider.
-	 * 
-	 * @param earthquake
-	 *            the instance to add.
-	 */
 	/**
 	 * Add new earthquake instance to the earthquake content provider.
 	 * 
