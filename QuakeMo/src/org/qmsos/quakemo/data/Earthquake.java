@@ -5,125 +5,93 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import android.location.Location;
-
 /**
- * 
  * Description of an earthquake instance.
+ *
  *
  */
 public class Earthquake {
 
-	/**
-	 * Date of this earthquake.
-	 */
-	private Date date;
+	// Basic info of earthquake.
+	private final long time;
+	private final double magnitude;
+	private final double longitude;
+	private final double latitude;
+	private final double depth;
 
-	/**
-	 * Details description of this earthquake.
-	 */
+	// Details description of this earthquake.
 	private String details;
 
-	/**
-	 * The spot of this earthquake as Location.class.
-	 */
-	private Location location;
-
-	/**
-	 * The magnitude of this earthquake as "Ms".
-	 */
-	private Double magnitude;
-
-	/**
-	 * An URL link to usgs.gov about this earthquake.
-	 */
+	// An URL link to usgs.gov about this earthquake.
 	private String link;
 
 	/**
-	 * Construct an earthquake instance.
+	 * Data structure of an earthquake.
 	 * 
-	 * @param date
-	 *            date of this earthquake.
-	 * @param details
-	 *            details of this earthquake.
-	 * @param location
-	 *            location of this earthquake.
+	 * @param time
+	 *            Time when the event occurred, milliseconds since Jan. 1, 1970
+	 *            UTC.
 	 * @param magnitude
-	 *            magnitude of this earthquake.
-	 * @param link
-	 *            link to usgs.gov about this earthquake.
+	 *            The magnitude for the event.
+	 * @param longitude
+	 *            Decimal degrees longitude. Negative values for western
+	 *            longitudes.
+	 * @param latitude
+	 *            Decimal degrees latitude. Negative values for southern
+	 *            latitudes.
+	 * @param depth
+	 *            Depth of the event in kilometers.
 	 */
-	public Earthquake(Date date, String details, Location location, Double magnitude, String link) {
-		this.date = date;
-		this.details = details;
-		this.location = location;
+	public Earthquake(long time, double magnitude, double longitude, double latitude, double depth) {
+		this.time = time;
 		this.magnitude = magnitude;
-		this.link = link;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.depth = depth;
 	}
 
-	/**
-	 * Get the date of this earthquake.
-	 * 
-	 * @return date of this earthquake.
-	 */
-	public Date getDate() {
-		return date;
-	}
-
-	/**
-	 * Get details of this earthquake.
-	 * 
-	 * @return details of this earthquake.
-	 */
+	// Getters and Setters
 	public String getDetails() {
 		return details;
 	}
 
-	/**
-	 * Get location of this earthquake.
-	 * 
-	 * @return location of this earthquake.
-	 */
-	public Location getLocation() {
-		return location;
+	public void setDetails(String details) {
+		this.details = details;
 	}
 
-	/**
-	 * Get magnitude of this earthquake.
-	 * 
-	 * @return magnitude of this earthquake.
-	 */
-	public Double getMagnitude() {
-		return magnitude;
-	}
-
-	/**
-	 * Link to USGS about this earthquake.
-	 * 
-	 * @return link to this earthquake.
-	 */
 	public String getLink() {
 		return link;
 	}
 
-	/**
-	 * Get dialog-suitable details of this earthquake.
-	 * 
-	 * @return the dialog-suitable details string.
-	 */
-	public String getDialogDetails() {
-		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
-		String dateString = dateFormat.format(date);
+	public void setLink(String link) {
+		this.link = link;
+	}
 
-		return dateString + "\n\n" + "Magnitude: " + magnitude + "\n\n" + details + "\n\n" + link;
+	public long getTime() {
+		return time;
+	}
+
+	public double getMagnitude() {
+		return magnitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public double getDepth() {
+		return depth;
 	}
 
 	@Override
 	public String toString() {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
-		String dateString = dateFormat.format(date);
 
-		return dateString + " - " + "M " + magnitude + " - " + details;
+		return dateFormat.format(new Date(time)) + " - " + "M " + magnitude + " - " + details;
 	}
 
 }

@@ -22,8 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * 
  * Show earthquakes on map.
+ *
  *
  */
 public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
@@ -85,8 +85,8 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_LOCATION_LA,
-				QuakeProvider.KEY_LOCATION_LO };
+		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_LATITUDE,
+				QuakeProvider.KEY_LONGITUDE };
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), "3"));
@@ -124,13 +124,10 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 
 		if (cursor != null && cursor.moveToFirst()) {
 			do {
-				int LaIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LOCATION_LA);
-				int LoIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LOCATION_LO);
+				int LaIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LATITUDE);
+				int LoIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LONGITUDE);
 
-				Double la = (double) cursor.getFloat(LaIndex);
-				Double lo = (double) cursor.getFloat(LoIndex);
-
-				GeoPoint geoPoint = new GeoPoint(la, lo);
+				GeoPoint geoPoint = new GeoPoint(cursor.getDouble(LaIndex), cursor.getDouble(LoIndex));
 
 				geoPoints.add(geoPoint);
 			} while (cursor.moveToNext());

@@ -1,14 +1,11 @@
 package org.qmsos.quakemo.fragment;
 
-import java.util.Date;
-
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.ResultsActivity;
 import org.qmsos.quakemo.data.Earthquake;
 
 import android.content.ContentUris;
 import android.database.Cursor;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
@@ -24,7 +21,7 @@ import android.widget.SimpleCursorAdapter;
  * 
  *
  */
-public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks<Cursor> {
+public class ResultsListFragment extends ListFragment implements LoaderCallbacks<Cursor> {
 
 	private SimpleCursorAdapter adapter;
 
@@ -97,21 +94,18 @@ public class QuakeSearchFragment extends ListFragment implements LoaderCallbacks
 	 */
 	private Earthquake queryForQuake(Cursor cursor) {
 		if (cursor.moveToFirst()) {
-			Date date = new Date(cursor.getLong(cursor.getColumnIndex(QuakeProvider.KEY_DATE)));
+			long time = cursor.getLong(cursor.getColumnIndex(QuakeProvider.KEY_TIME));
+			double magnitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
+			double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LONGITUDE));
+			double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LATITUDE));
+			double depth = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_DEPTH));
 
 			String details = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_DETAILS));
-
-			double magnitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
-
 			String link = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_LINK));
 
-			double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LOCATION_LA));
-			double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LOCATION_LO));
-			Location location = new Location("database");
-			location.setLatitude(latitude);
-			location.setLongitude(longitude);
-
-			Earthquake quake = new Earthquake(date, details, location, magnitude, link);
+			Earthquake quake = new Earthquake(time, magnitude, longitude, latitude, depth);
+			quake.setDetails(details);
+			quake.setLink(link);
 
 			return quake;
 		} else {

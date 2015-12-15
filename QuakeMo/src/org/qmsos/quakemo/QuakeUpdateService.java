@@ -29,7 +29,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,8 +38,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
- * 
  * The service performing earthquake update.
+ *
  *
  */
 public class QuakeUpdateService extends IntentService {
@@ -204,17 +203,21 @@ public class QuakeUpdateService extends IntentService {
 					JSONObject properties = feature.getJSONObject("properties");
 					double magnitude = properties.getDouble("mag");
 					String place = properties.getString("place");
-					Date date = new Date(properties.getLong("time"));
+					long time = properties.getLong("time");
 					String url = properties.getString("url");
 			
 					JSONObject geometry = feature.getJSONObject("geometry");
 					JSONArray coordinates = geometry.getJSONArray("coordinates");
-					Location location = new Location("database");
-					location.setLongitude(coordinates.getDouble(0));
-					location.setLatitude(coordinates.getDouble(1));
+					double longitude = coordinates.getDouble(0);
+					double latitude = coordinates.getDouble(1);
+					double depth = coordinates.getDouble(2);
 			
-					Earthquake earthquake = new Earthquake(date, place, location, magnitude, url);
-					if (addQuake(earthquake)) {
+					Earthquake earthquake = new Earthquake(time, magnitude, longitude, latitude, depth);
+					earthquake.setDetails(place);
+					earthquake.setLink(url);
+					
+					boolean added = addQuake(earthquake);
+					if (added) {
 						count++;
 						
 						notifyQuake(earthquake);
@@ -303,19 +306,19 @@ public class QuakeUpdateService extends IntentService {
 		
 		ContentResolver resolver = getContentResolver();
 
-		String where = QuakeProvider.KEY_DATE + " = " + earthquake.getDate().getTime();
+		String where = QuakeProvider.KEY_TIME + " = " + earthquake.getTime();
 
 		Cursor query = resolver.query(QuakeProvider.CONTENT_URI, null, where, null, null);
 		if (query.getCount() == 0) {
 			ContentValues values = new ContentValues();
-			values.put(QuakeProvider.KEY_DATE, earthquake.getDate().getTime());
-			values.put(QuakeProvider.KEY_DETAILS, earthquake.getDetails());
-			values.put(QuakeProvider.KEY_SUMMARY, earthquake.toString());
-			values.put(QuakeProvider.KEY_LOCATION_LA, earthquake.getLocation().getLatitude());
-			values.put(QuakeProvider.KEY_LOCATION_LO, earthquake.getLocation().getLongitude());
-			values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
+			values.put(QuakeProvider.KEY_TIME, earthquake.getTime());
 			values.put(QuakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
-
+			values.put(QuakeProvider.KEY_LONGITUDE, earthquake.getLongitude());
+			values.put(QuakeProvider.KEY_LATITUDE, earthquake.getLatitude());
+			values.put(QuakeProvider.KEY_DEPTH, earthquake.getDepth());
+			values.put(QuakeProvider.KEY_DETAILS, earthquake.getDetails());
+			values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
+			values.put(QuakeProvider.KEY_SUMMARY, earthquake.toString());
 			resolver.insert(QuakeProvider.CONTENT_URI, values);
 
 			result = true;
@@ -344,7 +347,7 @@ public class QuakeUpdateService extends IntentService {
 					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 	
 			builder.setContentIntent(launchIntent)
-					.setWhen(earthquake.getDate().getTime())
+					.setWhen(earthquake.getTime())
 					.setContentTitle("M " + earthquake.getMagnitude())
 					.setContentText(earthquake.getDetails());
 	

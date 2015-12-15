@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * 
  * The fragment show Update part of preferences.
+ * 
  *
  */
 public class PrefRefreshFragment extends PreferenceFragment {

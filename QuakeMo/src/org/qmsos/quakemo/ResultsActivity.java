@@ -1,8 +1,8 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.fragment.QuakeSearchFragment;
+import org.qmsos.quakemo.fragment.ResultsListFragment;
+import org.qmsos.quakemo.fragment.ResultsMapFragment;
 import org.qmsos.quakemo.fragment.QuakeDetailsDialog.ShowMapListener;
-import org.qmsos.quakemo.util.UtilMapFragment;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -72,7 +72,7 @@ public class ResultsActivity extends AppCompatActivity implements ShowMapListene
 
 	@Override
 	public void onShowMap(Location location) {
-		UtilMapFragment map = new UtilMapFragment();
+		ResultsMapFragment map = new ResultsMapFragment();
 		if (location != null) {
 			map.setLocation(location);
 		}
@@ -91,7 +91,7 @@ public class ResultsActivity extends AppCompatActivity implements ShowMapListene
 	 *            The intent to parse.
 	 */
 	private void parseIntent(Intent intent) {
-		QuakeSearchFragment searchFragment = new QuakeSearchFragment();
+		ResultsListFragment searchFragment = new ResultsListFragment();
 		
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);

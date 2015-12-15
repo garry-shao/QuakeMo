@@ -1,10 +1,11 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.fragment;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.qmsos.quakemo.util.UtilQuakeOverlay;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import android.view.ViewGroup;
  * 
  *
  */
-public class UtilMapFragment extends Fragment {
+public class ResultsMapFragment extends Fragment {
 
 	private static final String KEY_GEOPOINT = "KEY_GEOPOINT";
 	private static final String KEY_CENTER = "KEY_CENTER";

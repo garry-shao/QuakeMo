@@ -9,8 +9,8 @@ import org.qmsos.quakemo.util.UtilPreferenceActivity;
 import android.support.v7.widget.Toolbar;
 
 /**
- * 
  * The main activity managing preferences.
+ *
  *
  */
 public class PrefActivity extends UtilPreferenceActivity {

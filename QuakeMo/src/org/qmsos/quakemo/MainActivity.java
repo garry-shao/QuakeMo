@@ -36,8 +36,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 /**
- * 
  * Main activity of this application.
+ *
  *
  */
 public class MainActivity extends AppCompatActivity 

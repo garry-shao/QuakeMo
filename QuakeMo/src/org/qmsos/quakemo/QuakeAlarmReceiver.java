@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 /**
- * 
  * Execute update service whenever specified intent received.
+ *
  *
  */
 public class QuakeAlarmReceiver extends BroadcastReceiver {

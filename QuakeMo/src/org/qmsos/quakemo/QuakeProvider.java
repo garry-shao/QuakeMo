@@ -19,8 +19,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 /**
- * 
  * Content provider storing all earthquakes.
+ *
  *
  */
 public class QuakeProvider extends ContentProvider {
@@ -28,14 +28,18 @@ public class QuakeProvider extends ContentProvider {
 	public static final Uri CONTENT_URI = 
 			Uri.parse("content://org.qmsos.quakemo.quakeprovider/earthquakes");
 	
+	//base columns of database
 	public static final String KEY_ID = "_id";
-	public static final String KEY_DATE = "date";
-	public static final String KEY_DETAILS = "details";
-	public static final String KEY_SUMMARY = "summary";
-	public static final String KEY_LOCATION_LA = "latitude";
-	public static final String KEY_LOCATION_LO = "longitude";
+	public static final String KEY_TIME = "time";
 	public static final String KEY_MAGNITUDE = "magnitude";
+	public static final String KEY_LONGITUDE = "longitude";
+	public static final String KEY_LATITUDE = "latitude";
+	public static final String KEY_DEPTH = "depth";
+	public static final String KEY_DETAILS = "details";
 	public static final String KEY_LINK = "link";
+
+	// Search related columns
+	public static final String KEY_SUMMARY = "summary";
 	
 	// return code of UriMatcher.
 	private static final int QUAKES = 1;
@@ -101,7 +105,7 @@ public class QuakeProvider extends ContentProvider {
 		
 		String orderBy;
 		if (TextUtils.isEmpty(sortOrder)) {
-			orderBy = KEY_DATE;
+			orderBy = KEY_TIME;
 		} else {
 			orderBy = sortOrder;
 		}
@@ -134,6 +138,7 @@ public class QuakeProvider extends ContentProvider {
 		long rowID = database.insert(QuakeDatabaseHelper.EARTHQUAKE_TABLE, "quake", values);
 		if (rowID > 0) {
 			Uri resultUri = ContentUris.withAppendedId(CONTENT_URI, rowID);
+			
 			getContext().getContentResolver().notifyChange(resultUri, null);
 			
 			return resultUri;
@@ -207,12 +212,16 @@ public class QuakeProvider extends ContentProvider {
 		
 		private static final String DATABASE_CREATE = 
 				"create table " + EARTHQUAKE_TABLE + " (" + 
-				KEY_ID + " integer primary key autoincrement, " +
-				KEY_DATE + " INTEGER, " + KEY_DETAILS + " TEXT, " +
-				KEY_SUMMARY + " TEXT, " + KEY_LOCATION_LA + " FLOAT, " +
-				KEY_LOCATION_LO + " FLOAT, " + KEY_MAGNITUDE + " FLOAT, " + 
-				KEY_LINK + " TEXT);";
-		
+						KEY_ID + " integer primary key autoincrement, " +
+						KEY_TIME + " INTEGER, " + 
+						KEY_MAGNITUDE + " REAL, " + 
+						KEY_LONGITUDE + " REAL, " +
+						KEY_LATITUDE + " REAL, " +
+						KEY_DEPTH + " REAL, " +
+						KEY_DETAILS + " TEXT, " +
+						KEY_LINK + " TEXT, " + 
+						KEY_SUMMARY + " TEXT);";
+	
 		public QuakeDatabaseHelper(Context context, String name, 
 				CursorFactory factory, int version) {
 			super(context, name, factory, version);

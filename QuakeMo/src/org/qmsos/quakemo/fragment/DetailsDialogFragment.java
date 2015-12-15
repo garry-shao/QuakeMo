@@ -1,5 +1,10 @@
 package org.qmsos.quakemo.fragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.data.Earthquake;
 
@@ -49,9 +54,20 @@ public class QuakeDetailsDialog extends DialogFragment {
 	 * @return The new formed details dialog.
 	 */
 	public static QuakeDetailsDialog newInstance(Context context, Earthquake quake) {
+		DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
+		String dialogDetails = dataFormat.format(new Date(quake.getTime())) + 
+				"\n\n" + "Magnitude: " + quake.getMagnitude() + 
+				"\n\n" + "Depth: " + quake.getDepth() + " km" + 
+				"\n\n" + quake.getDetails() + 
+				"\n\n" + quake.getLink();
+		
+		Location location = new Location("TEST");
+		location.setLongitude(quake.getLongitude());
+		location.setLatitude(quake.getLatitude());
+		
 		Bundle args = new Bundle();
-		args.putString(KEY_DETAILS, quake.getDialogDetails());
-		args.putParcelable(KEY_LOCATION, quake.getLocation());
+		args.putString(KEY_DETAILS, dialogDetails);
+		args.putParcelable(KEY_LOCATION, location);
 		
 		QuakeDetailsDialog fragment = new QuakeDetailsDialog();
 		fragment.setArguments(args);

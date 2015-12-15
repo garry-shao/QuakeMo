@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * 
  * The fragment show the graphic part of preferences.
+ * 
  *
  */
 public class PrefGraphicFragment extends PreferenceFragment {
