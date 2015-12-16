@@ -1,8 +1,5 @@
 package org.qmsos.quakemo.util;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
@@ -15,30 +12,27 @@ import android.graphics.Paint.Style;
 import android.graphics.Point;
 
 /**
- * Overlay on the map of earthquakes.
+ * An simple overlay that show only one earthquake.
  *
  *
  */
-public class UtilQuakeOverlay extends Overlay {
+public class UtilSimpleOverlay extends Overlay {
 
-	/**
-	 * Radius of earthquake dot symbol.
-	 */
 	private static final int RADIUS = 3;
 
-	/**
-	 * Earthquake geoPoints stored.
-	 */
-	private List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
+	private GeoPoint geoPoint;
 
 	/**
-	 * Constructor of earthquake overlay.
+	 * Constructor of simple overlay that show particular earthquake.
 	 * 
 	 * @param context
 	 *            Context of this overlay associated to.
+	 * @param geoPoint
+	 *            The GeoPoint of earthquake.
 	 */
-	public UtilQuakeOverlay(Context context) {
+	public UtilSimpleOverlay(Context context, GeoPoint geoPoint) {
 		super(context);
+		this.geoPoint = geoPoint;
 	}
 
 	@Override
@@ -52,23 +46,12 @@ public class UtilQuakeOverlay extends Overlay {
 		paint.setAntiAlias(true);
 		paint.setFakeBoldText(true);
 		paint.setStyle(Style.FILL);
-		
+
 		Projection projection = mapView.getProjection();
-		for (GeoPoint geoPoint : geoPoints) {
-			Point point = new Point();
-			point = projection.toPixels(geoPoint, point);
-			
-			canvas.drawCircle(point.x, point.y, RADIUS, paint);
-		}
-		
-	}
+		Point point = new Point();
+		point = projection.toPixels(geoPoint, point);
 
-	public List<GeoPoint> getGeoPoints() {
-		return geoPoints;
-	}
-
-	public void setGeoPoints(List<GeoPoint> geoPoints) {
-		this.geoPoints = geoPoints;
+		canvas.drawCircle(point.x, point.y, RADIUS, paint);
 	}
 
 }

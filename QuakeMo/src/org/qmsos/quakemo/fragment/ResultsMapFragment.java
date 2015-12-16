@@ -1,12 +1,9 @@
 package org.qmsos.quakemo.fragment;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.qmsos.quakemo.QuakeProvider;
-import org.qmsos.quakemo.util.UtilQuakeOverlay;
+import org.qmsos.quakemo.util.UtilSimpleOverlay;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -28,7 +25,7 @@ public class ResultsMapFragment extends Fragment {
 	private static final String KEY_EARTHQUAKE = "KEY_EARTHQUAKE";
 	private static final String KEY_ZOOMLEVEL = "KEY_ZOOMLEVEL";
 
-	private UtilQuakeOverlay quakeOverlay;
+	private UtilSimpleOverlay quakeOverlay;
 	private MapView mapView;
 
 	/**
@@ -57,9 +54,6 @@ public class ResultsMapFragment extends Fragment {
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(1);
 
-		quakeOverlay = new UtilQuakeOverlay(getContext());
-
-		mapView.getOverlays().add(quakeOverlay);
 
 		long id = getArguments().getLong(KEY_EARTHQUAKE);
 		Cursor cursor = getContext().getContentResolver()
@@ -69,10 +63,9 @@ public class ResultsMapFragment extends Fragment {
 				double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LATITUDE));
 				double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LONGITUDE));
 				GeoPoint geoPoint = new GeoPoint(latitude, longitude);
-				List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
-				geoPoints.add(geoPoint);
-				quakeOverlay.setGeoPoints(geoPoints);
-
+				
+				quakeOverlay = new UtilSimpleOverlay(getContext(), geoPoint);
+				mapView.getOverlays().add(quakeOverlay);
 				mapView.getController().setCenter(geoPoint);
 			}
 		} finally {
