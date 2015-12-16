@@ -2,9 +2,7 @@ package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.ResultsActivity;
-import org.qmsos.quakemo.data.Earthquake;
 
-import android.content.ContentUris;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -47,17 +45,9 @@ public class ResultsListFragment extends ListFragment implements LoaderCallbacks
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Cursor result = getContext().getContentResolver().query(
-				ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
-		Earthquake earthquake = queryForQuake(result);
-		result.close();
-		
-		if (earthquake != null) {
-			DialogFragment dialog = DetailsDialogFragment.newInstance(getContext(), earthquake);
-			((DetailsDialogFragment) dialog).setMapEnabled(true);
-			
-			dialog.show(getFragmentManager(), "dialog");
-		}
+		DialogFragment dialog = DetailsDialogFragment.newInstance(getContext(), id);
+		((DetailsDialogFragment) dialog).setMapEnabled(true);
+		dialog.show(getFragmentManager(), "dialog");
 	}
 
 	@Override
@@ -84,33 +74,6 @@ public class ResultsListFragment extends ListFragment implements LoaderCallbacks
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 		adapter.swapCursor(null);
-	}
-
-	/**
-	 * Help method to get the FIRST Earthquake in cursor out from content provider.
-	 * @param cursor
-	 *            The query cursor.
-	 * @return The first earthquake or NULL if not available.
-	 */
-	private Earthquake queryForQuake(Cursor cursor) {
-		if (cursor.moveToFirst()) {
-			long time = cursor.getLong(cursor.getColumnIndex(QuakeProvider.KEY_TIME));
-			double magnitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
-			double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LONGITUDE));
-			double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LATITUDE));
-			double depth = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_DEPTH));
-
-			String details = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_DETAILS));
-			String link = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_LINK));
-
-			Earthquake quake = new Earthquake(time, magnitude, longitude, latitude, depth);
-			quake.setDetails(details);
-			quake.setLink(link);
-
-			return quake;
-		} else {
-			return null;
-		}
 	}
 
 }

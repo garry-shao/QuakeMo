@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.qmsos.quakemo.data.Earthquake;
+import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.util.UtilQuakeOverlay;
 
+import android.content.ContentUris;
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,15 +31,23 @@ public class ResultsMapFragment extends Fragment {
 	private UtilQuakeOverlay quakeOverlay;
 	private MapView mapView;
 
-	private Earthquake earthquake;
+	/**
+	 * Create a new instance of map fragment that shows particular earthquake.
+	 * 
+	 * @param context
+	 *            The context that this fragment within.
+	 * @param id
+	 *            The id of this earthquake.
+	 * @return The created fragment instance.
+	 */
+	public static ResultsMapFragment newInstance(Context context, long id) {
+		Bundle args = new Bundle();
+		args.putLong(KEY_EARTHQUAKE, id);
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	
-		if (savedInstanceState != null) {
-			earthquake = savedInstanceState.getParcelable(KEY_EARTHQUAKE);
-		}
+		ResultsMapFragment fragment = new ResultsMapFragment();
+		fragment.setArguments(args);
+
+		return fragment;
 	}
 
 	@Override
@@ -48,17 +59,26 @@ public class ResultsMapFragment extends Fragment {
 
 		quakeOverlay = new UtilQuakeOverlay(getContext());
 
-		if (earthquake != null) {
-			GeoPoint geoPoint = new GeoPoint(earthquake.getLatitude(), earthquake.getLongitude());
-			List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
-			geoPoints.add(geoPoint);
-			quakeOverlay.setGeoPoints(geoPoints);
-
-			mapView.getController().setCenter(geoPoint);
-		}
-		
 		mapView.getOverlays().add(quakeOverlay);
-		
+
+		long id = getArguments().getLong(KEY_EARTHQUAKE);
+		Cursor cursor = getContext().getContentResolver()
+				.query(ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
+		try {
+			if (cursor.moveToFirst()) {
+				double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LATITUDE));
+				double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LONGITUDE));
+				GeoPoint geoPoint = new GeoPoint(latitude, longitude);
+				List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
+				geoPoints.add(geoPoint);
+				quakeOverlay.setGeoPoints(geoPoints);
+
+				mapView.getController().setCenter(geoPoint);
+			}
+		} finally {
+			cursor.close();
+		}
+
 		if (savedInstanceState != null) {
 			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
 			if (center != null) {
@@ -79,18 +99,9 @@ public class ResultsMapFragment extends Fragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putParcelable(KEY_CENTER, (GeoPoint) mapView.getMapCenter());
-		outState.putParcelable(KEY_EARTHQUAKE, earthquake);
 		outState.putInt(KEY_ZOOMLEVEL, mapView.getZoomLevel());
 
 		super.onSaveInstanceState(outState);
-	}
-
-	public Earthquake getEarthquake() {
-		return earthquake;
-	}
-
-	public void setEarthquake(Earthquake earthquake) {
-		this.earthquake = earthquake;
 	}
 
 }

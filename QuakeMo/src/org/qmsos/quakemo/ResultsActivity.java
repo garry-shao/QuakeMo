@@ -1,6 +1,5 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.data.Earthquake;
 import org.qmsos.quakemo.fragment.DetailsDialogFragment.ShowMapListener;
 import org.qmsos.quakemo.fragment.ResultsListFragment;
 import org.qmsos.quakemo.fragment.ResultsMapFragment;
@@ -71,11 +70,8 @@ public class ResultsActivity extends AppCompatActivity implements ShowMapListene
 	}
 
 	@Override
-	public void onShowMap(Earthquake earthquake) {
-		ResultsMapFragment map = new ResultsMapFragment();
-		if (earthquake != null) {
-			map.setEarthquake(earthquake);
-		}
+	public void onShowMap(long id) {
+		ResultsMapFragment map = ResultsMapFragment.newInstance(this, id);
 		
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction transaction = manager.beginTransaction();
