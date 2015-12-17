@@ -1,6 +1,7 @@
 package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.util.UtilCursorAdapter;
 
@@ -91,8 +92,15 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 				QuakeProvider.KEY_MAGNITUDE, QuakeProvider.KEY_DETAILS };
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		
 		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), "3"));
-		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+		
+		int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), "1"));
+		long startMillis = System.currentTimeMillis()
+				- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
+
+		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude
+				+ " AND " + QuakeProvider.KEY_TIME + " > " + startMillis;
 
 		CursorLoader loader = new CursorLoader(
 				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);

@@ -77,6 +77,8 @@ public class QuakeUpdateService extends IntentService {
 	// Bundle keys used in ResultReceiver.
 	public static final String BUNDLE_KEY_COUNT = "BUNDLE_KEY_COUNT";
 	
+	public static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
+	
 	/**
 	 * Class name tag. Debug use only.
 	 */
@@ -86,8 +88,6 @@ public class QuakeUpdateService extends IntentService {
 	 * Notification ID in this application.
 	 */
 	private static final int NOTIFICATION_ID = 1;
-	
-	private static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 
 	/**
 	 * Default constructor of this service.
