@@ -2,51 +2,66 @@ package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.util.UtilCursorAdapter;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.view.ViewGroup;
 
 /**
  * Show earthquakes as list.
  * 
  *
  */
-public class QuakeListFragment extends ListFragment implements LoaderCallbacks<Cursor> {
+public class QuakeListFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
-	private SimpleCursorAdapter adapter;
+	private UtilCursorAdapter adapter;
+	private RecyclerView recyclerView;
 	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		recyclerView = (RecyclerView) inflater.inflate(R.layout.view_recycler, container, false);
+
+		return recyclerView;
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+
+		adapter = new UtilCursorAdapter(getContext(), null);
+		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+		recyclerView.setAdapter(adapter);
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
-		adapter = new SimpleCursorAdapter(getContext(), android.R.layout.simple_list_item_1, null,
-				new String[] { QuakeProvider.KEY_SUMMARY }, new int[] { android.R.id.text1 }, 0);
-		setListAdapter(adapter);
 
 		getLoaderManager().initLoader(0, null, this);
 	}
 
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-
-		DialogFragment dialog = DetailsDialogFragment.newInstance(getContext(), id);
-		dialog.show(getFragmentManager(), "dialog");
+	public void onDestroyView() {
+		getLoaderManager().destroyLoader(0);
+		
+		super.onDestroyView();
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_SUMMARY };
+		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_TIME, 
+				QuakeProvider.KEY_MAGNITUDE, QuakeProvider.KEY_DETAILS };
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), "3"));

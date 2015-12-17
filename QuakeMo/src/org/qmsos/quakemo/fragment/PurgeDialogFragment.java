@@ -17,6 +17,11 @@ import android.support.v7.app.AlertDialog;
  */
 public class PurgeDialogFragment extends DialogFragment {
 
+	/**
+	 * Interface for a callback to be invoked when purging action is called.
+	 * 
+	 *
+	 */
 	public interface ShowSnackbarListener {
 		void onShowSnackbar();
 	}

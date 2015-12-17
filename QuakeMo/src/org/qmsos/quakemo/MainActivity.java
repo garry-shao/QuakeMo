@@ -3,10 +3,12 @@ package org.qmsos.quakemo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.qmsos.quakemo.fragment.QuakeListFragment;
-import org.qmsos.quakemo.fragment.QuakeMapFragment;
+import org.qmsos.quakemo.fragment.DetailsDialogFragment;
 import org.qmsos.quakemo.fragment.PurgeDialogFragment;
 import org.qmsos.quakemo.fragment.PurgeDialogFragment.ShowSnackbarListener;
+import org.qmsos.quakemo.fragment.QuakeListFragment;
+import org.qmsos.quakemo.fragment.QuakeMapFragment;
+import org.qmsos.quakemo.util.UtilCursorAdapter.ShowDialogListener;
 import org.qmsos.quakemo.util.UtilPagerAdapter;
 import org.qmsos.quakemo.util.UtilResultReceiver;
 import org.qmsos.quakemo.util.UtilResultReceiver.Receiver;
@@ -41,7 +43,7 @@ import android.view.View;
  *
  */
 public class MainActivity extends AppCompatActivity 
-implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
+implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener, ShowDialogListener {
 
 	private static final String KEY_RECEIVER = "KEY_RECEIVER";
 	
@@ -256,6 +258,12 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener {
 			});
 			snackbar.show();
 		}
+	}
+
+	@Override
+	public void onShowDialog(long id) {
+		DetailsDialogFragment dialog = DetailsDialogFragment.newInstance(this, id);
+		dialog.show(getSupportFragmentManager(), "dialog");
 	}	
 
 }
