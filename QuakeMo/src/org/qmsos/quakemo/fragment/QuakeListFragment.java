@@ -7,6 +7,7 @@ import org.qmsos.quakemo.util.UtilCursorAdapter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -14,6 +15,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,8 @@ import android.view.ViewGroup;
  */
 public class QuakeListFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
+	private static final String KEY_RECYCLER_VIEW_STATE = "KEY_RECYCLER_VIEW_STATE";
+	
 	private UtilCursorAdapter adapter;
 	private RecyclerView recyclerView;
 	
@@ -56,6 +60,29 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 		getLoaderManager().destroyLoader(0);
 		
 		super.onDestroyView();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		LayoutManager layoutManager = recyclerView.getLayoutManager();
+		if (layoutManager instanceof LinearLayoutManager) {
+			outState.putParcelable(KEY_RECYCLER_VIEW_STATE, layoutManager.onSaveInstanceState());
+		}
+	}
+
+	@Override
+	public void onViewStateRestored(Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		
+		if (savedInstanceState != null) {
+			Parcelable savedRecyclerViewState = savedInstanceState.getParcelable(KEY_RECYCLER_VIEW_STATE);
+			LayoutManager layoutManager = recyclerView.getLayoutManager();
+			if (layoutManager instanceof LinearLayoutManager) {
+				layoutManager.onRestoreInstanceState(savedRecyclerViewState);
+			}
+		}
 	}
 
 	@Override
