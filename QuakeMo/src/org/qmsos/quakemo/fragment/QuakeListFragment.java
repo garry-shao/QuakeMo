@@ -1,5 +1,6 @@
 package org.qmsos.quakemo.fragment;
 
+import org.qmsos.quakemo.MainActivity;
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
@@ -88,24 +89,35 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = new String[] { QuakeProvider.KEY_ID, QuakeProvider.KEY_TIME, 
+		String[] projection = { QuakeProvider.KEY_ID, QuakeProvider.KEY_TIME, 
 				QuakeProvider.KEY_MAGNITUDE, QuakeProvider.KEY_DETAILS };
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		// Create search cursor.
+		if (args != null && args.getString(MainActivity.KEY_QUERY) != null) {
+			String query = args.getString(MainActivity.KEY_QUERY);
+			
+			String where = QuakeProvider.KEY_SUMMARY + " LIKE \"%" + query + "%\"";
+			String sortOrder = QuakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
+
+			return new CursorLoader(
+				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, sortOrder);
+		} else {
+		// Create data cursor.
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		
-		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), "3"));
+			int minMagnitude = Integer.parseInt(
+					prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), "3"));
 		
-		int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), "1"));
-		long startMillis = System.currentTimeMillis()
-				- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
+			int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), "1"));
+			long startMillis = System.currentTimeMillis()
+					- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
 
-		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude
-				+ " AND " + QuakeProvider.KEY_TIME + " > " + startMillis;
+			String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude
+					+ " AND " + QuakeProvider.KEY_TIME + " > " + startMillis;
 
-		CursorLoader loader = new CursorLoader(
-				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);
-
-		return loader;
+			return new CursorLoader(
+					getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);
+		}
 	}
 
 	@Override
