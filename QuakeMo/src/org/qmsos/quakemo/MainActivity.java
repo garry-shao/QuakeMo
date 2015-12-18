@@ -52,9 +52,8 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener, Sho
 	 */
 	private UtilResultReceiver receiver;
 	
-	// Fragments in this activity. Design principle: same data in different layouts.
-	private QuakeListFragment quakeList = new QuakeListFragment();
-	private QuakeMapFragment quakeMap = new QuakeMapFragment();
+	private QuakeListFragment quakeList;
+	private QuakeMapFragment quakeMap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +68,9 @@ implements OnSharedPreferenceChangeListener, Receiver, ShowSnackbarListener, Sho
 		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		
+		quakeList = new QuakeListFragment();
+		quakeMap = new QuakeMapFragment();
 		
 		List<Fragment> fragmentList = new ArrayList<Fragment>();
 		fragmentList.add(quakeList);
