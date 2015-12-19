@@ -38,9 +38,6 @@ public class QuakeProvider extends ContentProvider {
 	public static final String KEY_DETAILS = "details";
 	public static final String KEY_LINK = "link";
 
-	// Search related columns
-	public static final String KEY_SUMMARY = "summary";
-	
 	// return code of UriMatcher.
 	private static final int QUAKES = 1;
 	private static final int QUAKE_ID = 2;
@@ -51,7 +48,7 @@ public class QuakeProvider extends ContentProvider {
 	static {
 		SEARCH_PROJECTION_MAP = new HashMap<String, String>();
 		SEARCH_PROJECTION_MAP.put(SearchManager.SUGGEST_COLUMN_TEXT_1, 
-				KEY_SUMMARY + " AS " + SearchManager.SUGGEST_COLUMN_TEXT_1);
+				KEY_DETAILS + " AS " + SearchManager.SUGGEST_COLUMN_TEXT_1);
 		SEARCH_PROJECTION_MAP.put("_id", KEY_ID + " AS " + "_id");
 		
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -95,7 +92,7 @@ public class QuakeProvider extends ContentProvider {
 		case SEARCH:
 			if (uri.getPathSegments().size() > 1) {
 				queryBuilder.appendWhere(
-						KEY_SUMMARY + " LIKE \"%" + uri.getPathSegments().get(1) + "%\"");
+						KEY_DETAILS + " LIKE \"%" + uri.getPathSegments().get(1) + "%\"");
 			}
 			queryBuilder.setProjectionMap(SEARCH_PROJECTION_MAP);
 			break;
@@ -219,8 +216,7 @@ public class QuakeProvider extends ContentProvider {
 						KEY_LATITUDE + " REAL, " +
 						KEY_DEPTH + " REAL, " +
 						KEY_DETAILS + " TEXT, " +
-						KEY_LINK + " TEXT, " + 
-						KEY_SUMMARY + " TEXT);";
+						KEY_LINK + " TEXT);";
 	
 		public QuakeDatabaseHelper(Context context, String name, 
 				CursorFactory factory, int version) {

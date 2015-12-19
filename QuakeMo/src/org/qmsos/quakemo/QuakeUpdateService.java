@@ -318,7 +318,6 @@ public class QuakeUpdateService extends IntentService {
 			values.put(QuakeProvider.KEY_DEPTH, earthquake.getDepth());
 			values.put(QuakeProvider.KEY_DETAILS, earthquake.getDetails());
 			values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
-			values.put(QuakeProvider.KEY_SUMMARY, earthquake.toString());
 			resolver.insert(QuakeProvider.CONTENT_URI, values);
 
 			result = true;

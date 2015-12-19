@@ -94,8 +94,8 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 		if (args != null && args.getString(MainActivity.KEY_QUERY) != null) {
 			String query = args.getString(MainActivity.KEY_QUERY);
 
-			String where = QuakeProvider.KEY_SUMMARY + " LIKE \"%" + query + "%\"";
-			String sortOrder = QuakeProvider.KEY_SUMMARY + " COLLATE LOCALIZED ASC";
+			String where = QuakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
+			String sortOrder = QuakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";
 
 			return new CursorLoader(
 				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, sortOrder);
