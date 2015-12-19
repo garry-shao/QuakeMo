@@ -40,35 +40,24 @@
     <string name="snackbar_canceled">Canceled</string>
 
     <!-- Strings used in preferences -->
-    <string name="pref_refresh_summary">Change settings related to refresh</string>
-    <string name="pref_refresh_title">Refresh</string>
-    <string name="pref_graphic_summary">Change settings related to graphics</string>
-    <string name="pref_graphic_title">Graphic</string>
     <string name="pref_cat_display_title">Display</string>
-    <string name="pref_show_range_summary">Choose how many days back to display</string>
-    <string name="pref_show_range_title">Display Range</string>
-    <string name="pref_show_minimum_summary">Choose the minimum magnitude to show</string>
-    <string name="pref_show_minimum_title">Display Minimum</string>
-    <string name="pref_cat_widget_title">Widget</string>
-    <string name="pref_widget_summary">Select to register widget to android</string>
-    <string name="pref_widget_title">Toggle Widget</string>
-    <string name="pref_cat_notify_title">Notification</string>
-    <string name="pref_notify_toggle_summary">Select to notify user on new earthquakes</string>
-    <string name="pref_notify_toggle_title">Toggle Notification</string>
+    <string name="pref_show_range_title">Display range</string>
+    <string name="pref_show_minimum_title">Display minimum</string>
+    <string name="pref_notify_toggle_summary">Enable notification</string>
+    <string name="pref_notify_toggle_title">Notification</string>
     <string name="pref_notify_sound_summary">Notification with sound</string>
-    <string name="pref_notify_sound_title">With Sound</string>
+    <string name="pref_notify_sound_title">Sound</string>
     <string name="pref_notify_vibrate_summary">Notification with vibrate</string>
-    <string name="pref_notify_vibrate_title">With Vibrate</string>
+    <string name="pref_notify_vibrate_title">Vibrate</string>
     <string name="pref_cat_auto_title">Refresh</string>
-    <string name="pref_auto_toggle_summary">Select to turn on auto refresh</string>
-    <string name="pref_auto_toggle_title">Auto Refresh</string>
-    <string name="pref_auto_frequency_summary">Choose how frequent of auto refresh</string>
-    <string name="pref_auto_frequency_title">Refresh Frequency</string>
-    <string name="pref_cat_query_title">Query</string>
-    <string name="pref_query_range_summary">Choose how many days back to query</string>
-    <string name="pref_query_range_title">Query Range</string>
-    <string name="pref_query_minimum_summary">Choose the minimum magnitude to query</string>
-    <string name="pref_query_minimum_title">Query Minimum</string>
+    <string name="pref_auto_toggle_summary">Turn on auto refresh</string>
+    <string name="pref_auto_toggle_title">Automatic</string>
+    <string name="pref_auto_frequency_title">Frequency</string>
+    <string name="pref_query_range_title">Query range</string>
+    <string name="pref_query_minimum_title">Query minimum</string>
+    <string name="pref_cat_component_title">Component</string>
+    <string name="pref_widget_summary">Register widget to android</string>
+    <string name="pref_widget_title">Widget</string>
 
     <!-- Keys for shared preferences. DO NOT MODIFY -->
     <string name="PREF_SHOW_RANGE">PREF_SHOW_RANGE</string>

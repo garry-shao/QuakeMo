@@ -1,11 +1,7 @@
 package org.qmsos.quakemo;
 
-import java.util.List;
-
-import org.qmsos.quakemo.fragment.PrefGraphicFragment;
-import org.qmsos.quakemo.fragment.PrefRefreshFragment;
-import org.qmsos.quakemo.util.UtilPreferenceActivity;
-
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 /**
@@ -13,21 +9,15 @@ import android.support.v7.widget.Toolbar;
  *
  *
  */
-public class PrefActivity extends UtilPreferenceActivity {
+public class PrefActivity extends AppCompatActivity {
 
 	@Override
-	public void onBuildHeaders(List<Header> target) {
-		loadHeadersFromResource(R.xml.preference_headers, target);
-		
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pref);
+		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-	}
-
-	@Override
-	protected boolean isValidFragment(String fragmentName) {
-		return PrefGraphicFragment.class.getName().equals(fragmentName) || 
-				PrefRefreshFragment.class.getName().equals(fragmentName);
 	}
 
 }

@@ -1,15 +1,13 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.    -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+            backward-compatibility can go here.        -->
     </style>
 
     <!-- Application theme. -->
@@ -18,8 +16,29 @@
     </style>
 
     <style name="AppCompatTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/AppCompatTheme.PreferenceTheme</item>
+    </style>
+    
+    <style name="AppCompatTheme.PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="preferenceFragmentListStyle">@style/AppCompatTheme.PreferenceFragmentList</item>
+    </style>
+    
+    <style name="AppCompatTheme.PreferenceFragmentList">
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
+
+    <!-- Hack of PreferenceThemeOverlay.v14.Material, Change textStyle & textSize -->
+    <style name="Preference_TextAppearanceMaterialBody2">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Preference_TextAppearanceMaterialSubhead">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
 </resources>
