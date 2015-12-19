@@ -34,6 +34,7 @@ import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -46,7 +47,7 @@ import android.view.View;
  *
  */
 public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, 
-	OnActionExpandListener,	OnSuggestionListener, Receiver, ShowSnackbarListener, ShowDialogListener {
+	OnActionExpandListener,	Receiver, ShowSnackbarListener, ShowDialogListener {
 
 	/**
 	 * Key to the query string passed in bundle.
@@ -65,12 +66,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		if (savedInstanceState != null) {
-			receiver = savedInstanceState.getParcelable(KEY_RECEIVER);
-		} else {
-			receiver = new UtilResultReceiver(new Handler());
-		}
-
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
@@ -80,15 +75,21 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 		fragmentList.add(quakeList);
 		fragmentList.add(quakeMap);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
-
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
 		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList, this));
 
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
+		
+		if (savedInstanceState != null) {
+			receiver = savedInstanceState.getParcelable(KEY_RECEIVER);
+		} else {
+			receiver = new UtilResultReceiver(new Handler());
+		}
+		
 		// start service for the first time.
 		Intent startIntent = new Intent(this, QuakeUpdateService.class);
 		startIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
@@ -140,9 +141,41 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 		MenuItemCompat.setOnActionExpandListener(item, this);
 
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+		final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
 		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-		searchView.setOnSuggestionListener(this);
+		searchView.setOnSuggestionListener(new OnSuggestionListener() {
+
+			@Override
+			public boolean onSuggestionClick(int position) {
+				Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
+				String suggestion = cursor.getString(
+						cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+				cursor.close();
+
+				searchView.setQuery(suggestion, true);
+
+				return true;
+			}
+
+			@Override
+			public boolean onSuggestionSelect(int position) {
+				return false;
+			}
+		});
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				searchView.clearFocus();
+
+				return false;
+			}
+		});
 
 		return true;
 	}
@@ -211,24 +244,6 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 	@Override
 	public boolean onMenuItemActionExpand(MenuItem item) {
 		return true;
-	}
-
-	@Override
-	public boolean onSuggestionClick(int position) {
-		SearchView searchView = (SearchView) findViewById(R.id.menu_search);
-
-		Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
-		String suggestion = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
-		cursor.close();
-
-		searchView.setQuery(suggestion, true);
-
-		return true;
-	}
-
-	@Override
-	public boolean onSuggestionSelect(int position) {
-		return false;
 	}
 
 	@Override
