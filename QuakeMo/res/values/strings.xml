@@ -5,7 +5,6 @@
 
     <!-- Strings used in toolbar -->
     <string name="activity_name_pref">Preferences</string>
-    <string name="activity_name_results">Results</string>
 
     <!-- Strings used in tab title -->
     <string name="tab_list">List</string>
@@ -24,7 +23,6 @@
 
     <!-- Strings used in popup dialog -->
     <string name="dialog_details_title">Earthquake Details</string>
-    <string name="dialog_details_positive">Map</string>
     <string name="dialog_purge_title">Purge</string>
     <string name="dialog_purge_message">Are you SURE ?</string>
     <string name="dialog_positive_button">Confirm</string>
