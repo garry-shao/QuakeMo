@@ -33,7 +33,7 @@ public class UtilCursorAdapter extends UtilBaseAdapter<ViewHolder> {
 	public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
 
-		final int id = cursor.getInt(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_ID));
+		final long id = cursor.getLong(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_ID));
 		long time = cursor.getLong(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_TIME));
 		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE));
 
