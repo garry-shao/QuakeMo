@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -190,9 +191,8 @@ public class QuakeUpdateService extends IntentService {
 	private int refreshQuakes() {
 		int count = 0;
 		
-		String query = formatQuery();
-		String result = executeQuery(query);
-		if (result != null) {
+		String result = executeQuery(formatQuery());
+		if (result != null && result.length() > 0) {
 			try {
 				JSONObject reader = new JSONObject(result);
 			
@@ -224,7 +224,7 @@ public class QuakeUpdateService extends IntentService {
 					}
 				}
 			} catch (JSONException e) {
-				Log.e(TAG, "JSON Exception");
+				Log.e(TAG, "Something wrong with the result JSON");
 			}
 		}
 		
@@ -275,20 +275,26 @@ public class QuakeUpdateService extends IntentService {
 		try {
 			URL url = new URL(query);
 			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-			int responseCode = httpConnection.getResponseCode();
-			if (responseCode == HttpURLConnection.HTTP_OK) {
-				InputStream inStream = httpConnection.getInputStream();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-
-				String line;
-				while ((line = reader.readLine()) != null) {
-					builder.append(line);
+			try {
+				int responseCode = httpConnection.getResponseCode();
+				if (responseCode == HttpURLConnection.HTTP_OK) {
+					InputStream inStream = httpConnection.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+					
+					String line;
+					while ((line = reader.readLine()) != null) {
+						builder.append(line);
+					}
 				}
-			} else {
-				Log.e(TAG, "Http connnection error! " + "responseCode = " + responseCode);
+			} catch (IOException e) {
+				Log.e(TAG, "Error reading from the http connection");
+			} finally {
+				httpConnection.disconnect();
 			}
+		} catch (MalformedURLException e) {
+			Log.e(TAG, "Malformed URL");
 		} catch (IOException e) {
-			Log.e(TAG, "I/O exception");
+			Log.e(TAG, "Error opening the http connection");
 		}
 
 		return builder.toString();
