@@ -72,7 +72,7 @@
     <string name="PREF_NOTIFY_TOGGLE">PREF_NOTIFY_TOGGLE</string>
     <string name="PREF_NOTIFY_SOUND">PREF_NOTIFY_SOUND</string>
     <string name="PREF_NOTIFY_VIBRATE">PREF_NOTIFY_VIBRATE</string>
-    <string name="PREF_AUTO_TOGGLE">PREF_AUTO_TOGGLE</string>
+    <string name="PREF_AUTO_REFRESH">PREF_AUTO_REFRESH</string>
     <string name="PREF_AUTO_FREQUENCY">PREF_AUTO_FREQUENCY</string>
     <string name="PREF_QUERY_RANGE">PREF_QUERY_RANGE</string>
     <string name="PREF_QUERY_MINIMUM">PREF_QUERY_MINIMUM</string>

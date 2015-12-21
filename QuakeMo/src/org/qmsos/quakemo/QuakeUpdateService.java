@@ -111,22 +111,22 @@ public class QuakeUpdateService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean autoToggle = prefs.getBoolean(getString(R.string.PREF_AUTO_TOGGLE), false);
-		int autoFrequency = Integer.parseInt(
+		boolean autoRefresh = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
+		int frequency = Integer.parseInt(
 				prefs.getString(getString(R.string.PREF_AUTO_FREQUENCY), "12"));
 
 		String action = intent.getAction();
 		if (action != null) {
 			if (action.equals(ACTION_REFRESH_AUTO)) {
-				if (autoToggle) {
-					setupAutoUpdate(autoFrequency);
+				if (autoRefresh) {
+					enableAutoUpdate(frequency);
 
-					refreshQuakes();
+					executeRefresh();
 				} else {
-					cancelAutoUpdate();
+					disableAutoUpdate();
 				}
 			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
-				int count = refreshQuakes();
+				int count = executeRefresh();
 
 				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
 				if (receiver != null) {
@@ -141,7 +141,7 @@ public class QuakeUpdateService extends IntentService {
 					if (burndown.equals(EXTRA_PURGE_BURNDOWN_NO)) {
 						receiver.send(RESULT_CODE_CANCELED, new Bundle());
 					} else {
-						purgeQuakes();
+						purgeContentProvider();
 						
 						receiver.send(RESULT_CODE_PURGED, new Bundle());
 					}
@@ -158,7 +158,7 @@ public class QuakeUpdateService extends IntentService {
 	 * @param frequency
 	 *            update interval, in hours.
 	 */
-	private void setupAutoUpdate(int frequency) {
+	private void enableAutoUpdate(int frequency) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
@@ -174,7 +174,7 @@ public class QuakeUpdateService extends IntentService {
 	/**
 	 * Cancel automatic update.
 	 */
-	private void cancelAutoUpdate() {
+	private void disableAutoUpdate() {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
@@ -188,14 +188,13 @@ public class QuakeUpdateService extends IntentService {
 	 * 
 	 * @return How many entries added.
 	 */
-	private int refreshQuakes() {
+	private int executeRefresh() {
 		int count = 0;
 		
-		String result = executeQuery(formatQuery());
+		String result = download(assemble());
 		if (result != null && result.length() > 0) {
 			try {
 				JSONObject reader = new JSONObject(result);
-			
 				JSONArray features = reader.getJSONArray("features");
 				for (int i = 0; i < features.length(); i++) {
 					JSONObject feature = features.getJSONObject(i);
@@ -216,11 +215,10 @@ public class QuakeUpdateService extends IntentService {
 					earthquake.setDetails(place);
 					earthquake.setLink(url);
 					
-					boolean added = addQuake(earthquake);
+					boolean added = addToContentProvider(earthquake);
 					if (added) {
 						count++;
-						
-						notifyQuake(earthquake);
+						sendNotification(earthquake);
 					}
 				}
 			} catch (JSONException e) {
@@ -232,27 +230,36 @@ public class QuakeUpdateService extends IntentService {
 	}
 
 	/**
-	 * Purge all earthquakes stored in content provider.
-	 */
-	private void purgeQuakes() {
-		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
-	}
-
-	/**
-	 * Assemble query string by preferences.
+	 * Assemble query string out of preferences.
 	 * 
 	 * @return The assembled string.
 	 */
-	private String formatQuery() {
+	private String assemble() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+		long timeStamp = findTimeStamp();
+		String startTime;
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_QUERY_RANGE), "1"));
-		long startMillis = System.currentTimeMillis() - range * 24 * ONE_HOUR_IN_MILLISECONDS;
-		String startTime = dateFormat.format(new Date(startMillis));
-		
+		boolean querySeamless = prefs.getBoolean(getString(R.string.PREF_QUERY_FOLLOW), false);
+		if (querySeamless) {
+			if (timeStamp > (System.currentTimeMillis() - 30 * 24 * ONE_HOUR_IN_MILLISECONDS)) {
+				startTime = dateFormat.format(new Date(timeStamp));
+			} else {
+				startTime = dateFormat.format(
+						new Date(System.currentTimeMillis() - 30 * 24 * ONE_HOUR_IN_MILLISECONDS));
+			}
+		} else {
+			int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_QUERY_RANGE), "1"));
+			long startMillis = System.currentTimeMillis() - range * 24 * ONE_HOUR_IN_MILLISECONDS;
+			if (startMillis < timeStamp) {
+				startTime = dateFormat.format(new Date(timeStamp));
+			} else {
+				startTime = dateFormat.format(new Date(startMillis));
+			}
+		}
 		String minMagnitude = prefs.getString(getString(R.string.PREF_QUERY_MINIMUM), "3");
 
 		String query = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
@@ -263,13 +270,33 @@ public class QuakeUpdateService extends IntentService {
 	}
 
 	/**
-	 * Query remote server for results.
+	 * Find the time stamp of the recent earthquake. 
+	 * 
+	 * @return Time stamp of the recent earthquake in milliseconds or 0 if not found.
+	 */
+	private long findTimeStamp() {
+		long timeStamp = 0;
+		
+		String[] projections = { "MAX(" + QuakeProvider.KEY_TIME + ") AS " + QuakeProvider.KEY_TIME };
+		
+		Cursor query = getContentResolver().query(
+				QuakeProvider.CONTENT_URI, projections, null, null, null);
+		if (query.moveToFirst()) {
+			timeStamp = query.getLong(query.getColumnIndexOrThrow(QuakeProvider.KEY_TIME));
+		}
+		query.close();
+		
+		return timeStamp;
+	}
+
+	/**
+	 * Download from remote server for results.
 	 * 
 	 * @param query
 	 *            The query string.
 	 * @return Results of this query, NULL otherwise.
 	 */
-	private String executeQuery(String query) {
+	private String download(String query) {
 		StringBuilder builder = new StringBuilder();
 
 		try {
@@ -307,7 +334,7 @@ public class QuakeUpdateService extends IntentService {
 	 *            the instance to add.
 	 * @return TRUE if earthquake successfully added, FALSE otherwise.
 	 */
-	private boolean addQuake(Earthquake earthquake) {
+	private boolean addToContentProvider(Earthquake earthquake) {
 		boolean result = false;
 		
 		ContentResolver resolver = getContentResolver();
@@ -339,7 +366,7 @@ public class QuakeUpdateService extends IntentService {
 	 * @param earthquake
 	 *            the earthquake to notify.
 	 */
-	private void notifyQuake(Earthquake earthquake) {
+	private void sendNotification(Earthquake earthquake) {
 		Notification.Builder builder = new Notification.Builder(this);
 		builder.setAutoCancel(true)
 				.setTicker(getString(R.string.notification_ticker))
@@ -374,6 +401,13 @@ public class QuakeUpdateService extends IntentService {
 					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.notify(NOTIFICATION_ID, builder.build());
 		}
+	}
+
+	/**
+	 * Purge all earthquakes stored in content provider.
+	 */
+	private void purgeContentProvider() {
+		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
 	}
 
 }

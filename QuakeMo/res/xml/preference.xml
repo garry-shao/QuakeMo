@@ -3,7 +3,7 @@
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_auto_title" >
         <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="TRUE"
+            android:defaultValue="FALSE"
             android:disableDependentsState="true"
             android:key="@string/PREF_QUERY_FOLLOW"
             android:summary="@string/pref_query_follow_summary"
@@ -29,13 +29,13 @@
 
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="TRUE"
-            android:key="@string/PREF_AUTO_TOGGLE"
+            android:key="@string/PREF_AUTO_REFRESH"
             android:summary="@string/pref_auto_toggle_summary"
             android:title="@string/pref_auto_toggle_title" />
 
         <org.qmsos.quakemo.util.UtilListPreference
             android:defaultValue="@string/frequency_values_default"
-            android:dependency="@string/PREF_AUTO_TOGGLE"
+            android:dependency="@string/PREF_AUTO_REFRESH"
             android:dialogTitle="@string/pref_auto_frequency_title"
             android:entries="@array/frequency_entries"
             android:entryValues="@array/frequency_values"
