@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 			intent = new Intent(this, QuakeUpdateService.class);
 			intent.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
 			intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
-
+			
 			startService(intent);
 
 			return true;
@@ -268,6 +268,9 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 			break;
 		case QuakeUpdateService.RESULT_CODE_CANCELED:
 			result = getString(R.string.snackbar_canceled);
+			break;
+		case QuakeUpdateService.RESULT_CODE_DISCONNECTED:
+			result = getString(R.string.snackbar_disconnected);
 			break;
 		default:
 			result = null;

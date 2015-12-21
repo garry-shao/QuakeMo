@@ -56,10 +56,10 @@ public class QuakeWidget extends AppWidgetProvider {
 	private void updateEarthquake(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-		int minMagnitude = Integer.parseInt(
-				prefs.getString(context.getString(R.string.PREF_SHOW_MINIMUM), "3"));
+		int minMagnitude = Integer.parseInt(prefs.getString(context.getString(R.string.PREF_SHOW_MINIMUM), 
+				context.getString(R.string.minimum_values_default)));
 
-		String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+		String where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
 
 		Cursor lastEarthquake = 
 				context.getContentResolver().query(QuakeProvider.CONTENT_URI, null, where, null, null);

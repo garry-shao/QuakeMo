@@ -31,6 +31,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ResultReceiver;
@@ -74,6 +76,7 @@ public class QuakeUpdateService extends IntentService {
 	public static final int RESULT_CODE_REFRESHED = 1;
 	public static final int RESULT_CODE_PURGED = 2;
 	public static final int RESULT_CODE_CANCELED = 3;
+	public static final int RESULT_CODE_DISCONNECTED = 4;
 	
 	// Bundle keys used in ResultReceiver.
 	public static final String BUNDLE_KEY_COUNT = "BUNDLE_KEY_COUNT";
@@ -109,30 +112,36 @@ public class QuakeUpdateService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean autoRefresh = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
-		int frequency = Integer.parseInt(
-				prefs.getString(getString(R.string.PREF_AUTO_FREQUENCY), "12"));
-
 		String action = intent.getAction();
 		if (action != null) {
 			if (action.equals(ACTION_REFRESH_AUTO)) {
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+				boolean autoRefresh = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
 				if (autoRefresh) {
+					int frequency = Integer.parseInt(prefs.getString(
+							getString(R.string.PREF_AUTO_FREQUENCY), 
+							getString(R.string.frequency_values_default)));
+					
 					enableAutoUpdate(frequency);
 
-					executeRefresh();
+					if (checkConnection()) {
+						executeRefresh();
+					}
 				} else {
 					disableAutoUpdate();
 				}
 			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
-				int count = executeRefresh();
-
 				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
 				if (receiver != null) {
-					Bundle bundle = new Bundle();
-					bundle.putInt(BUNDLE_KEY_COUNT, count);
-					receiver.send(RESULT_CODE_REFRESHED, bundle);
+					if (checkConnection()) {
+						int count = executeRefresh();
+						
+						Bundle bundle = new Bundle();
+						bundle.putInt(BUNDLE_KEY_COUNT, count);
+						receiver.send(RESULT_CODE_REFRESHED, bundle);
+					} else {
+						receiver.send(RESULT_CODE_DISCONNECTED, new Bundle());
+					}
 				}
 			} else if (action.equals(ACTION_PURGE_DATABASE)) {
 				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
@@ -184,14 +193,37 @@ public class QuakeUpdateService extends IntentService {
 	}
 
 	/**
-	 * Query source for new earthquakes.
+	 * Check if there is a valid connection to Internet.
 	 * 
-	 * @return How many entries added.
+	 * @return TRUE if a valid connection exists, FALSE otherwise.
+	 */
+	private boolean checkConnection() {
+		ConnectivityManager manager = 
+				(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = manager.getActiveNetworkInfo();
+		if (info != null && info.isConnected()) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			String type = prefs.getString(
+					getString(R.string.PREF_CONNECTION), getString(R.string.connection_values_wifi));
+			if (type.equals(getString(R.string.connection_values_any)) 
+					|| (info.getType()) == ConnectivityManager.TYPE_WIFI) {
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Execute the query instance for new earthquakes.
+	 * 
+	 * @return How many new earthquakes added to content provider.
 	 */
 	private int executeRefresh() {
 		int count = 0;
 		
-		String result = download(assemble());
+		String result = download(assembleQuery());
 		if (result != null && result.length() > 0) {
 			try {
 				JSONObject reader = new JSONObject(result);
@@ -230,11 +262,18 @@ public class QuakeUpdateService extends IntentService {
 	}
 
 	/**
+	 * Purge all earthquakes stored in content provider.
+	 */
+	private void purgeContentProvider() {
+		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
+	}
+
+	/**
 	 * Assemble query string out of preferences.
 	 * 
 	 * @return The assembled string.
 	 */
-	private String assemble() {
+	private String assembleQuery() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -252,7 +291,8 @@ public class QuakeUpdateService extends IntentService {
 						new Date(System.currentTimeMillis() - 30 * 24 * ONE_HOUR_IN_MILLISECONDS));
 			}
 		} else {
-			int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_QUERY_RANGE), "1"));
+			int range = Integer.parseInt(prefs.getString(
+					getString(R.string.PREF_QUERY_RANGE), getString(R.string.range_values_default)));
 			long startMillis = System.currentTimeMillis() - range * 24 * ONE_HOUR_IN_MILLISECONDS;
 			if (startMillis < timeStamp) {
 				startTime = dateFormat.format(new Date(timeStamp));
@@ -260,7 +300,8 @@ public class QuakeUpdateService extends IntentService {
 				startTime = dateFormat.format(new Date(startMillis));
 			}
 		}
-		String minMagnitude = prefs.getString(getString(R.string.PREF_QUERY_MINIMUM), "3");
+		String minMagnitude = prefs.getString(
+				getString(R.string.PREF_QUERY_MINIMUM), getString(R.string.minimum_values_default));
 
 		String query = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
 				"&" + "starttime=" + startTime + 
@@ -401,13 +442,6 @@ public class QuakeUpdateService extends IntentService {
 					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			notificationManager.notify(NOTIFICATION_ID, builder.build());
 		}
-	}
-
-	/**
-	 * Purge all earthquakes stored in content provider.
-	 */
-	private void purgeContentProvider() {
-		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
 	}
 
 }

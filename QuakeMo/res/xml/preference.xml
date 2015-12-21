@@ -95,5 +95,15 @@
             android:summary="@string/pref_widget_summary"
             android:title="@string/pref_widget_title" />
     </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_connection_title" >
+        <org.qmsos.quakemo.util.UtilListPreference
+            android:defaultValue="@string/connection_values_wifi"
+            android:dialogTitle="@string/pref_connection_title"
+            android:entries="@array/connection_entries"
+            android:entryValues="@array/connection_values"
+            android:key="@string/PREF_CONNECTION"
+            android:summary="%s"
+            android:title="@string/pref_connection_title" />
+    </android.support.v7.preference.PreferenceCategory>
 
 </android.support.v7.preference.PreferenceScreen>

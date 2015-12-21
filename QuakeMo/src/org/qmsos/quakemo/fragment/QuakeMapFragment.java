@@ -103,20 +103,21 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 		// Create data cursor.
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		
-			int minMagnitude = Integer.parseInt(
-					prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), "3"));
+			int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), 
+					getString(R.string.minimum_values_default)));
 
 			String where;
 			boolean showAll = prefs.getBoolean(getString(R.string.PREF_SHOW_ALL), false);
 			if (showAll) {
-				where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+				where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
 			} else {
-				int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), "1"));
+				int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), 
+						getString(R.string.range_values_default)));
 				long startMillis = System.currentTimeMillis()
 						- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
 				
-				where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude
-						+ " AND " + QuakeProvider.KEY_TIME + " > " + startMillis;
+				where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
+						+ " AND " + QuakeProvider.KEY_TIME + " >= " + startMillis;
 			}
 			
 			return new CursorLoader(
