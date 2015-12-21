@@ -97,6 +97,13 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+	
+		receiver.setReceiver(this);
+	}
+
+	@Override
 	protected void onPause() {
 		receiver.setReceiver(null);
 
@@ -104,10 +111,11 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 	}
 
 	@Override
-	protected void onResume() {
-		receiver.setReceiver(this);
-
-		super.onResume();
+	protected void onDestroy() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.unregisterOnSharedPreferenceChangeListener(this);
+		
+		super.onDestroy();
 	}
 
 	@Override

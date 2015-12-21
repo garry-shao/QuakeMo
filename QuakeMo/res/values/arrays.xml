@@ -2,11 +2,11 @@
 <resources>
 
     <string-array name="range_entries">
-        <item>One Day</item>
-        <item>Two Days</item>
-        <item>Three Days</item>
-        <item>Four Days</item>
-        <item>Five Days</item>
+        <item>One day</item>
+        <item>Two days</item>
+        <item>Three days</item>
+        <item>Four days</item>
+        <item>Five days</item>
     </string-array>
     <string-array name="range_values">
         <item>@string/range_values_default</item>
@@ -16,11 +16,11 @@
         <item>5</item>
     </string-array>
     <string-array name="frequency_entries">
-        <item>Every Hour</item>
-        <item>Two Hours</item>
-        <item>Three Hours</item>
-        <item>Six Hours</item>
-        <item>Twelve Hours</item>
+        <item>Every hour</item>
+        <item>Two hours</item>
+        <item>Three hours</item>
+        <item>Six hours</item>
+        <item>Twelve hours</item>
     </string-array>
     <string-array name="frequency_values">
         <item>1</item>
