@@ -2,8 +2,16 @@
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_auto_title" >
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="TRUE"
+            android:disableDependentsState="true"
+            android:key="@string/PREF_QUERY_FOLLOW"
+            android:summary="@string/pref_query_follow_summary"
+            android:title="@string/pref_query_follow_title" />
+
         <org.qmsos.quakemo.util.UtilListPreference
             android:defaultValue="@string/range_values_default"
+            android:dependency="@string/PREF_QUERY_FOLLOW"
             android:dialogTitle="@string/pref_query_range_title"
             android:entries="@array/range_entries"
             android:entryValues="@array/range_values"
@@ -36,8 +44,16 @@
             android:title="@string/pref_auto_frequency_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_display_title" >
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="FALSE"
+            android:disableDependentsState="true"
+            android:key="@string/PREF_SHOW_ALL"
+            android:summary="@string/pref_show_all_summary"
+            android:title="@string/pref_show_all_title" />
+
         <org.qmsos.quakemo.util.UtilListPreference
             android:defaultValue="@string/range_values_default"
+            android:dependency="@string/PREF_SHOW_ALL"
             android:dialogTitle="@string/pref_show_range_title"
             android:entries="@array/range_entries"
             android:entryValues="@array/range_values"
@@ -52,7 +68,8 @@
             android:key="@string/PREF_SHOW_MINIMUM"
             android:summary="%s"
             android:title="@string/pref_show_minimum_title" />
-
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_notify_title" >
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="FALSE"
             android:key="@string/PREF_NOTIFY_TOGGLE"

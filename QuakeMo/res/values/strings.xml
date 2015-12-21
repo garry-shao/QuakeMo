@@ -41,8 +41,11 @@
 
     <!-- Strings used in preferences -->
     <string name="pref_cat_display_title">Display</string>
+    <string name="pref_show_all_summary">Display all earthquakes stored.</string>
+    <string name="pref_show_all_title">Display all</string>
     <string name="pref_show_range_title">Display range</string>
     <string name="pref_show_minimum_title">Display minimum</string>
+    <string name="pref_cat_notify_title">Notification</string>
     <string name="pref_notify_toggle_summary">Enable notification</string>
     <string name="pref_notify_toggle_title">Notification</string>
     <string name="pref_notify_sound_summary">Notification with sound</string>
@@ -50,16 +53,19 @@
     <string name="pref_notify_vibrate_summary">Notification with vibrate</string>
     <string name="pref_notify_vibrate_title">Vibrate</string>
     <string name="pref_cat_auto_title">Refresh</string>
-    <string name="pref_auto_toggle_summary">Turn on auto refresh</string>
-    <string name="pref_auto_toggle_title">Automatic</string>
-    <string name="pref_auto_frequency_title">Frequency</string>
+    <string name="pref_auto_toggle_summary">Turn on automatic refresh</string>
+    <string name="pref_auto_toggle_title">Automatic refresh</string>
+    <string name="pref_auto_frequency_title">Refresh frequency</string>
     <string name="pref_query_range_title">Query range</string>
     <string name="pref_query_minimum_title">Query minimum</string>
+    <string name="pref_query_follow_summary">Follow up to database timestamp</string>
+    <string name="pref_query_follow_title">Query seamless</string>
     <string name="pref_cat_component_title">Component</string>
     <string name="pref_widget_summary">Register widget to android</string>
     <string name="pref_widget_title">Widget</string>
 
     <!-- Keys for shared preferences. DO NOT MODIFY -->
+    <string name="PREF_SHOW_ALL">PREF_SHOW_ALL</string>
     <string name="PREF_SHOW_RANGE">PREF_SHOW_RANGE</string>
     <string name="PREF_SHOW_MINIMUM">PREF_SHOW_MINIMUM</string>
     <string name="PREF_WIDGET">PREF_WIDGET</string>
@@ -70,6 +76,8 @@
     <string name="PREF_AUTO_FREQUENCY">PREF_AUTO_FREQUENCY</string>
     <string name="PREF_QUERY_RANGE">PREF_QUERY_RANGE</string>
     <string name="PREF_QUERY_MINIMUM">PREF_QUERY_MINIMUM</string>
+    <string name="PREF_QUERY_FOLLOW">PREF_QUERY_FOLLOW</string>
+    
 
     <!-- Default values in /array. CHECK before modify -->
     <string name="range_values_default">1</string>

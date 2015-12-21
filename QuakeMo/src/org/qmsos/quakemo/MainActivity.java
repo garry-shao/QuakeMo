@@ -225,7 +225,8 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		if (key.equals(getString(R.string.PREF_SHOW_MINIMUM)) 
-				|| key.equals(getString(R.string.PREF_SHOW_RANGE))) {
+				|| key.equals(getString(R.string.PREF_SHOW_RANGE))
+				|| key.equals(getString(R.string.PREF_SHOW_ALL))) {
 
 			reload(null);
 		}

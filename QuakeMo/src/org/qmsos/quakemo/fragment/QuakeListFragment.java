@@ -108,12 +108,18 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 			int minMagnitude = Integer.parseInt(
 					prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), "3"));
 		
-			int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), "1"));
-			long startMillis = System.currentTimeMillis()
-					- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
-
-			String where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude
-					+ " AND " + QuakeProvider.KEY_TIME + " > " + startMillis;
+			String where;
+			boolean showAll = prefs.getBoolean(getString(R.string.PREF_SHOW_ALL), false);
+			if (showAll) {
+				where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude;
+			} else {
+				int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), "1"));
+				long startMillis = System.currentTimeMillis()
+						- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
+				
+				where = QuakeProvider.KEY_MAGNITUDE + " > " + minMagnitude
+						+ " AND " + QuakeProvider.KEY_TIME + " > " + startMillis;
+			}
 
 			return new CursorLoader(
 					getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);
