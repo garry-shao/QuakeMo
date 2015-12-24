@@ -247,7 +247,7 @@ public class QuakeUpdateService extends IntentService {
 					earthquake.setDetails(place);
 					earthquake.setLink(url);
 					
-					boolean added = addToContentProvider(earthquake);
+					boolean added = addToProvider(earthquake);
 					if (added) {
 						count++;
 						sendNotification(earthquake);
@@ -375,7 +375,7 @@ public class QuakeUpdateService extends IntentService {
 	 *            the instance to add.
 	 * @return TRUE if earthquake successfully added, FALSE otherwise.
 	 */
-	private boolean addToContentProvider(Earthquake earthquake) {
+	private boolean addToProvider(Earthquake earthquake) {
 		boolean result = false;
 		
 		ContentResolver resolver = getContentResolver();
@@ -383,20 +383,22 @@ public class QuakeUpdateService extends IntentService {
 		String where = QuakeProvider.KEY_TIME + " = " + earthquake.getTime();
 
 		Cursor query = resolver.query(QuakeProvider.CONTENT_URI, null, where, null, null);
-		if (query.getCount() == 0) {
-			ContentValues values = new ContentValues();
-			values.put(QuakeProvider.KEY_TIME, earthquake.getTime());
-			values.put(QuakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
-			values.put(QuakeProvider.KEY_LONGITUDE, earthquake.getLongitude());
-			values.put(QuakeProvider.KEY_LATITUDE, earthquake.getLatitude());
-			values.put(QuakeProvider.KEY_DEPTH, earthquake.getDepth());
-			values.put(QuakeProvider.KEY_DETAILS, earthquake.getDetails());
-			values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
-			resolver.insert(QuakeProvider.CONTENT_URI, values);
-
-			result = true;
+		if (query != null) {
+			if (query.getCount() == 0) {
+				ContentValues values = new ContentValues();
+				values.put(QuakeProvider.KEY_TIME, earthquake.getTime());
+				values.put(QuakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
+				values.put(QuakeProvider.KEY_LONGITUDE, earthquake.getLongitude());
+				values.put(QuakeProvider.KEY_LATITUDE, earthquake.getLatitude());
+				values.put(QuakeProvider.KEY_DEPTH, earthquake.getDepth());
+				values.put(QuakeProvider.KEY_DETAILS, earthquake.getDetails());
+				values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
+				resolver.insert(QuakeProvider.CONTENT_URI, values);
+				
+				result = true;
+			}
+			query.close();
 		}
-		query.close();
 		
 		return result;
 	}

@@ -218,8 +218,7 @@ public class QuakeProvider extends ContentProvider {
 						KEY_DETAILS + " TEXT, " +
 						KEY_LINK + " TEXT);";
 	
-		public QuakeDatabaseHelper(Context context, String name, 
-				CursorFactory factory, int version) {
+		public QuakeDatabaseHelper(Context context, String name, CursorFactory factory, int version) {
 			super(context, name, factory, version);
 		}
 		
