@@ -13,10 +13,12 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
@@ -81,15 +83,20 @@ public class DetailsDialogFragment extends DialogFragment {
 					"\n\n" + details;
 			
 			builder.setMessage(dialogDetails);
-			builder.setPositiveButton(R.string.dialog_details_link, new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Intent intent = new Intent(Intent.ACTION_VIEW);
-					intent.setData(Uri.parse(link));
-					startActivity(intent);
-				}
-			});
+			
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+			boolean linkEnabled = prefs.getBoolean(getString(R.string.PREF_LINK), false);
+			if (linkEnabled) {
+				builder.setPositiveButton(R.string.dialog_details_link, new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(Intent.ACTION_VIEW);
+						intent.setData(Uri.parse(link));
+						startActivity(intent);
+					}
+				});
+			}
 		} else {
 			builder.setMessage("earthquake ID does not EXIST!");
 		}

@@ -94,6 +94,11 @@
             android:key="@string/PREF_WIDGET"
             android:summary="@string/pref_widget_summary"
             android:title="@string/pref_widget_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="FALSE"
+            android:key="@string/PREF_LINK"
+            android:summary="@string/pref_link_summary"
+            android:title="@string/pref_link_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_connection_title" >
         <org.qmsos.quakemo.util.UtilListPreference

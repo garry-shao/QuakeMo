@@ -65,6 +65,8 @@
     <string name="pref_cat_component_title">Component</string>
     <string name="pref_widget_summary">Register widget to android</string>
     <string name="pref_widget_title">Widget</string>
+    <string name="pref_link_summary">Enable link to usgs.gov</string>
+    <string name="pref_link_title">Link</string>
     <string name="pref_cat_connection_title">Connection</string>
     <string name="pref_connection_title">Use connection</string>
 
@@ -73,6 +75,7 @@
     <string name="PREF_SHOW_RANGE">PREF_SHOW_RANGE</string>
     <string name="PREF_SHOW_MINIMUM">PREF_SHOW_MINIMUM</string>
     <string name="PREF_WIDGET">PREF_WIDGET</string>
+    <string name="PREF_LINK">PREF_LINK</string>
     <string name="PREF_NOTIFY_TOGGLE">PREF_NOTIFY_TOGGLE</string>
     <string name="PREF_NOTIFY_SOUND">PREF_NOTIFY_SOUND</string>
     <string name="PREF_NOTIFY_VIBRATE">PREF_NOTIFY_VIBRATE</string>
