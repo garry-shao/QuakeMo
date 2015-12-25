@@ -11,7 +11,11 @@ import org.qmsos.quakemo.R;
 import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -50,36 +54,47 @@ public class DetailsDialogFragment extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		String dialogDetails;
-
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setTitle(R.string.dialog_details_title);
+		
 		final long id = getArguments().getLong(KEY_EARTHQUAKE);
 
 		Cursor cursor = getContext().getContentResolver()
 				.query(ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
-		try {
-			if (cursor.moveToFirst()) {
-				long time = cursor.getLong(cursor.getColumnIndex(QuakeProvider.KEY_TIME));
-				double magnitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
-				double depth = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_DEPTH));
-				String details = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_DETAILS));
-				String link = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_LINK));
+		if (cursor != null && cursor.moveToFirst()) {
+			long time = cursor.getLong(cursor.getColumnIndex(QuakeProvider.KEY_TIME));
+			double magnitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_MAGNITUDE));
+			double depth = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_DEPTH));
+			double longitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LONGITUDE));
+			double latitude = cursor.getDouble(cursor.getColumnIndex(QuakeProvider.KEY_LATITUDE));
+			String details = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_DETAILS));
+			final String link = cursor.getString(cursor.getColumnIndex(QuakeProvider.KEY_LINK));
 
-				DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
-				dialogDetails = dataFormat.format(new Date(time)) + 
-						"\n\n" + "Magnitude: " + magnitude + 
-						"\n\n" + "Depth: " + depth + " km" + 
-						"\n\n" + details + "\n\n" + link;
-			} else {
-				dialogDetails = "earthquake ID does not EXIST!";
-			}
-		} finally {
-			cursor.close();
+			String lon = longitude > 0 ? Math.abs(longitude) + "\u00b0E" : Math.abs(longitude) + "\u00b0W";
+			String lat = latitude > 0 ? Math.abs(latitude) + "\u00b0N" : Math.abs(latitude) + "\u00b0S";
+			
+			DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
+			String dialogDetails = dataFormat.format(new Date(time)) + 
+					"\n\n" + "Magnitude: " + magnitude + 
+					"\n\n" + "Depth: " + depth + " km" + 
+					"\n\n" + "Coord: " + lon + " " + lat + 
+					"\n\n" + details;
+			
+			builder.setMessage(dialogDetails);
+			builder.setPositiveButton(R.string.dialog_details_link, new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse(link));
+					startActivity(intent);
+				}
+			});
+		} else {
+			builder.setMessage("earthquake ID does not EXIST!");
 		}
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle(R.string.dialog_details_title).setMessage(dialogDetails);
+		cursor.close();
 
 		return builder.create();
 	}
-
 }

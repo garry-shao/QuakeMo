@@ -23,6 +23,7 @@
 
     <!-- Strings used in popup dialog -->
     <string name="dialog_details_title">Earthquake Details</string>
+    <string name="dialog_details_link">Link</string>
     <string name="dialog_purge_title">Purge</string>
     <string name="dialog_purge_message">Are you SURE ?</string>
     <string name="dialog_positive_button">Confirm</string>
