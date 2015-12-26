@@ -43,7 +43,7 @@
 
     <!-- Strings used in preferences -->
     <string name="pref_cat_display_title">Display</string>
-    <string name="pref_show_all_summary">Display all earthquakes stored.</string>
+    <string name="pref_show_all_summary">Display all earthquakes stored</string>
     <string name="pref_show_all_title">Display all</string>
     <string name="pref_show_range_title">Display range</string>
     <string name="pref_show_minimum_title">Display minimum</string>
