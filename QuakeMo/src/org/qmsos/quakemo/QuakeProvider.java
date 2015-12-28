@@ -208,8 +208,8 @@ public class QuakeProvider extends ContentProvider {
 		private static final String EARTHQUAKE_TABLE = "earthquakes";
 		
 		private static final String DATABASE_CREATE = 
-				"create table " + EARTHQUAKE_TABLE + " (" + 
-						KEY_ID + " integer primary key autoincrement, " +
+				"CREATE TABLE " + EARTHQUAKE_TABLE + " (" + 
+						KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 						KEY_TIME + " INTEGER, " + 
 						KEY_MAGNITUDE + " REAL, " + 
 						KEY_LONGITUDE + " REAL, " +
