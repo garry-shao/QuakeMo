@@ -226,6 +226,9 @@ public class QuakeUpdateService extends IntentService {
 		String result = download(assembleQuery());
 		if (result != null && result.length() > 0) {
 			try {
+				long timeStamp = 0;
+				Earthquake quakeStamp = null;
+				
 				JSONObject reader = new JSONObject(result);
 				JSONArray features = reader.getJSONArray("features");
 				for (int i = 0; i < features.length(); i++) {
@@ -250,8 +253,16 @@ public class QuakeUpdateService extends IntentService {
 					boolean added = addToProvider(earthquake);
 					if (added) {
 						count++;
-						sendNotification(earthquake);
+						
+						if (time > timeStamp) {
+							timeStamp = time;
+							quakeStamp = earthquake;
+						}
 					}
+				}
+				
+				if (timeStamp > 0 && quakeStamp != null) {
+					sendNotification(quakeStamp);
 				}
 			} catch (JSONException e) {
 				Log.e(TAG, "Something wrong with the result JSON");
