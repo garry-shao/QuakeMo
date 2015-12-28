@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 			View coordinatorLayout = findViewById(R.id.coordinator_layout);
 			if (coordinatorLayout != null) {
 				Snackbar.make(coordinatorLayout,getString(R.string.snackbar_refreshing), 
-						Snackbar.LENGTH_INDEFINITE).show();
+						Snackbar.LENGTH_LONG).show();
 			}
 
 			intent = new Intent(this, QuakeUpdateService.class);
