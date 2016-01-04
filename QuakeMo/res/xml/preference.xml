@@ -81,12 +81,6 @@
             android:key="@string/PREF_NOTIFY_SOUND"
             android:summary="@string/pref_notify_sound_summary"
             android:title="@string/pref_notify_sound_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="FALSE"
-            android:dependency="@string/PREF_NOTIFY_TOGGLE"
-            android:key="@string/PREF_NOTIFY_VIBRATE"
-            android:summary="@string/pref_notify_vibrate_summary"
-            android:title="@string/pref_notify_vibrate_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_component_title" >
         <android.support.v7.preference.SwitchPreferenceCompat

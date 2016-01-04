@@ -437,13 +437,6 @@ public class QuakeUpdateService extends IntentService {
 					.setContentTitle("M " + earthquake.getMagnitude())
 					.setContentText(earthquake.getDetails());
 	
-			boolean notifyVibrate = prefs.getBoolean(getString(R.string.PREF_NOTIFY_VIBRATE), false);
-			if (notifyVibrate) {
-				double vibrateLength = 100 * Math.exp(0.53 * earthquake.getMagnitude());
-	
-				builder.setVibrate(new long[] { 100, 100, (long) vibrateLength });
-			}
-	
 			boolean notifySound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
 			if (notifySound) {
 				Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
