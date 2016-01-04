@@ -424,7 +424,7 @@ public class QuakeUpdateService extends IntentService {
 		Notification.Builder builder = new Notification.Builder(this);
 		builder.setAutoCancel(true)
 				.setTicker(getString(R.string.notification_ticker))
-				.setSmallIcon(R.drawable.ic_launcher);
+				.setSmallIcon(R.drawable.ic_notification);
 	
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean notifyToggle = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
