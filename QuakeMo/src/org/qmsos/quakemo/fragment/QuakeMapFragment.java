@@ -31,7 +31,11 @@ import android.view.ViewGroup;
 public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
 	private static final String KEY_CENTER = "KEY_CENTER";
-	private static final String KEY_ZOOMLEVEL = "KEY_ZOOMLEVEL";
+	private static final String KEY_ZOOM_LEVEL = "KEY_ZOOM_LEVEL";
+	
+	// Confine zoom levels of MapView.
+	private static final int ZOOM_LEVEL_MIN = 1;
+	private static final int ZOOM_LEVEL_MAX = 4;
 	
 	/**
 	 * The earthquake overlay on the map.
@@ -47,8 +51,10 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mapView = new MapView(getContext());
 		mapView.setMultiTouchControls(true);
+		mapView.setUseDataConnection(false);
 		mapView.setTilesScaledToDpi(true);
-		mapView.setMinZoomLevel(1);
+		mapView.setMinZoomLevel(ZOOM_LEVEL_MIN);
+		mapView.setMaxZoomLevel(ZOOM_LEVEL_MAX);
 
 		if (savedInstanceState != null) {
 			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
@@ -56,12 +62,12 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 				mapView.getController().setCenter(center);
 			}
 
-			int i = savedInstanceState.getInt(KEY_ZOOMLEVEL);
-			if (i > 0) {
-				mapView.getController().setZoom(i);
+			int zoomLevel = savedInstanceState.getInt(KEY_ZOOM_LEVEL);
+			if (zoomLevel > 0) {
+				mapView.getController().setZoom(zoomLevel);
 			}
 		} else {
-			mapView.getController().setZoom(1);
+			mapView.getController().setZoom(ZOOM_LEVEL_MIN);
 		}
 
 		quakeOverlay = new UtilQuakeOverlay(getContext());
@@ -80,7 +86,7 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putParcelable(KEY_CENTER, (GeoPoint) mapView.getMapCenter());
-		outState.putInt(KEY_ZOOMLEVEL, mapView.getZoomLevel());
+		outState.putInt(KEY_ZOOM_LEVEL, mapView.getZoomLevel());
 
 		super.onSaveInstanceState(outState);
 	}
