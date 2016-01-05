@@ -30,10 +30,10 @@ public class UtilPagerAdapter extends FragmentPagerAdapter {
 	}
 
 	@Override
-	public Fragment getItem(int arg0) {
+	public Fragment getItem(int position) {
 		// Misleading method name, fragments returned
 		// here aren't same with those in FragmentPagerAdaper.
-		return (fragmentList == null || fragmentList.size() == 0) ? null : fragmentList.get(arg0);
+		return (fragmentList == null || fragmentList.size() == 0) ? null : fragmentList.get(position);
 	}
 
 	@Override

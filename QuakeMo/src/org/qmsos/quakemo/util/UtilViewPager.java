@@ -23,11 +23,11 @@ public class UtilViewPager extends ViewPager {
 	}
 
 	@Override
-	protected boolean canScroll(View arg0, boolean arg1, int arg2, int arg3, int arg4) {
-		if (arg0 instanceof MapView) {
+	protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
+		if (v instanceof MapView) {
 			return true;
 		} else {
-			return super.canScroll(arg0, arg1, arg2, arg3, arg4);
+			return super.canScroll(v, checkV, dx, x, y);
 		}
 	}
 
