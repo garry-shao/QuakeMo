@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.qmsos.quakemo.MainActivity;
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.R;
 
@@ -48,8 +47,10 @@ public class UtilCursorAdapter extends UtilBaseAdapter<ViewHolder> {
 			@Override
 			public void onClick(View v) {
 				Context context = v.getContext();
-				if (context instanceof MainActivity) {
-					((MainActivity) context).onShowDialog(id);
+				try {
+					((ShowDialogListener) context).onShowDialog(id);
+				} catch (ClassCastException e) {
+					throw new ClassCastException("context must implement ShowDialogListener");
 				}
 			}
 		});

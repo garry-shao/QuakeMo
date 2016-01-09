@@ -17,15 +17,6 @@ import android.support.v7.app.AlertDialog;
  */
 public class PurgeDialogFragment extends DialogFragment {
 
-	/**
-	 * Interface for a callback to be invoked when purging action is called.
-	 * 
-	 *
-	 */
-	public interface ShowSnackbarListener {
-		void onShowSnackbar();
-	}
-
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -36,11 +27,24 @@ public class PurgeDialogFragment extends DialogFragment {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				((ShowSnackbarListener) getActivity()).onShowSnackbar();
+				try {
+					((ShowSnackbarListener) getContext()).onShowSnackbar();
+				} catch (ClassCastException e) {
+					throw new ClassCastException("context must implement ShowSnackbarListener");
+				}
 			}
 		});
 
 		return builder.create();
+	}
+
+	/**
+	 * Interface for a callback to be invoked when purging action is called.
+	 * 
+	 *
+	 */
+	public interface ShowSnackbarListener {
+		void onShowSnackbar();
 	}
 
 }
