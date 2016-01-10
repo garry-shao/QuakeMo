@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 /**
@@ -18,6 +19,8 @@ import android.widget.RemoteViews;
  */
 public class QuakeWidget extends AppWidgetProvider {
 
+	private static final String TAG = QuakeWidget.class.getSimpleName();
+	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
@@ -54,33 +57,32 @@ public class QuakeWidget extends AppWidgetProvider {
 	 *            The AppWidge IDs.
 	 */
 	private void updateEarthquake(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-		int minMagnitude = Integer.parseInt(prefs.getString(context.getString(R.string.PREF_SHOW_MINIMUM), 
-				context.getString(R.string.minimum_values_default)));
-
-		String where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
-
-		Cursor lastEarthquake = 
-				context.getContentResolver().query(QuakeProvider.CONTENT_URI, null, where, null, null);
-
 		String magnitude = "--";
 		String details = context.getString(R.string.widget_empty);
 
-		if (lastEarthquake != null) {
-			try {
-				if (lastEarthquake.moveToLast()) {
-					int magnitudeIndex = lastEarthquake.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE);
-					int detailsIndex = lastEarthquake.getColumnIndexOrThrow(QuakeProvider.KEY_DETAILS);
-
-					magnitude = lastEarthquake.getString(magnitudeIndex);
-					details = lastEarthquake.getString(detailsIndex);
-				}
-			} finally {
-				lastEarthquake.close();
+		Cursor cursor = null;
+		try {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+			int minMagnitude = Integer.parseInt(prefs.getString(
+					context.getString(R.string.PREF_SHOW_MINIMUM), 
+					context.getString(R.string.minimum_values_default)));
+			String where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
+			
+			cursor = context.getContentResolver().query(QuakeProvider.CONTENT_URI, null, where, null, null);
+			if (cursor != null && cursor.moveToLast()) {
+				magnitude = cursor.getString(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE));
+				details = cursor.getString(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_DETAILS));
+			}
+		} catch (NumberFormatException e) {
+			Log.e(TAG, "error parsing number");
+		} catch (IllegalArgumentException e) {
+			Log.e(TAG, "Columns do not exist");
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
 			}
 		}
-
+		
 		for (int i = 0; i < appWidgetIds.length; i++) {
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_quake);
 			views.setTextViewText(R.id.widget_magnitude, "M " + magnitude);

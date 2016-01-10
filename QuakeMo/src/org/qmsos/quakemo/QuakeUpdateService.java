@@ -329,14 +329,21 @@ public class QuakeUpdateService extends IntentService {
 	private long findTimeStamp() {
 		long timeStamp = 0;
 		
-		String[] projections = { "MAX(" + QuakeProvider.KEY_TIME + ") AS " + QuakeProvider.KEY_TIME };
-		
-		Cursor query = getContentResolver().query(
-				QuakeProvider.CONTENT_URI, projections, null, null, null);
-		if (query.moveToFirst()) {
-			timeStamp = query.getLong(query.getColumnIndexOrThrow(QuakeProvider.KEY_TIME));
+		Cursor cursor = null;
+		try {
+			String[] projections = { "MAX(" + QuakeProvider.KEY_TIME + ") AS " + QuakeProvider.KEY_TIME };
+			
+			cursor = getContentResolver().query(QuakeProvider.CONTENT_URI, projections, null, null, null);
+			if (cursor != null && cursor.moveToFirst()) {
+				timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_TIME));
+			}
+		} catch (IllegalArgumentException e) {
+			Log.e(TAG, "Column does not exists");
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
 		}
-		query.close();
 		
 		return timeStamp;
 	}
@@ -387,15 +394,18 @@ public class QuakeUpdateService extends IntentService {
 	 * @return TRUE if earthquake successfully added, FALSE otherwise.
 	 */
 	private boolean addToProvider(Earthquake earthquake) {
-		boolean result = false;
+		if (earthquake == null) {
+			return false;
+		}
 		
-		ContentResolver resolver = getContentResolver();
-
-		String where = QuakeProvider.KEY_TIME + " = " + earthquake.getTime();
-
-		Cursor query = resolver.query(QuakeProvider.CONTENT_URI, null, where, null, null);
-		if (query != null) {
-			if (query.getCount() == 0) {
+		boolean flag = false;
+		
+		Cursor cursor = null;
+		try {
+			ContentResolver resolver = getContentResolver();
+			String where = QuakeProvider.KEY_TIME + " = " + earthquake.getTime();
+			cursor = resolver.query(QuakeProvider.CONTENT_URI, null, where, null, null);
+			if (cursor != null && !cursor.moveToNext()) {
 				ContentValues values = new ContentValues();
 				values.put(QuakeProvider.KEY_TIME, earthquake.getTime());
 				values.put(QuakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
@@ -406,12 +416,17 @@ public class QuakeUpdateService extends IntentService {
 				values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
 				resolver.insert(QuakeProvider.CONTENT_URI, values);
 				
-				result = true;
+				flag = true;
 			}
-			query.close();
+		} catch (Exception e) {
+			Log.e(TAG, "Error found when adding earthquake to provider");
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
 		}
 		
-		return result;
+		return flag;
 	}
 
 	/**
