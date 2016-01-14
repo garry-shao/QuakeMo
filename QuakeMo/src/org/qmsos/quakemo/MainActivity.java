@@ -66,6 +66,10 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 
 	private static final String KEY_RECEIVER = "KEY_RECEIVER";
 
+	// flags used to show different layout of Snackbar.
+	private static final int SNACKBAR_REFRESH = 1;
+	private static final int SNACKBAR_PURGE = 2;
+	
 	/**
 	 * Callback from update service.
 	 */
@@ -216,17 +220,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 
 			return true;
 		case (R.id.menu_refresh):
-			View coordinatorLayout = findViewById(R.id.coordinator_layout);
-			if (coordinatorLayout != null) {
-				Snackbar.make(coordinatorLayout,getString(R.string.snackbar_refreshing), 
-						Snackbar.LENGTH_LONG).show();
-			}
-
-			intent = new Intent(this, QuakeUpdateService.class);
-			intent.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
-			intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
-			
-			startService(intent);
+			showSnackbar(SNACKBAR_REFRESH);
 
 			return true;
 		default:
@@ -288,43 +282,12 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			result = null;
 		}
 
-		View coordinatorLayout = findViewById(R.id.coordinator_layout);
-		if (coordinatorLayout != null && result != null) {
-			Snackbar.make(coordinatorLayout, result, Snackbar.LENGTH_SHORT).show();
-		}
+		showSnackbar(result);
 	}
 
 	@Override
 	public void onPurgeSelected() {
-		final Intent intent = new Intent(this, QuakeUpdateService.class);
-		intent.setAction(QuakeUpdateService.ACTION_PURGE_DATABASE);
-		intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
-
-		View coordinatorLayout = findViewById(R.id.coordinator_layout);
-		if (coordinatorLayout != null) {
-			Snackbar snackbar = Snackbar.make(coordinatorLayout, R.string.snackbar_purging, 
-					Snackbar.LENGTH_LONG);
-			snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN,
-							QuakeUpdateService.EXTRA_PURGE_BURNDOWN_NO);
-				}
-			});
-			snackbar.setCallback(new Callback() {
-
-				@Override
-				public void onDismissed(Snackbar snackbar, int event) {
-					if (event != Callback.DISMISS_EVENT_ACTION) {
-						intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN,
-								QuakeUpdateService.EXTRA_PURGE_BURNDOWN_YES);
-					}
-					startService(intent);
-				}
-			});
-			snackbar.show();
-		}
+		showSnackbar(SNACKBAR_PURGE);
 	}
 
 	@Override
@@ -402,6 +365,95 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 				in.close();
 			} catch (IOException e) {
 				Log.e(MainActivity.class.getSimpleName(), "I/O error when unzipping map tiles");
+			}
+		}
+	}
+
+	/**
+	 * Show view of snackbar configured by non zero flag.
+	 * 
+	 * @param flag 
+	 *             layout of the snackbar, either {@link SNACKBAR_REFRESH} or 
+	 *             {@link SNACKBAR_PURGE}
+	 */
+	private void showSnackbar(int flag) {
+		showSnackbar(flag, null);
+	}
+
+	/**
+	 * Show an ordinary snackbar.
+	 * 
+	 * @param text 
+	 *             The text shown on snackbar, must be NOT NULL.
+	 */
+	private void showSnackbar(String text) {
+		showSnackbar(0, text);
+	}
+
+	/**
+	 * Implementation of showing snackbar, should use {@link #showSnackbar(int)} or 
+	 * {@link #showSnackbar(String)}.
+	 * 
+	 * @param flag
+	 * @param text
+	 */
+	private void showSnackbar(int flag, String text) {
+		View view = findViewById(R.id.coordinator_layout);
+		if (view != null) {
+			
+			Snackbar snackbar = null;
+			
+			final Intent intent = new Intent(this, QuakeUpdateService.class);
+			
+			switch (flag) {
+			case SNACKBAR_REFRESH:
+				intent.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
+				intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
+				
+				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
+				snackbar.setCallback(new Callback() {
+
+					@Override
+					public void onDismissed(Snackbar snackbar, int event) {
+						
+						startService(intent);
+					}
+				});
+				break;
+			case SNACKBAR_PURGE:
+				intent.setAction(QuakeUpdateService.ACTION_PURGE_DATABASE);
+				intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
+				
+				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
+				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN,
+								QuakeUpdateService.EXTRA_PURGE_BURNDOWN_NO);
+					}
+				});
+				snackbar.setCallback(new Callback() {
+
+					@Override
+					public void onDismissed(Snackbar snackbar, int event) {
+						if (event != Callback.DISMISS_EVENT_ACTION) {
+							intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN,
+									QuakeUpdateService.EXTRA_PURGE_BURNDOWN_YES);
+						}
+						startService(intent);
+					}
+				});
+				break;
+			default:
+				if (text != null) {
+					snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+				}
+				break;
+			}
+			
+			if (snackbar != null) {
+				snackbar.show();
 			}
 		}
 	}
