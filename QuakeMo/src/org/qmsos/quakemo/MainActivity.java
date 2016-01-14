@@ -12,13 +12,13 @@ import java.util.zip.ZipInputStream;
 
 import org.qmsos.quakemo.fragment.DetailsDialogFragment;
 import org.qmsos.quakemo.fragment.PurgeDialogFragment;
-import org.qmsos.quakemo.fragment.PurgeDialogFragment.ShowSnackbarListener;
+import org.qmsos.quakemo.fragment.PurgeDialogFragment.OnPurgeSelectedListener;
 import org.qmsos.quakemo.fragment.QuakeListFragment;
 import org.qmsos.quakemo.fragment.QuakeMapFragment;
-import org.qmsos.quakemo.util.UtilCursorAdapter.ShowDialogListener;
+import org.qmsos.quakemo.util.UtilCursorAdapter.ShowDialogCallback;
 import org.qmsos.quakemo.util.UtilPagerAdapter;
 import org.qmsos.quakemo.util.UtilResultReceiver;
-import org.qmsos.quakemo.util.UtilResultReceiver.Receiver;
+import org.qmsos.quakemo.util.UtilResultReceiver.OnReceiveListener;
 
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -55,8 +55,9 @@ import android.view.View;
  *
  *
  */
-public class MainActivity extends AppCompatActivity implements OnSharedPreferenceChangeListener, 
-	OnActionExpandListener,	Receiver, ShowSnackbarListener, ShowDialogListener {
+public class MainActivity extends AppCompatActivity 
+implements OnSharedPreferenceChangeListener, OnActionExpandListener, 
+	OnReceiveListener, OnPurgeSelectedListener, ShowDialogCallback {
 
 	/**
 	 * Key to the query string passed in bundle.
@@ -111,12 +112,12 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 	protected void onResume() {
 		super.onResume();
 	
-		receiver.setReceiver(this);
+		receiver.setListener(this);
 	}
 
 	@Override
 	protected void onPause() {
-		receiver.setReceiver(null);
+		receiver.setListener(null);
 
 		super.onPause();
 	}
@@ -294,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements OnSharedPreferenc
 	}
 
 	@Override
-	public void onShowSnackbar() {
+	public void onPurgeSelected() {
 		final Intent intent = new Intent(this, QuakeUpdateService.class);
 		intent.setAction(QuakeUpdateService.ACTION_PURGE_DATABASE);
 		intent.putExtra(UtilResultReceiver.RECEIVER, receiver);

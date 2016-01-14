@@ -17,30 +17,31 @@ public class UtilResultReceiver extends ResultReceiver {
 	 */
 	public static final String RECEIVER = "org.qmsos.quakemo.RECEIVER";
 	
-	/**
-	 * The result callback interface.
-	 * 
-	 * 
-	 */
-	public interface Receiver {
-		public void onReceiveResult(int resultCode, Bundle resultData);
-	}
-
-	private Receiver receiver;
+	private OnReceiveListener listener;
 
 	public UtilResultReceiver(Handler handler) {
 		super(handler);
 	}
 
-	public void setReceiver(Receiver receiver) {
-		this.receiver = receiver;
-	}
-
 	@Override
 	protected void onReceiveResult(int resultCode, Bundle resultData) {
-		if (receiver != null) {
-			receiver.onReceiveResult(resultCode, resultData);
+		if (listener != null) {
+			listener.onReceiveResult(resultCode, resultData);
 		}
+	}
+
+	public void setListener(OnReceiveListener listener) {
+		this.listener = listener;
+	}
+
+	/**
+	 * Callback interface when results are delivered. 
+	 * 
+	 * 
+	 * 
+	 */
+	public interface OnReceiveListener {
+		void onReceiveResult(int resultCode, Bundle resultData);
 	}
 
 }

@@ -28,9 +28,9 @@ public class PurgeDialogFragment extends DialogFragment {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				try {
-					((ShowSnackbarListener) getContext()).onShowSnackbar();
+					((OnPurgeSelectedListener) getContext()).onPurgeSelected();
 				} catch (ClassCastException e) {
-					throw new ClassCastException("context must implement ShowSnackbarListener");
+					throw new ClassCastException("context must implements OnPurgeSelectedListener");
 				}
 			}
 		});
@@ -43,8 +43,8 @@ public class PurgeDialogFragment extends DialogFragment {
 	 * 
 	 *
 	 */
-	public interface ShowSnackbarListener {
-		void onShowSnackbar();
+	public interface OnPurgeSelectedListener {
+		void onPurgeSelected();
 	}
 
 }

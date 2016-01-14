@@ -48,9 +48,9 @@ public class UtilCursorAdapter extends UtilBaseAdapter<ViewHolder> {
 			public void onClick(View v) {
 				Context context = v.getContext();
 				try {
-					((ShowDialogListener) context).onShowDialog(id);
+					((ShowDialogCallback) context).onShowDialog(id);
 				} catch (ClassCastException e) {
-					throw new ClassCastException("context must implement ShowDialogListener");
+					throw new ClassCastException("context must implements ShowDialogCallback");
 				}
 			}
 		});
@@ -81,7 +81,7 @@ public class UtilCursorAdapter extends UtilBaseAdapter<ViewHolder> {
 	 * 
 	 *
 	 */
-	public interface ShowDialogListener {
+	public interface ShowDialogCallback {
 		/**
 		 * Callback to show dialog of earthquake.
 		 * 
