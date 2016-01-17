@@ -1,15 +1,12 @@
 package org.qmsos.quakemo.fragment;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.qmsos.quakemo.MainActivity;
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.util.UtilQuakeOverlay;
+import org.qmsos.quakemo.util.UtilMapOverlay;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -40,7 +37,7 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	/**
 	 * The earthquake overlay on the map.
 	 */
-	private UtilQuakeOverlay quakeOverlay;
+	private UtilMapOverlay mapOverlay;
 
 	/**
 	 * Defined as there is only one view on this fragment.
@@ -70,9 +67,9 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 			mapView.getController().setZoom(ZOOM_LEVEL_MIN);
 		}
 
-		quakeOverlay = new UtilQuakeOverlay(getContext());
-		mapView.getOverlays().add(quakeOverlay);
-		
+		mapOverlay = new UtilMapOverlay(getContext(), null);
+		mapView.getOverlays().add(mapOverlay);
+
 		return mapView;
 	}
 
@@ -125,7 +122,7 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 				where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
 						+ " AND " + QuakeProvider.KEY_TIME + " >= " + startMillis;
 			}
-			
+
 			return new CursorLoader(
 					getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);
 		}
@@ -133,40 +130,14 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		quakeOverlay.setGeoPoints(parseGeoPoints(data));
-
+		mapOverlay.swapCursor(data);
 		mapView.invalidate();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		quakeOverlay.setGeoPoints(parseGeoPoints(null));
-
+		mapOverlay.swapCursor(null);
 		mapView.invalidate();
-	}
-
-	/**
-	 * Parse GeoPoints of earthquakes from cursor.
-	 * 
-	 * @param cursor
-	 *            The cursor to parse.
-	 * @return The parsed GeoPoints as list.
-	 */
-	private List<GeoPoint> parseGeoPoints(Cursor cursor) {
-		LinkedList<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
-
-		if (cursor != null && cursor.moveToFirst()) {
-			do {
-				int LaIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LATITUDE);
-				int LoIndex = cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LONGITUDE);
-
-				GeoPoint geoPoint = new GeoPoint(cursor.getDouble(LaIndex), cursor.getDouble(LoIndex));
-
-				geoPoints.add(geoPoint);
-			} while (cursor.moveToNext());
-		}
-
-		return geoPoints;
 	}
 
 }
