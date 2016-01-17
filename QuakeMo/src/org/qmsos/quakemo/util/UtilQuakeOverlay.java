@@ -27,9 +27,14 @@ public class UtilQuakeOverlay extends Overlay {
 	private static final int RADIUS = 3;
 
 	/**
+	 * Paint instance used to mark earthquake.
+	 */
+	private Paint quakePaint;
+	
+	/**
 	 * Earthquake geoPoints stored.
 	 */
-	private List<GeoPoint> geoPoints = new LinkedList<GeoPoint>();
+	private List<GeoPoint> geoPoints;
 
 	/**
 	 * Constructor of earthquake overlay.
@@ -39,6 +44,14 @@ public class UtilQuakeOverlay extends Overlay {
 	 */
 	public UtilQuakeOverlay(Context context) {
 		super(context);
+		
+		quakePaint = new Paint();
+		quakePaint.setARGB(250, 255, 0, 0);
+		quakePaint.setAntiAlias(true);
+		quakePaint.setFakeBoldText(true);
+		quakePaint.setStyle(Style.FILL);
+		
+		geoPoints = new LinkedList<GeoPoint>();
 	}
 
 	@Override
@@ -46,19 +59,13 @@ public class UtilQuakeOverlay extends Overlay {
 		if (shadow) {
 			return;
 		}
-
-		Paint paint = new Paint();
-		paint.setARGB(250, 255, 0, 0);
-		paint.setAntiAlias(true);
-		paint.setFakeBoldText(true);
-		paint.setStyle(Style.FILL);
 		
 		Projection projection = mapView.getProjection();
 		for (GeoPoint geoPoint : geoPoints) {
 			Point point = new Point();
 			point = projection.toPixels(geoPoint, point);
 			
-			canvas.drawCircle(point.x, point.y, RADIUS, paint);
+			canvas.drawCircle(point.x, point.y, RADIUS, quakePaint);
 		}
 		
 	}
