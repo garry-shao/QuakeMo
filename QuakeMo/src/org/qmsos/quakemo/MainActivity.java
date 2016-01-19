@@ -60,6 +60,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 	// flags used to show different layout of Snackbar.
 	private static final int SNACKBAR_REFRESH = 1;
 	private static final int SNACKBAR_PURGE = 2;
+	private static final int SNACKBAR_NORMAL = 3;
 	
 	/**
 	 * Callback from update service.
@@ -209,7 +210,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 
 			return true;
 		case (R.id.menu_refresh):
-			showSnackbar(SNACKBAR_REFRESH);
+			showSnackbar(SNACKBAR_REFRESH, null);
 
 			return true;
 		default:
@@ -271,12 +272,12 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			result = null;
 		}
 
-		showSnackbar(result);
+		showSnackbar(SNACKBAR_NORMAL, result);
 	}
 
 	@Override
 	public void onPurgeSelected() {
-		showSnackbar(SNACKBAR_PURGE);
+		showSnackbar(SNACKBAR_PURGE, null);
 	}
 
 	@Override
@@ -314,32 +315,14 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 	}
 
 	/**
-	 * Show view of snackbar configured by non zero flag.
-	 * 
-	 * @param flag 
-	 *             layout of the snackbar, either {@link SNACKBAR_REFRESH} or 
-	 *             {@link SNACKBAR_PURGE}
-	 */
-	private void showSnackbar(int flag) {
-		showSnackbar(flag, null);
-	}
-
-	/**
-	 * Show an ordinary snackbar.
-	 * 
-	 * @param text 
-	 *             The text shown on snackbar, must be NOT NULL.
-	 */
-	private void showSnackbar(String text) {
-		showSnackbar(0, text);
-	}
-
-	/**
 	 * Implementation of showing snackbar, should use {@link #showSnackbar(int)} or 
 	 * {@link #showSnackbar(String)}.
 	 * 
 	 * @param flag
+	 *            layout of the snackbar, either {@link SNACKBAR_REFRESH},  
+	 *            {@link SNACKBAR_PURGE} or {@link SNACKBAR_NORMAL}.
 	 * @param text
+	 *            Text shown on snackbar, used when flag is {@link SNACKBAR_NORMAL}.
 	 */
 	private void showSnackbar(int flag, String text) {
 		View view = findViewById(R.id.coordinator_layout);
@@ -389,7 +372,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 					}
 				});
 				break;
-			default:
+			case SNACKBAR_NORMAL:
 				if (text != null) {
 					snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
 				}
