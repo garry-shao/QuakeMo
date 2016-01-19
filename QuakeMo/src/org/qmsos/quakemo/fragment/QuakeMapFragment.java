@@ -1,5 +1,6 @@
 package org.qmsos.quakemo.fragment;
 
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.qmsos.quakemo.MainActivity;
@@ -48,6 +49,7 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mapView = new MapView(getContext());
 		mapView.setMultiTouchControls(true);
+		mapView.setTileSource(TileSourceFactory.MAPNIK);
 		mapView.setUseDataConnection(false);
 		mapView.setTilesScaledToDpi(true);
 		mapView.setMinZoomLevel(ZOOM_LEVEL_MIN);
