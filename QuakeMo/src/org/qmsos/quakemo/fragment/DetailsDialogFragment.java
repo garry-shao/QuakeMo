@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.net.Uri;
@@ -55,7 +56,6 @@ public class DetailsDialogFragment extends DialogFragment {
 
 		return fragment;
 	}
-
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -108,7 +108,11 @@ public class DetailsDialogFragment extends DialogFragment {
 						public void onClick(DialogInterface dialog, int which) {
 							Intent intent = new Intent(Intent.ACTION_VIEW);
 							intent.setData(Uri.parse(link));
-							startActivity(intent);
+							
+							PackageManager manager = getContext().getPackageManager();
+							if (manager != null && intent.resolveActivity(manager) != null) {
+								startActivity(intent);
+							}
 						}
 					});
 				}
@@ -125,4 +129,5 @@ public class DetailsDialogFragment extends DialogFragment {
 
 		return builder.create();
 	}
+
 }
