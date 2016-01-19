@@ -3,11 +3,13 @@ package org.qmsos.quakemo.fragment;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.MapView.OnFirstLayoutListener;
 import org.qmsos.quakemo.MainActivity;
 import org.qmsos.quakemo.QuakeProvider;
 import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.util.UtilMapOverlay;
+import org.qmsos.quakemo.util.UtilMapTileChecker;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -26,7 +28,7 @@ import android.view.ViewGroup;
  *
  *
  */
-public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor>, OnFirstLayoutListener {
 
 	private static final String KEY_CENTER = "KEY_CENTER";
 	private static final String KEY_ZOOM_LEVEL = "KEY_ZOOM_LEVEL";
@@ -52,6 +54,7 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 		mapView.setTileSource(TileSourceFactory.MAPNIK);
 		mapView.setUseDataConnection(false);
 		mapView.setTilesScaledToDpi(true);
+		mapView.addOnFirstLayoutListener(this);
 		mapView.setMinZoomLevel(ZOOM_LEVEL_MIN);
 		mapView.setMaxZoomLevel(ZOOM_LEVEL_MAX);
 
@@ -140,6 +143,11 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	public void onLoaderReset(Loader<Cursor> loader) {
 		mapOverlay.swapCursor(null);
 		mapView.invalidate();
+	}
+
+	@Override
+	public void onFirstLayout(View v, int left, int top, int right, int bottom) {
+		UtilMapTileChecker.checkMapTiles(getContext());
 	}
 
 }

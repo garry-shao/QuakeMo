@@ -1,14 +1,7 @@
 package org.qmsos.quakemo;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.qmsos.quakemo.fragment.DetailsDialogFragment;
 import org.qmsos.quakemo.fragment.PurgeDialogFragment;
@@ -29,7 +22,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -44,7 +36,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
-import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -104,8 +95,6 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			receiver = new UtilResultReceiver(new Handler());
 		}
 
-		unzipMapTiles();
-		
 		// start service for the first time.
 		Intent startIntent = new Intent(this, QuakeUpdateService.class);
 		startIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
@@ -320,51 +309,6 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			QuakeMapFragment quakeMap = (QuakeMapFragment) manager.findFragmentByTag(mapTag);
 			if (quakeMap.isAdded()) {
 				quakeMap.getLoaderManager().restartLoader(0, bundle, quakeMap);
-			}
-		}
-	}
-
-	/**
-	 * Unzip map tiles to external storage device(SD card).
-	 * 
-	 * 
-	 */
-	private void unzipMapTiles() {
-		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-		String unzippedPath = externalPath + "/osmdroid/tiles/";
-		File file = new File(unzippedPath);
-		if (!file.exists()) {
-			String filename = "Mapnik.zip";
-			try {
-				InputStream in = getAssets().open(filename);
-				ZipInputStream zin = new ZipInputStream(in);
-				
-				ZipEntry entry = zin.getNextEntry();
-				while (entry != null) {
-					String entryName = entry.getName();
-					if (entry.isDirectory()) {
-						File dir = new File(unzippedPath + entryName);
-						dir.mkdirs();
-					} else {
-						byte[] buffer = new byte[2048];
-						
-						FileOutputStream fout = new FileOutputStream(unzippedPath + entryName);
-						BufferedOutputStream bout = new BufferedOutputStream(fout, buffer.length);
-						
-						int content;
-						while ((content = zin.read(buffer)) != -1) {
-							bout.write(buffer, 0, content);
-						}
-						bout.flush();
-						bout.close();
-					}
-					entry = zin.getNextEntry();
-				}
-				
-				zin.close();
-				in.close();
-			} catch (IOException e) {
-				Log.e(MainActivity.class.getSimpleName(), "I/O error when unzipping map tiles");
 			}
 		}
 	}
