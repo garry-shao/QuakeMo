@@ -237,6 +237,15 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			manager.setComponentEnabledSetting(new ComponentName(this, QuakeWidget.class), newState,
 					PackageManager.DONT_KILL_APP);
 		}
+		
+		if (key.equals(getString(R.string.PREF_AUTO_REFRESH)) 
+				|| key.equals(getString(R.string.PREF_AUTO_FREQUENCY))) {
+			
+			Intent intent = new Intent(this, QuakeUpdateService.class);
+			intent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
+			
+			startService(intent);
+		}
 	}
 
 	@Override
