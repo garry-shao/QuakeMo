@@ -18,10 +18,14 @@ public class QuakeAlarmReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Intent startIntent = new Intent(context, QuakeUpdateService.class);
-		startIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
-		
-		context.startService(startIntent);
+		String action = intent.getAction();
+
+		if (action.equals(ACTION_REFRESH_ALARM) || action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+			Intent refreshIntent = new Intent(context, QuakeUpdateService.class);
+			refreshIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
+			
+			context.startService(refreshIntent);
+		}
 	}
 
 }

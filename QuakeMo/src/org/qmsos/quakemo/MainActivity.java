@@ -95,11 +95,6 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 		} else {
 			receiver = new UtilResultReceiver(new Handler());
 		}
-
-		// start service for the first time.
-		Intent startIntent = new Intent(this, QuakeUpdateService.class);
-		startIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
-		startService(startIntent);
 	}
 
 	@Override
