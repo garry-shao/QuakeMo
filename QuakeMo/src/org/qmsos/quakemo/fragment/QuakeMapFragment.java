@@ -11,12 +11,15 @@ import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.util.UtilMapOverlay;
 import org.qmsos.quakemo.util.UtilMapTileChecker;
 
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -147,7 +150,11 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 
 	@Override
 	public void onFirstLayout(View v, int left, int top, int right, int bottom) {
-		UtilMapTileChecker.checkMapTiles(getContext());
+		if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) 
+				== PackageManager.PERMISSION_GRANTED) {
+			
+			UtilMapTileChecker.checkMapTiles(getContext());
+		}
 	}
 
 }
