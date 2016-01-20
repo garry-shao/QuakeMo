@@ -93,8 +93,8 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 				QuakeProvider.KEY_MAGNITUDE, QuakeProvider.KEY_DETAILS };
 
 		// Create search cursor.
-		if (args != null && args.getString(MainActivity.KEY_QUERY) != null) {
-			String query = args.getString(MainActivity.KEY_QUERY);
+		if (args != null && args.getString(MainActivity.BUNDLE_KEY_QUERY) != null) {
+			String query = args.getString(MainActivity.BUNDLE_KEY_QUERY);
 			
 			String where = QuakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
 			String sortOrder = QuakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";

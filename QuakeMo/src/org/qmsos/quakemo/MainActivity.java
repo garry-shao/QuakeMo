@@ -36,6 +36,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
+import android.util.Log;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,12 +51,9 @@ public class MainActivity extends AppCompatActivity
 implements OnSharedPreferenceChangeListener, OnActionExpandListener, 
 	OnReceiveListener, OnPurgeSelectedListener, ShowDialogCallback {
 
-	/**
-	 * Key to the query string passed in bundle.
-	 */
-	public static final String KEY_QUERY = "KEY_QUERY";
-
-	private static final String KEY_RECEIVER = "KEY_RECEIVER";
+	private static final String TAG = MainActivity.class.getSimpleName();
+	
+	private static final String STATE_KEY_RECEIVER = "STATE_KEY_RECEIVER";
 
 	// flags used to show different layout of Snackbar.
 	private static final int SNACKBAR_REFRESH = 1;
@@ -66,6 +64,11 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 	 * Callback from update service.
 	 */
 	private UtilResultReceiver receiver;
+
+	/**
+	 * Key to the query string passed in bundle.
+	 */
+	public static final String BUNDLE_KEY_QUERY = "BUNDLE_KEY_QUERY";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +94,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 		prefs.registerOnSharedPreferenceChangeListener(this);
 		
 		if (savedInstanceState != null) {
-			receiver = savedInstanceState.getParcelable(KEY_RECEIVER);
+			receiver = savedInstanceState.getParcelable(STATE_KEY_RECEIVER);
 		} else {
 			receiver = new UtilResultReceiver(new Handler());
 		}
@@ -121,7 +124,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable(KEY_RECEIVER, receiver);
+		outState.putParcelable(STATE_KEY_RECEIVER, receiver);
 
 		super.onSaveInstanceState(outState);
 	}
@@ -134,7 +137,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			String query = intent.getStringExtra(SearchManager.QUERY);
 
 			Bundle args = new Bundle();
-			args.putString(KEY_QUERY, query);
+			args.putString(BUNDLE_KEY_QUERY, query);
 
 			reload(args);
 		}
