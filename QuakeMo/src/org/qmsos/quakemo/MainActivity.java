@@ -159,13 +159,25 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 
 			@Override
 			public boolean onSuggestionClick(int position) {
-				Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
-				String suggestion = cursor.getString(
-						cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
-				cursor.close();
-
-				searchView.setQuery(suggestion, true);
-
+				Cursor cursor = null;
+				try {
+					Object item = searchView.getSuggestionsAdapter().getItem(position);
+					if (item != null) {
+						cursor = (Cursor) item;
+						
+						String suggestion = cursor.getString(
+								cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1));
+						
+						searchView.setQuery(suggestion, true);
+					}
+				} catch (IllegalArgumentException e) {
+					Log.e(TAG, "Columns do not exist");
+				} finally {
+					if (cursor != null && !cursor.isClosed()) {
+						cursor.close();
+					}
+				}
+				
 				return true;
 			}
 
