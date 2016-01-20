@@ -94,6 +94,11 @@ public class QuakeUpdateService extends IntentService {
 	private static final int NOTIFICATION_ID = 1;
 
 	/**
+	 * Unique request code of the auto update alarm's PendingIntent.
+	 */
+	private static final int ALARM_INTENT_REQUEST_CODE = 235;
+	
+	/**
 	 * Default constructor of this service.
 	 */
 	public QuakeUpdateService() {
@@ -170,14 +175,16 @@ public class QuakeUpdateService extends IntentService {
 	private void enableAutoUpdate(int frequency) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
-				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM), 0);
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
+				ALARM_INTENT_REQUEST_CODE,
+				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM), 
+				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		long intervalMillis = frequency * ONE_HOUR_IN_MILLISECONDS;
 		long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
-		int alarmType = AlarmManager.ELAPSED_REALTIME_WAKEUP;
-
-		alarmManager.setInexactRepeating(alarmType, timeToRefresh, intervalMillis, alarmIntent);
+		
+		alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
+				timeToRefresh, intervalMillis, alarmIntent);
 	}
 
 	/**
@@ -186,8 +193,10 @@ public class QuakeUpdateService extends IntentService {
 	private void disableAutoUpdate() {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0,
-				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM), 0);
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
+				ALARM_INTENT_REQUEST_CODE,
+				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM),
+				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		alarmManager.cancel(alarmIntent);
 	}
