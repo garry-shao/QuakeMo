@@ -14,6 +14,7 @@ import org.qmsos.quakemo.util.UtilResultReceiver;
 import org.qmsos.quakemo.util.UtilResultReceiver.OnReceiveListener;
 
 import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -36,9 +37,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.SearchView.OnSuggestionListener;
-import android.util.Log;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.support.v7.widget.Toolbar.OnMenuItemClickListener;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -48,7 +49,7 @@ import android.view.View;
  *
  */
 public class MainActivity extends AppCompatActivity 
-implements OnSharedPreferenceChangeListener, OnActionExpandListener, 
+implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
 	OnReceiveListener, OnPurgeSelectedListener, ShowDialogCallback {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -76,7 +77,12 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 		setContentView(R.layout.activity_main);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
+		toolbar.setTitle(R.string.app_name);
+		toolbar.inflateMenu(R.menu.menu_main_options);
+		toolbar.setOnMenuItemClickListener(this);
+		
+		MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
+		initialSearch(searchItem);
 
 		List<Fragment> fragmentList = new ArrayList<Fragment>();
 		QuakeListFragment quakeList = new QuakeListFragment();
@@ -142,86 +148,22 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			reload(args);
 		}
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-
-		getMenuInflater().inflate(R.menu.menu_main_options, menu);
-
-		MenuItem item = menu.findItem(R.id.menu_search);
-		MenuItemCompat.setOnActionExpandListener(item, this);
-
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		final SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-		searchView.setOnSuggestionListener(new OnSuggestionListener() {
-
-			@Override
-			public boolean onSuggestionClick(int position) {
-				Cursor cursor = null;
-				try {
-					Object item = searchView.getSuggestionsAdapter().getItem(position);
-					if (item != null) {
-						cursor = (Cursor) item;
-						
-						String suggestion = cursor.getString(
-								cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1));
-						
-						searchView.setQuery(suggestion, true);
-					}
-				} catch (IllegalArgumentException e) {
-					Log.e(TAG, "Columns do not exist");
-				} finally {
-					if (cursor != null && !cursor.isClosed()) {
-						cursor.close();
-					}
-				}
-				
-				return true;
-			}
-
-			@Override
-			public boolean onSuggestionSelect(int position) {
-				return false;
-			}
-		});
-		searchView.setOnQueryTextListener(new OnQueryTextListener() {
-
-			@Override
-			public boolean onQueryTextChange(String newText) {
-				return false;
-			}
-
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				searchView.clearFocus();
-
-				return false;
-			}
-		});
-
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		super.onOptionsItemSelected(item);
-
+@Override
+	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
 		case (R.id.menu_preferences):
 			Intent intent = new Intent(this, PrefActivity.class);
 			startActivity(intent);
-
+	
 			return true;
 		case (R.id.menu_purge):
 			PurgeDialogFragment dialog = new PurgeDialogFragment();
 			dialog.show(getSupportFragmentManager(), "dialog");
-
+	
 			return true;
 		case (R.id.menu_refresh):
 			showSnackbar(SNACKBAR_REFRESH, null);
-
+	
 			return true;
 		default:
 			return false;
@@ -256,18 +198,6 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			
 			startService(intent);
 		}
-	}
-
-	@Override
-	public boolean onMenuItemActionCollapse(MenuItem item) {
-		reload(null);
-
-		return true;
-	}
-
-	@Override
-	public boolean onMenuItemActionExpand(MenuItem item) {
-		return true;
 	}
 
 	@Override
@@ -306,30 +236,94 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 	}
 
 	/**
-	 * Reload all the cursors for new data.
+	 * Initialize SearchView, should be used only once.
 	 * 
-	 * @param bundle
-	 *            May used to pass extra arguments to create new cursor.
+	 * @param menuItem
+	 *            The MenuItem of SearchView.
 	 */
-	private void reload(Bundle bundle) {
-		FragmentManager manager = getSupportFragmentManager();
-
-		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		UtilPagerAdapter adapter = (UtilPagerAdapter) viewPager.getAdapter();
-
-		String listTag = adapter.getTag(0);
-		if (listTag != null && manager.findFragmentByTag(listTag) != null) {
-			QuakeListFragment quakeList = (QuakeListFragment) manager.findFragmentByTag(listTag);
-			if (quakeList.isAdded()) {
-				quakeList.getLoaderManager().restartLoader(0, bundle, quakeList);
-			}
+	private void initialSearch(MenuItem menuItem) {
+		if (menuItem == null) {
+			return;
 		}
-		String mapTag = adapter.getTag(1);
-		if (mapTag != null && manager.findFragmentByTag(mapTag) != null) {
-			QuakeMapFragment quakeMap = (QuakeMapFragment) manager.findFragmentByTag(mapTag);
-			if (quakeMap.isAdded()) {
-				quakeMap.getLoaderManager().restartLoader(0, bundle, quakeMap);
+		
+		MenuItemCompat.setOnActionExpandListener(menuItem, new OnActionExpandListener() {
+	
+			@Override
+			public boolean onMenuItemActionCollapse(MenuItem item) {
+				if (item.getItemId() == R.id.menu_search) {
+					reload(null);
+					
+					return true;
+				} else {
+					return false;
+				}
 			}
+	
+			@Override
+			public boolean onMenuItemActionExpand(MenuItem item) {
+				if (item.getItemId() == R.id.menu_search) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+		
+		if (menuItem.getActionView() instanceof SearchView) {
+			final SearchView searchView = (SearchView) menuItem.getActionView();
+			
+			SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+			SearchableInfo searchableInfo = manager.getSearchableInfo(getComponentName());
+			if (searchableInfo != null) {
+				searchView.setSearchableInfo(searchableInfo);
+			}
+			
+			searchView.setOnSuggestionListener(new OnSuggestionListener() {
+				
+				@Override
+				public boolean onSuggestionClick(int position) {
+					Cursor cursor = null;
+					try {
+						Object item = searchView.getSuggestionsAdapter().getItem(position);
+						if (item != null) {
+							cursor = (Cursor) item;
+							
+							String suggestion = cursor.getString(
+									cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1));
+							
+							searchView.setQuery(suggestion, true);
+						}
+					} catch (IllegalArgumentException e) {
+						Log.e(TAG, "Columns do not exist");
+					} finally {
+						if (cursor != null && !cursor.isClosed()) {
+							cursor.close();
+						}
+					}
+					
+					return true;
+				}
+				
+				@Override
+				public boolean onSuggestionSelect(int position) {
+					return false;
+				}
+			});
+			
+			searchView.setOnQueryTextListener(new OnQueryTextListener() {
+				
+				@Override
+				public boolean onQueryTextChange(String newText) {
+					return false;
+				}
+				
+				@Override
+				public boolean onQueryTextSubmit(String query) {
+					searchView.clearFocus();
+					
+					return false;
+				}
+			});
 		}
 	}
 
@@ -358,7 +352,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
 				snackbar.setCallback(new Callback() {
-
+	
 					@Override
 					public void onDismissed(Snackbar snackbar, int event) {
 						
@@ -372,7 +366,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
 				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
-
+	
 					@Override
 					public void onClick(View v) {
 						intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN,
@@ -380,7 +374,7 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 					}
 				});
 				snackbar.setCallback(new Callback() {
-
+	
 					@Override
 					public void onDismissed(Snackbar snackbar, int event) {
 						if (event != Callback.DISMISS_EVENT_ACTION) {
@@ -400,6 +394,34 @@ implements OnSharedPreferenceChangeListener, OnActionExpandListener,
 			
 			if (snackbar != null) {
 				snackbar.show();
+			}
+		}
+	}
+
+	/**
+	 * Reload all the cursors for new data.
+	 * 
+	 * @param bundle
+	 *            May used to pass extra arguments to create new cursor.
+	 */
+	private void reload(Bundle bundle) {
+		FragmentManager manager = getSupportFragmentManager();
+
+		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+		UtilPagerAdapter adapter = (UtilPagerAdapter) viewPager.getAdapter();
+
+		String listTag = adapter.getTag(0);
+		if (listTag != null && manager.findFragmentByTag(listTag) != null) {
+			QuakeListFragment quakeList = (QuakeListFragment) manager.findFragmentByTag(listTag);
+			if (quakeList.isAdded()) {
+				quakeList.getLoaderManager().restartLoader(0, bundle, quakeList);
+			}
+		}
+		String mapTag = adapter.getTag(1);
+		if (mapTag != null && manager.findFragmentByTag(mapTag) != null) {
+			QuakeMapFragment quakeMap = (QuakeMapFragment) manager.findFragmentByTag(mapTag);
+			if (quakeMap.isAdded()) {
+				quakeMap.getLoaderManager().restartLoader(0, bundle, quakeMap);
 			}
 		}
 	}
