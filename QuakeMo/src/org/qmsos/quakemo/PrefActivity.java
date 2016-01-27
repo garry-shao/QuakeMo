@@ -18,6 +18,7 @@ public class PrefActivity extends AppCompatActivity {
 		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 }

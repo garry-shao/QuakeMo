@@ -41,6 +41,7 @@
         </activity>
         <activity
             android:name=".PrefActivity"
+            android:parentActivityName=".MainActivity"
             android:label="@string/activity_name_pref" >
         </activity>
 
