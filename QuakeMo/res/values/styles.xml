@@ -16,14 +16,14 @@
     </style>
 
     <style name="AppCompatTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="preferenceTheme">@style/AppCompatTheme.PreferenceTheme</item>
-        <item name="toolbarStyle">@style/AppCompatTheme.ToolbarStyle</item>
+        <item name="preferenceTheme">@style/preferenceTheme</item>
+        <item name="toolbarStyle">@style/toolbarStyle</item>
         <item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>
         <item name="editTextColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     
     <!-- Toolbar theme. -->
-    <style name="AppCompatTheme.ToolbarStyle" parent="Widget.AppCompat.Toolbar">
+    <style name="toolbarStyle" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorAccent</item>
         <item name="titleTextAppearance">
             @style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse
@@ -35,7 +35,7 @@
     
     <!-- Preferences theme. -->
     <!-- Hack of PreferenceThemeOverlay.v14.Material, Change textStyle & textSize -->
-    <style name="AppCompatTheme.PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
+    <style name="preferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
         <item name="preferenceFragmentListStyle">@style/AppCompatTheme.PreferenceFragmentList</item>
     </style>
     
