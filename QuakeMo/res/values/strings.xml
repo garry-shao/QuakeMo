@@ -85,8 +85,8 @@
     
     <!-- Default values in /array. CHECK before modify -->
     <string name="range_values_default">1</string>
-    <string name="frequency_values_default">12</string>
-    <string name="minimum_values_default">3</string>
+    <string name="frequency_values_default">3</string>
+    <string name="minimum_values_default">4</string>
     
     <!-- Values used in connection array's values -->
     <string name="connection_values_wifi">wifi</string>

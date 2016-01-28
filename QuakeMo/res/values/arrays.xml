@@ -9,7 +9,7 @@
         <item>Five days</item>
     </string-array>
     <string-array name="range_values">
-        <item>@string/range_values_default</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
@@ -27,7 +27,7 @@
         <item>2</item>
         <item>3</item>
         <item>6</item>
-        <item>@string/frequency_values_default</item>
+        <item>12</item>
     </string-array>
     <string-array name="minimum_entries">
         <item>M 3.0</item>
@@ -37,7 +37,7 @@
         <item>M 7.0</item>
     </string-array>
     <string-array name="minimum_values">
-        <item>@string/minimum_values_default</item>
+        <item>3</item>
         <item>4</item>
         <item>5</item>
         <item>6</item>
