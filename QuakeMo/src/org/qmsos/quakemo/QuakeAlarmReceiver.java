@@ -20,7 +20,7 @@ public class QuakeAlarmReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
 
-		if (action.equals(ACTION_REFRESH_ALARM) || action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+		if (action != null && action.equals(ACTION_REFRESH_ALARM)) {
 			Intent refreshIntent = new Intent(context, QuakeUpdateService.class);
 			refreshIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
 			

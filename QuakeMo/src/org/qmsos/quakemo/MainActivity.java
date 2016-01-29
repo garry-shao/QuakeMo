@@ -104,6 +104,10 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		} else {
 			receiver = new UtilResultReceiver(new Handler());
 		}
+		
+		Intent intent = new Intent(this, QuakeUpdateService.class);
+		intent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
+		startService(intent);
 	}
 
 	@Override
