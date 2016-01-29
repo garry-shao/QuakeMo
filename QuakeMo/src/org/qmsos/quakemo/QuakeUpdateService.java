@@ -304,11 +304,11 @@ public class QuakeUpdateService extends IntentService {
 		
 		boolean querySeamless = prefs.getBoolean(getString(R.string.PREF_QUERY_FOLLOW), false);
 		if (querySeamless) {
-			if (timeStamp > (System.currentTimeMillis() - 30 * 24 * ONE_HOUR_IN_MILLISECONDS)) {
+			long defaultStartMillis = System.currentTimeMillis() - 7 * 24 * ONE_HOUR_IN_MILLISECONDS;
+			if (timeStamp > defaultStartMillis) {
 				startTime = dateFormat.format(new Date(timeStamp));
 			} else {
-				startTime = dateFormat.format(
-						new Date(System.currentTimeMillis() - 30 * 24 * ONE_HOUR_IN_MILLISECONDS));
+				startTime = dateFormat.format(new Date(defaultStartMillis));
 			}
 		} else {
 			int range = Integer.parseInt(prefs.getString(
