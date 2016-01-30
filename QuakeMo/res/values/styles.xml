@@ -22,6 +22,14 @@
         <item name="editTextColor">?android:attr/textColorPrimaryInverse</item>
     </style>
     
+    <!-- TabLayout theme. -->
+    <style name="tabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/tabTextAppearance</item>
+    </style>
+    <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
+    
     <!-- Toolbar theme. -->
     <style name="toolbarStyle" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorAccent</item>
