@@ -3,6 +3,8 @@ package org.qmsos.quakemo.util;
 import java.util.List;
 
 import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.fragment.QuakeListFragment;
+import org.qmsos.quakemo.fragment.QuakeMapFragment;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -43,12 +45,12 @@ public class UtilPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		switch (position) {
-		case 0:
+		Fragment fragment = fragmentList.get(position);
+		if (fragment instanceof QuakeListFragment) {
 			return context.getString(R.string.tab_list);
-		case 1:
+		} else if (fragment instanceof QuakeMapFragment) {
 			return context.getString(R.string.tab_map);
-		default:
+		} else {
 			return context.getString(R.string.tab_null);
 		}
 	}
