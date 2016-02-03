@@ -154,7 +154,7 @@ public class QuakeUpdateService extends IntentService {
 					String burndown = intent.getStringExtra(EXTRA_PURGE_BURNDOWN); 
 					if (burndown.equals(EXTRA_PURGE_BURNDOWN_NO)) {
 						receiver.send(RESULT_CODE_CANCELED, new Bundle());
-					} else {
+					} else if (burndown.equals(EXTRA_PURGE_BURNDOWN_YES)) {
 						purgeContentProvider();
 						
 						receiver.send(RESULT_CODE_PURGED, new Bundle());
