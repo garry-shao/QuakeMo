@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.map;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -25,7 +25,7 @@ import android.support.v4.content.ContextCompat;
  * 
  *
  */
-public class UtilMapTileChecker {
+public class MapTileChecker {
 
 	public static final String MAP_SOURCE = "Mapnik";
 	

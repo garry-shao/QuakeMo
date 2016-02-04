@@ -10,10 +10,10 @@ import android.support.v7.preference.PreferenceFragmentCompat;
  * 
  *
  */
-public class QuakePrefFragment extends PreferenceFragmentCompat {
+public class CompatPreference extends PreferenceFragmentCompat {
 
 	@Override
-	public void onCreatePreferences(Bundle arg0, String arg1) {
+	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 		addPreferencesFromResource(R.xml.preference);
 	}
 

@@ -1,11 +1,11 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.widget;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
 
 import android.content.Context;
@@ -22,9 +22,9 @@ import android.widget.TextView;
  * 
  *
  */
-public class UtilCursorAdapter extends UtilBaseAdapter<ViewHolder> {
+public class RecyclerViewCursorAdapter extends RecyclerViewBaseAdapter<ViewHolder> {
 
-	public UtilCursorAdapter(Context context, Cursor cursor) {
+	public RecyclerViewCursorAdapter(Context context, Cursor cursor) {
 		super(context, cursor);
 	}
 
@@ -32,15 +32,15 @@ public class UtilCursorAdapter extends UtilBaseAdapter<ViewHolder> {
 	public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
 
-		final long id = cursor.getLong(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_ID));
-		long time = cursor.getLong(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_TIME));
-		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE));
+		final long id = cursor.getLong(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_ID));
+		long time = cursor.getLong(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_TIME));
+		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
 
 		String info = dateFormat.format(new Date(time)) + " - " + "M " + magnitude;
-		String details = cursor.getString(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_DETAILS));
+		String details = cursor.getString(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
 
-		((UtilViewHolder) holder).infoView.setText(info);
-		((UtilViewHolder) holder).detailsView.setText(details);
+		((RecyclerViewHolder) holder).mInfoView.setText(info);
+		((RecyclerViewHolder) holder).mDetailsView.setText(details);
 
 		holder.itemView.setOnClickListener(new OnClickListener() {
 
@@ -60,18 +60,18 @@ public class UtilCursorAdapter extends UtilBaseAdapter<ViewHolder> {
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = View.inflate(parent.getContext(), R.layout.view_holder, null);
 
-		return new UtilViewHolder(view);
+		return new RecyclerViewHolder(view);
 	}
 
-	public static class UtilViewHolder extends ViewHolder {
-		TextView infoView;
-		TextView detailsView;
+	static class RecyclerViewHolder extends ViewHolder {
+		TextView mInfoView;
+		TextView mDetailsView;
 
-		public UtilViewHolder(View itemView) {
+		public RecyclerViewHolder(View itemView) {
 			super(itemView);
 
-			infoView = (TextView) itemView.findViewById(R.id.info);
-			detailsView = (TextView) itemView.findViewById(R.id.details);
+			mInfoView = (TextView) itemView.findViewById(R.id.info);
+			mDetailsView = (TextView) itemView.findViewById(R.id.details);
 		}
 	}
 

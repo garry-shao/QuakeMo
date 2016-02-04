@@ -1,11 +1,11 @@
 package org.qmsos.quakemo.fragment;
 
+import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.MainActivity;
-import org.qmsos.quakemo.QuakeProvider;
-import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.util.UtilCursorAdapter;
+import org.qmsos.quakemo.widget.RecyclerViewCursorAdapter;
 
+import android.app.AlarmManager;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -27,27 +27,27 @@ import android.view.ViewGroup;
  * 
  *
  */
-public class QuakeListFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> {
 
 	private static final String KEY_RECYCLER_VIEW_STATE = "KEY_RECYCLER_VIEW_STATE";
 	
-	private UtilCursorAdapter adapter;
-	private RecyclerView recyclerView;
+	private RecyclerViewCursorAdapter mCursorAdapter;
+	private RecyclerView mRecyclerView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		recyclerView = (RecyclerView) inflater.inflate(R.layout.view_recycler, container, false);
+		mRecyclerView = (RecyclerView) inflater.inflate(R.layout.view_recycler, container, false);
 
-		return recyclerView;
+		return mRecyclerView;
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		adapter = new UtilCursorAdapter(getContext(), null);
-		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-		recyclerView.setAdapter(adapter);
+		mCursorAdapter = new RecyclerViewCursorAdapter(getContext(), null);
+		mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+		mRecyclerView.setAdapter(mCursorAdapter);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		LayoutManager layoutManager = recyclerView.getLayoutManager();
+		LayoutManager layoutManager = mRecyclerView.getLayoutManager();
 		if (layoutManager instanceof LinearLayoutManager) {
 			outState.putParcelable(KEY_RECYCLER_VIEW_STATE, layoutManager.onSaveInstanceState());
 		}
@@ -80,7 +80,7 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 		
 		if (savedInstanceState != null) {
 			Parcelable savedRecyclerViewState = savedInstanceState.getParcelable(KEY_RECYCLER_VIEW_STATE);
-			LayoutManager layoutManager = recyclerView.getLayoutManager();
+			LayoutManager layoutManager = mRecyclerView.getLayoutManager();
 			if (layoutManager instanceof LinearLayoutManager) {
 				layoutManager.onRestoreInstanceState(savedRecyclerViewState);
 			}
@@ -89,18 +89,18 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { QuakeProvider.KEY_ID, QuakeProvider.KEY_TIME, 
-				QuakeProvider.KEY_MAGNITUDE, QuakeProvider.KEY_DETAILS };
+		String[] projection = { EarthquakeProvider.KEY_ID, EarthquakeProvider.KEY_TIME, 
+				EarthquakeProvider.KEY_MAGNITUDE, EarthquakeProvider.KEY_DETAILS };
 
 		// Create search cursor.
 		if (args != null && args.getString(MainActivity.BUNDLE_KEY_QUERY) != null) {
 			String query = args.getString(MainActivity.BUNDLE_KEY_QUERY);
 			
-			String where = QuakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
-			String sortOrder = QuakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";
+			String where = EarthquakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
+			String sortOrder = EarthquakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";
 
 			return new CursorLoader(
-				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, sortOrder);
+				getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, sortOrder);
 		} else {
 		// Create data cursor.
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -111,30 +111,29 @@ public class QuakeListFragment extends Fragment implements LoaderCallbacks<Curso
 			String where;
 			boolean showAll = prefs.getBoolean(getString(R.string.PREF_SHOW_ALL), false);
 			if (showAll) {
-				where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
+				where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
 			} else {
 				int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), 
 						getString(R.string.range_values_default)));
-				long startMillis = System.currentTimeMillis()
-						- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
+				long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 				
-				where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
-						+ " AND " + QuakeProvider.KEY_TIME + " >= " + startMillis;
+				where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
+						+ " AND " + EarthquakeProvider.KEY_TIME + " >= " + startMillis;
 			}
 
 			return new CursorLoader(
-					getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);
+					getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, null);
 		}
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		adapter.swapCursor(data);
+		mCursorAdapter.swapCursor(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		adapter.swapCursor(null);
+		mCursorAdapter.swapCursor(null);
 	}
 
 }

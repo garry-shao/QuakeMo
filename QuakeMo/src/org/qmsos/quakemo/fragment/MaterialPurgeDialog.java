@@ -15,7 +15,7 @@ import android.support.v7.app.AlertDialog;
  * 
  *
  */
-public class PurgeDialogFragment extends DialogFragment {
+public class MaterialPurgeDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {

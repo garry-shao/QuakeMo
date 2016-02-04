@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.widget;
 
 import android.content.Context;
 import android.database.ContentObserver;
@@ -16,7 +16,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
  * @param <VH>
  *            subclass of ViewHolder.
  */
-public abstract class UtilBaseAdapter<VH extends ViewHolder> extends Adapter<VH> {
+public abstract class RecyclerViewBaseAdapter<VH extends ViewHolder> extends Adapter<VH> {
 
 	public static final int FLAG_REGISTER_CONTENT_OBSERVER = 0x02;
 
@@ -27,11 +27,11 @@ public abstract class UtilBaseAdapter<VH extends ViewHolder> extends Adapter<VH>
 	protected ChangeObserver mChangeObserver;
 	protected DataSetObserver mDataSetObserver;
 
-	public UtilBaseAdapter(Context context, Cursor c, int flags) {
+	public RecyclerViewBaseAdapter(Context context, Cursor c, int flags) {
 		init(context, c, flags);
 	}
 
-	public UtilBaseAdapter(Context context, Cursor c) {
+	public RecyclerViewBaseAdapter(Context context, Cursor c) {
 		this(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
 	}
 

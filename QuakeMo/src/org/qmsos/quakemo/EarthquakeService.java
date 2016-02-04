@@ -16,7 +16,7 @@ import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.qmsos.quakemo.data.Earthquake;
+import org.qmsos.quakemo.util.Earthquake;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -39,11 +39,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
- * The service performing earthquake update.
+ * The main service performing background jobs.
  *
  *
  */
-public class QuakeUpdateService extends IntentService {
+public class EarthquakeService extends IntentService {
 
 	/**
 	 * The intent action of refreshing widget.
@@ -76,12 +76,10 @@ public class QuakeUpdateService extends IntentService {
 	public static final int RESULT_CODE_CANCELED = 3;
 	public static final int RESULT_CODE_DISCONNECTED = 4;
 	
-	public static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
-	
 	/**
 	 * Class name tag. Debug use only.
 	 */
-	private static final String TAG = QuakeUpdateService.class.getSimpleName();
+	private static final String TAG = EarthquakeService.class.getSimpleName();
 
 	/**
 	 * Notification ID in this application.
@@ -96,7 +94,7 @@ public class QuakeUpdateService extends IntentService {
 	/**
 	 * Default constructor of this service.
 	 */
-	public QuakeUpdateService() {
+	public EarthquakeService() {
 		super(TAG);
 	}
 
@@ -106,7 +104,7 @@ public class QuakeUpdateService extends IntentService {
 	 * @param workThreadName
 	 *            Tag name for debug.
 	 */
-	public QuakeUpdateService(String workThreadName) {
+	public EarthquakeService(String workThreadName) {
 		super(workThreadName);
 	}
 
@@ -172,10 +170,10 @@ public class QuakeUpdateService extends IntentService {
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
 				ALARM_INTENT_REQUEST_CODE,
-				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM), 
+				new Intent(EarthquakeAlarmReceiver.ACTION_REFRESH_ALARM), 
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
-		long intervalMillis = frequency * ONE_HOUR_IN_MILLISECONDS;
+		long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
 		long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
 		
 		alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
@@ -190,7 +188,7 @@ public class QuakeUpdateService extends IntentService {
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
 				ALARM_INTENT_REQUEST_CODE,
-				new Intent(QuakeAlarmReceiver.ACTION_REFRESH_ALARM),
+				new Intent(EarthquakeAlarmReceiver.ACTION_REFRESH_ALARM),
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		alarmManager.cancel(alarmIntent);
@@ -280,7 +278,7 @@ public class QuakeUpdateService extends IntentService {
 	 * Purge all earthquakes stored in content provider.
 	 */
 	private void purgeContentProvider() {
-		getContentResolver().delete(QuakeProvider.CONTENT_URI, null, null);
+		getContentResolver().delete(EarthquakeProvider.CONTENT_URI, null, null);
 	}
 
 	/**
@@ -299,7 +297,7 @@ public class QuakeUpdateService extends IntentService {
 		
 		boolean querySeamless = prefs.getBoolean(getString(R.string.PREF_QUERY_FOLLOW), false);
 		if (querySeamless) {
-			long defaultStartMillis = System.currentTimeMillis() - 7 * 24 * ONE_HOUR_IN_MILLISECONDS;
+			long defaultStartMillis = System.currentTimeMillis() - 7 * AlarmManager.INTERVAL_DAY;
 			if (timeStamp > defaultStartMillis) {
 				startTime = dateFormat.format(new Date(timeStamp));
 			} else {
@@ -308,7 +306,7 @@ public class QuakeUpdateService extends IntentService {
 		} else {
 			int range = Integer.parseInt(prefs.getString(
 					getString(R.string.PREF_QUERY_RANGE), getString(R.string.range_values_default)));
-			long startMillis = System.currentTimeMillis() - range * 24 * ONE_HOUR_IN_MILLISECONDS;
+			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 			if (startMillis < timeStamp) {
 				startTime = dateFormat.format(new Date(timeStamp));
 			} else {
@@ -335,11 +333,11 @@ public class QuakeUpdateService extends IntentService {
 		
 		Cursor cursor = null;
 		try {
-			String[] projections = { "MAX(" + QuakeProvider.KEY_TIME + ") AS " + QuakeProvider.KEY_TIME };
+			String[] projections = { "MAX(" + EarthquakeProvider.KEY_TIME + ") AS " + EarthquakeProvider.KEY_TIME };
 			
-			cursor = getContentResolver().query(QuakeProvider.CONTENT_URI, projections, null, null, null);
+			cursor = getContentResolver().query(EarthquakeProvider.CONTENT_URI, projections, null, null, null);
 			if (cursor != null && cursor.moveToFirst()) {
-				timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_TIME));
+				timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_TIME));
 			}
 		} catch (IllegalArgumentException e) {
 			Log.e(TAG, "Column does not exists");
@@ -407,18 +405,18 @@ public class QuakeUpdateService extends IntentService {
 		Cursor cursor = null;
 		try {
 			ContentResolver resolver = getContentResolver();
-			String where = QuakeProvider.KEY_TIME + " = " + earthquake.getTime();
-			cursor = resolver.query(QuakeProvider.CONTENT_URI, null, where, null, null);
+			String where = EarthquakeProvider.KEY_TIME + " = " + earthquake.getTime();
+			cursor = resolver.query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
 			if (cursor != null && !cursor.moveToNext()) {
 				ContentValues values = new ContentValues();
-				values.put(QuakeProvider.KEY_TIME, earthquake.getTime());
-				values.put(QuakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
-				values.put(QuakeProvider.KEY_LONGITUDE, earthquake.getLongitude());
-				values.put(QuakeProvider.KEY_LATITUDE, earthquake.getLatitude());
-				values.put(QuakeProvider.KEY_DEPTH, earthquake.getDepth());
-				values.put(QuakeProvider.KEY_DETAILS, earthquake.getDetails());
-				values.put(QuakeProvider.KEY_LINK, earthquake.getLink());
-				resolver.insert(QuakeProvider.CONTENT_URI, values);
+				values.put(EarthquakeProvider.KEY_TIME, earthquake.getTime());
+				values.put(EarthquakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
+				values.put(EarthquakeProvider.KEY_LONGITUDE, earthquake.getLongitude());
+				values.put(EarthquakeProvider.KEY_LATITUDE, earthquake.getLatitude());
+				values.put(EarthquakeProvider.KEY_DEPTH, earthquake.getDepth());
+				values.put(EarthquakeProvider.KEY_DETAILS, earthquake.getDetails());
+				values.put(EarthquakeProvider.KEY_LINK, earthquake.getLink());
+				resolver.insert(EarthquakeProvider.CONTENT_URI, values);
 				
 				flag = true;
 			}

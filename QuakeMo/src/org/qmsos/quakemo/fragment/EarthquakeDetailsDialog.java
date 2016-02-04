@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
 
 import android.app.Dialog;
@@ -29,9 +29,9 @@ import android.util.Log;
  *
  *
  */
-public class DetailsDialogFragment extends DialogFragment {
+public class EarthquakeDetailsDialog extends DialogFragment {
 
-	private static final String TAG = DetailsDialogFragment.class.getSimpleName();
+	private static final String TAG = EarthquakeDetailsDialog.class.getSimpleName();
 	
 	/**
 	 * Key used to retrieve earthquake id from bundle.
@@ -47,11 +47,11 @@ public class DetailsDialogFragment extends DialogFragment {
 	 *            The id of this earthquake.
 	 * @return The created dialog fragment instance.
 	 */
-	public static DetailsDialogFragment newInstance(Context context, long id) {
+	public static EarthquakeDetailsDialog newInstance(Context context, long id) {
 		Bundle args = new Bundle();
 		args.putLong(KEY_EARTHQUAKE, id);
 
-		DetailsDialogFragment fragment = new DetailsDialogFragment();
+		EarthquakeDetailsDialog fragment = new EarthquakeDetailsDialog();
 		fragment.setArguments(args);
 
 		return fragment;
@@ -66,22 +66,22 @@ public class DetailsDialogFragment extends DialogFragment {
 		try {
 			final long id = getArguments().getLong(KEY_EARTHQUAKE);
 			cursor = getContext().getContentResolver().query(
-					ContentUris.withAppendedId(QuakeProvider.CONTENT_URI, id), null, null, null, null);
+					ContentUris.withAppendedId(EarthquakeProvider.CONTENT_URI, id), null, null, null, null);
 			if (cursor != null && cursor.moveToFirst()) {
 				long time = cursor.getLong(
-						cursor.getColumnIndexOrThrow(QuakeProvider.KEY_TIME));
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_TIME));
 				double magnitude = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE));
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
 				double depth = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(QuakeProvider.KEY_DEPTH));
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DEPTH));
 				double longitude = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LONGITUDE));
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LONGITUDE));
 				double latitude = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LATITUDE));
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LATITUDE));
 				String details = cursor.getString(
-						cursor.getColumnIndexOrThrow(QuakeProvider.KEY_DETAILS));
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
 				final String link = cursor.getString(
-						cursor.getColumnIndexOrThrow(QuakeProvider.KEY_LINK));
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LINK));
 				
 				String lon = longitude > 0 
 						? Math.abs(longitude) + "\u00b0E" 

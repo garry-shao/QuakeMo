@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.widget;
 
 import org.osmdroid.views.MapView;
 
@@ -12,13 +12,13 @@ import android.view.View;
  * 
  *
  */
-public class UtilViewPager extends ViewPager {
+public class MapViewPager extends ViewPager {
 
-	public UtilViewPager(Context context, AttributeSet attrs) {
+	public MapViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public UtilViewPager(Context context) {
+	public MapViewPager(Context context) {
 		super(context);
 	}
 

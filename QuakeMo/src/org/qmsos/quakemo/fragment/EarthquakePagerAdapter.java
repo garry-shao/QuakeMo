@@ -1,10 +1,8 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.fragment;
 
 import java.util.List;
 
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.fragment.QuakeListFragment;
-import org.qmsos.quakemo.fragment.QuakeMapFragment;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -18,40 +16,40 @@ import android.view.ViewGroup;
  * 
  *
  */
-public class UtilPagerAdapter extends FragmentPagerAdapter {
+public class EarthquakePagerAdapter extends FragmentPagerAdapter {
 
-	private SparseArray<String> tags = new SparseArray<String>();
-	private List<Fragment> fragmentList;
-	private Context context;
+	private SparseArray<String> mTags = new SparseArray<String>();
+	private List<Fragment> mFragmentList;
+	private Context mContext;
 
-	public UtilPagerAdapter(FragmentManager fm, List<Fragment> fragmentList, Context context) {
+	public EarthquakePagerAdapter(FragmentManager fm, List<Fragment> fragmentList, Context context) {
 		super(fm);
 
-		this.fragmentList = fragmentList;
-		this.context = context;
+		this.mFragmentList = fragmentList;
+		this.mContext = context;
 	}
 
 	@Override
 	public Fragment getItem(int position) {
 		// Misleading method name, fragments returned
 		// here aren't same with those in FragmentPagerAdaper.
-		return (fragmentList == null || fragmentList.size() == 0) ? null : fragmentList.get(position);
+		return (mFragmentList == null || mFragmentList.size() == 0) ? null : mFragmentList.get(position);
 	}
 
 	@Override
 	public int getCount() {
-		return fragmentList == null ? 0 : fragmentList.size();
+		return mFragmentList == null ? 0 : mFragmentList.size();
 	}
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		Fragment fragment = fragmentList.get(position);
-		if (fragment instanceof QuakeListFragment) {
-			return context.getString(R.string.tab_list);
-		} else if (fragment instanceof QuakeMapFragment) {
-			return context.getString(R.string.tab_map);
+		Fragment fragment = mFragmentList.get(position);
+		if (fragment instanceof EarthquakeList) {
+			return mContext.getString(R.string.tab_list);
+		} else if (fragment instanceof EarthquakeMap) {
+			return mContext.getString(R.string.tab_map);
 		} else {
-			return context.getString(R.string.tab_null);
+			return mContext.getString(R.string.tab_null);
 		}
 	}
 
@@ -61,11 +59,11 @@ public class UtilPagerAdapter extends FragmentPagerAdapter {
 		switch (position) {
 		case 0:
 			String firstTag = fragment.getTag();
-			tags.append(0, firstTag);
+			mTags.append(0, firstTag);
 			break;
 		case 1:
 			String secondTag = fragment.getTag();
-			tags.append(1, secondTag);
+			mTags.append(1, secondTag);
 			break;
 		}
 
@@ -83,7 +81,7 @@ public class UtilPagerAdapter extends FragmentPagerAdapter {
 	 * @return The tag of querying fragment or NULL if not found.
 	 */
 	public String getTag(int position) {
-		return tags.get(position);
+		return mTags.get(position);
 	}
 
 }

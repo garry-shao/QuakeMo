@@ -9,7 +9,7 @@ import android.content.Intent;
  *
  *
  */
-public class QuakeAlarmReceiver extends BroadcastReceiver {
+public class EarthquakeAlarmReceiver extends BroadcastReceiver {
 	
 	/**
 	 * action flag in intent, being used to set up alarm.
@@ -21,8 +21,8 @@ public class QuakeAlarmReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 
 		if (action != null && action.equals(ACTION_REFRESH_ALARM)) {
-			Intent refreshIntent = new Intent(context, QuakeUpdateService.class);
-			refreshIntent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
+			Intent refreshIntent = new Intent(context, EarthquakeService.class);
+			refreshIntent.setAction(EarthquakeService.ACTION_REFRESH_AUTO);
 			
 			context.startService(refreshIntent);
 		}

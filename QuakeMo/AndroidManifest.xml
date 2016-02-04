@@ -39,9 +39,9 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".PrefActivity"
+            android:name=".PreferenceActivity"
             android:parentActivityName=".MainActivity"
-            android:label="@string/activity_name_pref" >
+            android:label="@string/activity_name_preference" >
         </activity>
 
         <meta-data
@@ -49,25 +49,25 @@
             android:value=".MainActivity" />
 
         <provider
-            android:name=".QuakeProvider"
-            android:authorities="org.qmsos.quakemo.quakeprovider"
+            android:name=".EarthquakeProvider"
+            android:authorities="org.qmsos.quakemo.earthquakeprovider"
             android:exported="false" >
         </provider>
 
         <service
-            android:name=".QuakeUpdateService"
+            android:name=".EarthquakeService"
             android:enabled="true" >
         </service>
 
         <receiver
-            android:name=".QuakeAlarmReceiver"
+            android:name=".EarthquakeAlarmReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="org.qmsos.quakemo.ACTION_REFRESH_ALARM" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".QuakeWidget"
+            android:name=".EarthquakeWidget"
             android:enabled="true"
             android:label="@string/widget_name" >
             <intent-filter>

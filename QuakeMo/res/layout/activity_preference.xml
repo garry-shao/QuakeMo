@@ -9,14 +9,12 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </android.support.v7.widget.Toolbar>
+        android:layout_height="wrap_content" />
 
     <fragment
         android:id="@+id/fragment"
-        android:name="org.qmsos.quakemo.fragment.QuakePrefFragment"
+        android:name="org.qmsos.quakemo.fragment.CompatPreference"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </fragment>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

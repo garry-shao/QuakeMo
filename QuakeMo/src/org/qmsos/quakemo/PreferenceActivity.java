@@ -9,12 +9,12 @@ import android.support.v7.widget.Toolbar;
  *
  *
  */
-public class PrefActivity extends AppCompatActivity {
+public class PreferenceActivity extends AppCompatActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_pref);
+		setContentView(R.layout.activity_preference);
 		
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);

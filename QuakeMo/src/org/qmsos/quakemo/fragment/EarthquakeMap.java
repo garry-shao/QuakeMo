@@ -3,13 +3,13 @@ package org.qmsos.quakemo.fragment;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.MainActivity;
-import org.qmsos.quakemo.QuakeProvider;
-import org.qmsos.quakemo.QuakeUpdateService;
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.util.UtilMapOverlay;
-import org.qmsos.quakemo.util.UtilMapTileChecker;
+import org.qmsos.quakemo.map.EarthquakeOverlay;
+import org.qmsos.quakemo.map.MapTileChecker;
 
+import android.app.AlarmManager;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -27,7 +27,7 @@ import android.view.ViewGroup;
  *
  *
  */
-public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 
 	private static final String KEY_CENTER = "KEY_CENTER";
 	private static final String KEY_ZOOM_LEVEL = "KEY_ZOOM_LEVEL";
@@ -39,42 +39,42 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 	/**
 	 * The earthquake overlay on the map.
 	 */
-	private UtilMapOverlay mapOverlay;
+	private EarthquakeOverlay mEarthquakeOverlay;
 
 	/**
 	 * Defined as there is only one view on this fragment.
 	 */
-	private MapView mapView;
+	private MapView mMapView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		UtilMapTileChecker.checkMapTileFiles(getContext());
+		MapTileChecker.checkMapTileFiles(getContext());
 		
-		mapView = new MapView(getContext());
-		mapView.setMultiTouchControls(true);
-		mapView.setTileSource(new XYTileSource(UtilMapTileChecker.MAP_SOURCE, 
+		mMapView = new MapView(getContext());
+		mMapView.setMultiTouchControls(true);
+		mMapView.setTileSource(new XYTileSource(MapTileChecker.MAP_SOURCE, 
 				ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {}));
-		mapView.setUseDataConnection(false);
-		mapView.setTilesScaledToDpi(true);
+		mMapView.setUseDataConnection(false);
+		mMapView.setTilesScaledToDpi(true);
 
 		if (savedInstanceState != null) {
 			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
 			if (center != null) {
-				mapView.getController().setCenter(center);
+				mMapView.getController().setCenter(center);
 			}
 
 			int zoomLevel = savedInstanceState.getInt(KEY_ZOOM_LEVEL);
 			if (zoomLevel > 0) {
-				mapView.getController().setZoom(zoomLevel);
+				mMapView.getController().setZoom(zoomLevel);
 			}
 		} else {
-			mapView.getController().setZoom(ZOOM_LEVEL_MIN);
+			mMapView.getController().setZoom(ZOOM_LEVEL_MIN);
 		}
 
-		mapOverlay = new UtilMapOverlay(getContext(), null);
-		mapView.getOverlays().add(mapOverlay);
+		mEarthquakeOverlay = new EarthquakeOverlay(getContext(), null);
+		mMapView.getOverlays().add(mEarthquakeOverlay);
 
-		return mapView;
+		return mMapView;
 	}
 
 	@Override
@@ -86,26 +86,26 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable(KEY_CENTER, (GeoPoint) mapView.getMapCenter());
-		outState.putInt(KEY_ZOOM_LEVEL, mapView.getZoomLevel());
+		outState.putParcelable(KEY_CENTER, (GeoPoint) mMapView.getMapCenter());
+		outState.putInt(KEY_ZOOM_LEVEL, mMapView.getZoomLevel());
 
 		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { QuakeProvider.KEY_ID, QuakeProvider.KEY_LATITUDE,
-				QuakeProvider.KEY_LONGITUDE };
+		String[] projection = { EarthquakeProvider.KEY_ID, EarthquakeProvider.KEY_LATITUDE,
+				EarthquakeProvider.KEY_LONGITUDE };
 
 		// Create search cursor.
 		if (args != null && args.getString(MainActivity.BUNDLE_KEY_QUERY) != null) {
 			String query = args.getString(MainActivity.BUNDLE_KEY_QUERY);
 
-			String where = QuakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
-			String sortOrder = QuakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";
+			String where = EarthquakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
+			String sortOrder = EarthquakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";
 
 			return new CursorLoader(
-				getContext(), QuakeProvider.CONTENT_URI, projection, where, null, sortOrder);
+				getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, sortOrder);
 		} else {
 		// Create data cursor.
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -116,32 +116,31 @@ public class QuakeMapFragment extends Fragment implements LoaderCallbacks<Cursor
 			String where;
 			boolean showAll = prefs.getBoolean(getString(R.string.PREF_SHOW_ALL), false);
 			if (showAll) {
-				where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
+				where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
 			} else {
 				int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), 
 						getString(R.string.range_values_default)));
-				long startMillis = System.currentTimeMillis()
-						- range * 24 * QuakeUpdateService.ONE_HOUR_IN_MILLISECONDS;
+				long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 				
-				where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
-						+ " AND " + QuakeProvider.KEY_TIME + " >= " + startMillis;
+				where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
+						+ " AND " + EarthquakeProvider.KEY_TIME + " >= " + startMillis;
 			}
 
 			return new CursorLoader(
-					getContext(), QuakeProvider.CONTENT_URI, projection, where, null, null);
+					getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, null);
 		}
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mapOverlay.swapCursor(data);
-		mapView.invalidate();
+		mEarthquakeOverlay.swapCursor(data);
+		mMapView.invalidate();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mapOverlay.swapCursor(null);
-		mapView.invalidate();
+		mEarthquakeOverlay.swapCursor(null);
+		mMapView.invalidate();
 	}
 
 }

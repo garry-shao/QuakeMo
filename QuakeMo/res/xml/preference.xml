@@ -9,7 +9,7 @@
             android:summary="@string/pref_query_follow_summary"
             android:title="@string/pref_query_follow_title" />
 
-        <org.qmsos.quakemo.util.UtilListPreference
+        <org.qmsos.quakemo.widget.MaterialListPreference
             android:defaultValue="@string/range_values_default"
             android:dependency="@string/PREF_QUERY_FOLLOW"
             android:dialogTitle="@string/pref_query_range_title"
@@ -18,7 +18,7 @@
             android:key="@string/PREF_QUERY_RANGE"
             android:summary="%s"
             android:title="@string/pref_query_range_title" />
-        <org.qmsos.quakemo.util.UtilListPreference
+        <org.qmsos.quakemo.widget.MaterialListPreference
             android:defaultValue="@string/minimum_values_default"
             android:dialogTitle="@string/pref_query_minimum_title"
             android:entries="@array/minimum_entries"
@@ -33,7 +33,7 @@
             android:summary="@string/pref_auto_toggle_summary"
             android:title="@string/pref_auto_toggle_title" />
 
-        <org.qmsos.quakemo.util.UtilListPreference
+        <org.qmsos.quakemo.widget.MaterialListPreference
             android:defaultValue="@string/frequency_values_default"
             android:dependency="@string/PREF_AUTO_REFRESH"
             android:dialogTitle="@string/pref_auto_frequency_title"
@@ -51,7 +51,7 @@
             android:summary="@string/pref_show_all_summary"
             android:title="@string/pref_show_all_title" />
 
-        <org.qmsos.quakemo.util.UtilListPreference
+        <org.qmsos.quakemo.widget.MaterialListPreference
             android:defaultValue="@string/range_values_default"
             android:dependency="@string/PREF_SHOW_ALL"
             android:dialogTitle="@string/pref_show_range_title"
@@ -60,7 +60,7 @@
             android:key="@string/PREF_SHOW_RANGE"
             android:summary="%s"
             android:title="@string/pref_show_range_title" />
-        <org.qmsos.quakemo.util.UtilListPreference
+        <org.qmsos.quakemo.widget.MaterialListPreference
             android:defaultValue="@string/minimum_values_default"
             android:dialogTitle="@string/pref_show_minimum_title"
             android:entries="@array/minimum_entries"
@@ -95,7 +95,7 @@
             android:title="@string/pref_link_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_connection_title" >
-        <org.qmsos.quakemo.util.UtilListPreference
+        <org.qmsos.quakemo.widget.MaterialListPreference
             android:defaultValue="@string/connection_values_wifi"
             android:dialogTitle="@string/pref_connection_title"
             android:entries="@array/connection_entries"

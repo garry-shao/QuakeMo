@@ -17,9 +17,9 @@ import android.widget.RemoteViews;
  *
  *
  */
-public class QuakeWidget extends AppWidgetProvider {
+public class EarthquakeWidget extends AppWidgetProvider {
 
-	private static final String TAG = QuakeWidget.class.getSimpleName();
+	private static final String TAG = EarthquakeWidget.class.getSimpleName();
 	
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -41,7 +41,8 @@ public class QuakeWidget extends AppWidgetProvider {
 	public void onReceive(Context context, Intent intent) {
 		super.onReceive(context, intent);
 
-		if (intent.getAction().equals(QuakeUpdateService.ACTION_REFRESH_WIDGET)) {
+		String action = intent.getAction();
+		if (action != null && action.equals(EarthquakeService.ACTION_REFRESH_WIDGET)) {
 			updateEarthquake(context);
 		}
 	}
@@ -66,12 +67,12 @@ public class QuakeWidget extends AppWidgetProvider {
 			int minMagnitude = Integer.parseInt(prefs.getString(
 					context.getString(R.string.PREF_SHOW_MINIMUM), 
 					context.getString(R.string.minimum_values_default)));
-			String where = QuakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
+			String where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
 			
-			cursor = context.getContentResolver().query(QuakeProvider.CONTENT_URI, null, where, null, null);
+			cursor = context.getContentResolver().query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
 			if (cursor != null && cursor.moveToLast()) {
-				magnitude = cursor.getString(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_MAGNITUDE));
-				details = cursor.getString(cursor.getColumnIndexOrThrow(QuakeProvider.KEY_DETAILS));
+				magnitude = cursor.getString(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
+				details = cursor.getString(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
 			}
 		} catch (NumberFormatException e) {
 			Log.e(TAG, "error parsing number");
@@ -102,7 +103,7 @@ public class QuakeWidget extends AppWidgetProvider {
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		
 		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
-				new ComponentName(context, QuakeWidget.class));
+				new ComponentName(context, EarthquakeWidget.class));
 
 		updateEarthquake(context, appWidgetManager, appWidgetIds);
 	}

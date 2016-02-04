@@ -3,13 +3,13 @@ package org.qmsos.quakemo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.qmsos.quakemo.fragment.DetailsDialogFragment;
-import org.qmsos.quakemo.fragment.PurgeDialogFragment;
-import org.qmsos.quakemo.fragment.PurgeDialogFragment.OnPurgeSelectedListener;
-import org.qmsos.quakemo.fragment.QuakeListFragment;
-import org.qmsos.quakemo.fragment.QuakeMapFragment;
-import org.qmsos.quakemo.util.UtilCursorAdapter.ShowDialogCallback;
-import org.qmsos.quakemo.util.UtilPagerAdapter;
+import org.qmsos.quakemo.fragment.EarthquakeDetailsDialog;
+import org.qmsos.quakemo.fragment.MaterialPurgeDialog;
+import org.qmsos.quakemo.fragment.MaterialPurgeDialog.OnPurgeSelectedListener;
+import org.qmsos.quakemo.fragment.EarthquakeList;
+import org.qmsos.quakemo.fragment.EarthquakeMap;
+import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
+import org.qmsos.quakemo.widget.RecyclerViewCursorAdapter.ShowDialogCallback;
 
 import android.app.SearchManager;
 import android.app.SearchableInfo;
@@ -65,7 +65,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	private static final int SNACKBAR_PURGE = 2;
 	private static final int SNACKBAR_NORMAL = 3;
 	
-	private MessageReceiver messageReceiver;
+	private MessageReceiver mMessageReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,13 +81,13 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		initialSearch(searchItem);
 
 		List<Fragment> fragmentList = new ArrayList<Fragment>();
-		QuakeListFragment quakeList = new QuakeListFragment();
-		QuakeMapFragment quakeMap = new QuakeMapFragment();
+		EarthquakeList quakeList = new EarthquakeList();
+		EarthquakeMap quakeMap = new EarthquakeMap();
 		fragmentList.add(quakeList);
 		fragmentList.add(quakeMap);
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		viewPager.setAdapter(new UtilPagerAdapter(getSupportFragmentManager(), fragmentList, this));
+		viewPager.setAdapter(new EarthquakePagerAdapter(getSupportFragmentManager(), fragmentList, this));
 
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
@@ -95,10 +95,10 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
-		messageReceiver = new MessageReceiver();
+		mMessageReceiver = new MessageReceiver();
 
-		Intent intent = new Intent(this, QuakeUpdateService.class);
-		intent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
+		Intent intent = new Intent(this, EarthquakeService.class);
+		intent.setAction(EarthquakeService.ACTION_REFRESH_AUTO);
 		startService(intent);
 	}
 
@@ -109,12 +109,12 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(ACTION_PURGE_EXECUTED);
 		filter.addAction(ACTION_REFRESH_EXECUTED);
-		LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, filter);
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
 	}
 
 	@Override
 	protected void onPause() {
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 		
 		super.onPause();
 	}
@@ -145,12 +145,12 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
 		case (R.id.menu_preferences):
-			Intent intent = new Intent(this, PrefActivity.class);
+			Intent intent = new Intent(this, PreferenceActivity.class);
 			startActivity(intent);
 	
 			return true;
 		case (R.id.menu_purge):
-			PurgeDialogFragment dialog = new PurgeDialogFragment();
+			MaterialPurgeDialog dialog = new MaterialPurgeDialog();
 			dialog.show(getSupportFragmentManager(), "dialog");
 	
 			return true;
@@ -179,15 +179,15 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 					: PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 
 			PackageManager manager = getPackageManager();
-			manager.setComponentEnabledSetting(new ComponentName(this, QuakeWidget.class), newState,
+			manager.setComponentEnabledSetting(new ComponentName(this, EarthquakeWidget.class), newState,
 					PackageManager.DONT_KILL_APP);
 		}
 		
 		if (key.equals(getString(R.string.PREF_AUTO_REFRESH)) 
 				|| key.equals(getString(R.string.PREF_AUTO_FREQUENCY))) {
 			
-			Intent intent = new Intent(this, QuakeUpdateService.class);
-			intent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
+			Intent intent = new Intent(this, EarthquakeService.class);
+			intent.setAction(EarthquakeService.ACTION_REFRESH_AUTO);
 			
 			startService(intent);
 		}
@@ -200,7 +200,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 
 	@Override
 	public void onShowDialog(long id) {
-		DetailsDialogFragment dialog = DetailsDialogFragment.newInstance(this, id);
+		EarthquakeDetailsDialog dialog = EarthquakeDetailsDialog.newInstance(this, id);
 		dialog.show(getSupportFragmentManager(), "dialog");
 	}
 
@@ -312,11 +312,11 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			
 			Snackbar snackbar = null;
 			
-			final Intent intent = new Intent(this, QuakeUpdateService.class);
+			final Intent intent = new Intent(this, EarthquakeService.class);
 			
 			switch (flag) {
 			case SNACKBAR_REFRESH:
-				intent.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
+				intent.setAction(EarthquakeService.ACTION_REFRESH_MANUAL);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
 				snackbar.setCallback(new Callback() {
@@ -329,15 +329,15 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				});
 				break;
 			case SNACKBAR_PURGE:
-				intent.setAction(QuakeUpdateService.ACTION_PURGE_DATABASE);
+				intent.setAction(EarthquakeService.ACTION_PURGE_DATABASE);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
 				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
 	
 					@Override
 					public void onClick(View v) {
-						intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN,
-								QuakeUpdateService.EXTRA_PURGE_BURNDOWN_NO);
+						intent.putExtra(EarthquakeService.EXTRA_PURGE_BURNDOWN,
+								EarthquakeService.EXTRA_PURGE_BURNDOWN_NO);
 					}
 				});
 				snackbar.setCallback(new Callback() {
@@ -345,8 +345,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 					@Override
 					public void onDismissed(Snackbar snackbar, int event) {
 						if (event != Callback.DISMISS_EVENT_ACTION) {
-							intent.putExtra(QuakeUpdateService.EXTRA_PURGE_BURNDOWN,
-									QuakeUpdateService.EXTRA_PURGE_BURNDOWN_YES);
+							intent.putExtra(EarthquakeService.EXTRA_PURGE_BURNDOWN,
+									EarthquakeService.EXTRA_PURGE_BURNDOWN_YES);
 						}
 						startService(intent);
 					}
@@ -375,18 +375,18 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		FragmentManager manager = getSupportFragmentManager();
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		UtilPagerAdapter adapter = (UtilPagerAdapter) viewPager.getAdapter();
+		EarthquakePagerAdapter adapter = (EarthquakePagerAdapter) viewPager.getAdapter();
 
 		String listTag = adapter.getTag(0);
 		if (listTag != null && manager.findFragmentByTag(listTag) != null) {
-			QuakeListFragment quakeList = (QuakeListFragment) manager.findFragmentByTag(listTag);
+			EarthquakeList quakeList = (EarthquakeList) manager.findFragmentByTag(listTag);
 			if (quakeList.isAdded()) {
 				quakeList.getLoaderManager().restartLoader(0, bundle, quakeList);
 			}
 		}
 		String mapTag = adapter.getTag(1);
 		if (mapTag != null && manager.findFragmentByTag(mapTag) != null) {
-			QuakeMapFragment quakeMap = (QuakeMapFragment) manager.findFragmentByTag(mapTag);
+			EarthquakeMap quakeMap = (EarthquakeMap) manager.findFragmentByTag(mapTag);
 			if (quakeMap.isAdded()) {
 				quakeMap.getLoaderManager().restartLoader(0, bundle, quakeMap);
 			}
@@ -404,17 +404,17 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				String result;
 				int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0);
 				switch (resultCode) {
-				case QuakeUpdateService.RESULT_CODE_REFRESHED:
+				case EarthquakeService.RESULT_CODE_REFRESHED:
 					result = intent.getIntExtra(EXTRA_ADDED_COUNT, 0) + " "
 							+ getString(R.string.snackbar_refreshed);
 					break;
-				case QuakeUpdateService.RESULT_CODE_PURGED:
+				case EarthquakeService.RESULT_CODE_PURGED:
 					result = getString(R.string.snackbar_purged);
 					break;
-				case QuakeUpdateService.RESULT_CODE_CANCELED:
+				case EarthquakeService.RESULT_CODE_CANCELED:
 					result = getString(R.string.snackbar_canceled);
 					break;
-				case QuakeUpdateService.RESULT_CODE_DISCONNECTED:
+				case EarthquakeService.RESULT_CODE_DISCONNECTED:
 					result = getString(R.string.snackbar_disconnected);
 					break;
 				default:

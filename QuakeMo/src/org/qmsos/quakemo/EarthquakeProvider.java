@@ -23,10 +23,10 @@ import android.util.Log;
  *
  *
  */
-public class QuakeProvider extends ContentProvider {
+public class EarthquakeProvider extends ContentProvider {
 	
 	public static final Uri CONTENT_URI = 
-			Uri.parse("content://org.qmsos.quakemo.quakeprovider/earthquakes");
+			Uri.parse("content://org.qmsos.quakemo.earthquakeprovider/earthquakes");
 	
 	//base columns of database
 	public static final String KEY_ID = "_id";
@@ -44,23 +44,23 @@ public class QuakeProvider extends ContentProvider {
 	private static final int SEARCH = 3;
 	
 	private static final HashMap<String, String> SEARCH_PROJECTION_MAP;
-	private static final UriMatcher uriMatcher;
+	private static final UriMatcher URI_MATCHER;
 	static {
 		SEARCH_PROJECTION_MAP = new HashMap<String, String>();
 		SEARCH_PROJECTION_MAP.put(SearchManager.SUGGEST_COLUMN_TEXT_1, 
 				KEY_DETAILS + " AS " + SearchManager.SUGGEST_COLUMN_TEXT_1);
 		SEARCH_PROJECTION_MAP.put("_id", KEY_ID + " AS " + "_id");
 		
-		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", "earthquakes", QUAKES);
-		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", "earthquakes/#", QUAKE_ID);
-		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
+		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", "earthquakes", QUAKES);
+		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", "earthquakes/#", QUAKE_ID);
+		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH);
-		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
+		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH);
-		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
+		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT, SEARCH);
-		uriMatcher.addURI("org.qmsos.quakemo.quakeprovider", 
+		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SEARCH);
 	}
 	
@@ -83,10 +83,10 @@ public class QuakeProvider extends ContentProvider {
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 		queryBuilder.setTables(QuakeDatabaseHelper.EARTHQUAKE_TABLE);
 		
-		switch (uriMatcher.match(uri)) {
+		switch (URI_MATCHER.match(uri)) {
 		case QUAKE_ID:
 			if (uri.getPathSegments().size() > 1) {
-				queryBuilder.appendWhere(KEY_ID + "=" + uri.getPathSegments().get(1));
+				queryBuilder.appendWhere(KEY_ID + " = " + uri.getPathSegments().get(1));
 			}
 			break;
 		case SEARCH:
@@ -116,7 +116,7 @@ public class QuakeProvider extends ContentProvider {
 
 	@Override
 	public String getType(Uri uri) {
-		switch (uriMatcher.match(uri)) {
+		switch (URI_MATCHER.match(uri)) {
 		case QUAKES:
 			return "vnd.android.cursor.dir/vnd.org.qmsos.quakemo";
 		case QUAKE_ID:
@@ -149,13 +149,13 @@ public class QuakeProvider extends ContentProvider {
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
 		int count;
-		switch (uriMatcher.match(uri)) {
+		switch (URI_MATCHER.match(uri)) {
 		case QUAKES:
 			count = database.delete(QuakeDatabaseHelper.EARTHQUAKE_TABLE, selection, selectionArgs);
 			
 			break;
 		case QUAKE_ID:
-			String where = KEY_ID + "=" + uri.getPathSegments().get(1) + 
+			String where = KEY_ID + " = " + uri.getPathSegments().get(1) + 
 					(!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
 			count = database.delete(QuakeDatabaseHelper.EARTHQUAKE_TABLE, where, selectionArgs);
 			
@@ -174,13 +174,13 @@ public class QuakeProvider extends ContentProvider {
 		SQLiteDatabase database = dbHelper.getWritableDatabase();
 		
 		int count;
-		switch (uriMatcher.match(uri)) {
+		switch (URI_MATCHER.match(uri)) {
 		case QUAKES:
 			count = database.update(
 					QuakeDatabaseHelper.EARTHQUAKE_TABLE, values, selection, selectionArgs);
 			break;
 		case QUAKE_ID:
-			String where = KEY_ID + "=" + uri.getPathSegments().get(1) + 
+			String where = KEY_ID + " = " + uri.getPathSegments().get(1) + 
 					(!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
 			count = database.update(
 					QuakeDatabaseHelper.EARTHQUAKE_TABLE, values, where, selectionArgs);
@@ -201,7 +201,7 @@ public class QuakeProvider extends ContentProvider {
 	 */
 	private static class QuakeDatabaseHelper extends SQLiteOpenHelper {
 
-		private static final String TAG = QuakeProvider.class.getSimpleName();
+		private static final String TAG = EarthquakeProvider.class.getSimpleName();
 		
 		private static final String DATABASE_NAME = "earthquake.db";
 		private static final int DATABASE_VERSION = 1;

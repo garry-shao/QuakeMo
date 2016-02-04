@@ -4,7 +4,7 @@
     <string name="app_name">QuakeMo</string>
 
     <!-- Strings used in toolbar -->
-    <string name="activity_name_pref">Preferences</string>
+    <string name="activity_name_preference">Preferences</string>
 
     <!-- Strings used in tab title -->
     <string name="tab_list">List</string>

@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.map;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
-import org.qmsos.quakemo.QuakeProvider;
+import org.qmsos.quakemo.EarthquakeProvider;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -21,7 +21,7 @@ import android.graphics.Point;
  *
  *
  */
-public class UtilMapOverlay extends Overlay {
+public class EarthquakeOverlay extends Overlay {
 
 	/**
 	 * Radius of earthquake dot symbol.
@@ -35,7 +35,7 @@ public class UtilMapOverlay extends Overlay {
 	/**
 	 * Earthquake geoPoints stored.
 	 */
-	private List<GeoPoint> geoPoints;
+	private List<GeoPoint> mGeoPoints;
 
 	/**
 	 * Constructor of earthquake overlay.
@@ -43,7 +43,7 @@ public class UtilMapOverlay extends Overlay {
 	 * @param context
 	 *            Context of this overlay associated to.
 	 */
-	public UtilMapOverlay(Context context, Cursor cursor) {
+	public EarthquakeOverlay(Context context, Cursor cursor) {
 		super(context);
 		
 		init(context, cursor);
@@ -60,7 +60,7 @@ public class UtilMapOverlay extends Overlay {
 		mPaint.setFakeBoldText(true);
 		mPaint.setStyle(Style.FILL);
 		
-		geoPoints = new LinkedList<GeoPoint>();
+		mGeoPoints = new LinkedList<GeoPoint>();
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class UtilMapOverlay extends Overlay {
 		}
 		
 		Projection projection = mapView.getProjection();
-		for (GeoPoint geoPoint : geoPoints) {
+		for (GeoPoint geoPoint : mGeoPoints) {
 			Point point = new Point();
 			point = projection.toPixels(geoPoint, point);
 			
@@ -98,17 +98,17 @@ public class UtilMapOverlay extends Overlay {
 
 	private void changeDataSet() {
 		if (mDataValid) {
-			geoPoints.clear();
+			mGeoPoints.clear();
 			
 			if (mCursor.moveToFirst()) {
 				do {
 					double latitude = mCursor.getDouble(
-							mCursor.getColumnIndexOrThrow(QuakeProvider.KEY_LATITUDE));
+							mCursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LATITUDE));
 					double longitude = mCursor.getDouble(
-							mCursor.getColumnIndexOrThrow(QuakeProvider.KEY_LONGITUDE));
+							mCursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LONGITUDE));
 					GeoPoint geoPoint = new GeoPoint(latitude, longitude);
 					
-					geoPoints.add(geoPoint);
+					mGeoPoints.add(geoPoint);
 				} while (mCursor.moveToNext());
 			}
 		}
