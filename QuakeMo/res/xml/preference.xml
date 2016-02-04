@@ -3,7 +3,7 @@
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_auto_title" >
         <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="FALSE"
+            android:defaultValue="TRUE"
             android:disableDependentsState="true"
             android:key="@string/PREF_QUERY_FOLLOW"
             android:summary="@string/pref_query_follow_summary"
@@ -71,7 +71,7 @@
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_notify_title" >
         <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="FALSE"
+            android:defaultValue="TRUE"
             android:key="@string/PREF_NOTIFY_TOGGLE"
             android:summary="@string/pref_notify_toggle_summary"
             android:title="@string/pref_notify_toggle_title" />
