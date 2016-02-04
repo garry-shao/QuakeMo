@@ -64,11 +64,11 @@ public class EarthquakeProvider extends ContentProvider {
 				SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SEARCH);
 	}
 	
-	private QuakeDatabaseHelper dbHelper ;
+	private QuakeDatabaseHelper mDatabaseHelper ;
 	
 	@Override
 	public boolean onCreate() {
-		dbHelper = new QuakeDatabaseHelper(getContext(), 
+		mDatabaseHelper = new QuakeDatabaseHelper(getContext(), 
 				QuakeDatabaseHelper.DATABASE_NAME, null, QuakeDatabaseHelper.DATABASE_VERSION);
 		
 		return true;
@@ -78,7 +78,7 @@ public class EarthquakeProvider extends ContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection, 
 			String[] selectionArgs, String sortOrder) {
 		
-		SQLiteDatabase database = dbHelper.getWritableDatabase();
+		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 		queryBuilder.setTables(QuakeDatabaseHelper.EARTHQUAKE_TABLE);
@@ -130,7 +130,7 @@ public class EarthquakeProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		SQLiteDatabase database = dbHelper.getWritableDatabase();
+		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		long rowID = database.insert(QuakeDatabaseHelper.EARTHQUAKE_TABLE, "quake", values);
 		if (rowID > 0) {
@@ -146,7 +146,7 @@ public class EarthquakeProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		SQLiteDatabase database = dbHelper.getWritableDatabase();
+		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		int count;
 		switch (URI_MATCHER.match(uri)) {
@@ -171,7 +171,7 @@ public class EarthquakeProvider extends ContentProvider {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		SQLiteDatabase database = dbHelper.getWritableDatabase();
+		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		int count;
 		switch (URI_MATCHER.match(uri)) {
