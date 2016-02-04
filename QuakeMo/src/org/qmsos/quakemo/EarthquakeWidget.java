@@ -60,7 +60,7 @@ public class EarthquakeWidget extends AppWidgetProvider {
 	 *            The AppWidge IDs.
 	 */
 	private void updateEarthquake(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		String magnitude = "--";
+		double magnitude = 0.0f;
 		String details = context.getString(R.string.widget_empty);
 
 		Cursor cursor = null;
@@ -71,10 +71,13 @@ public class EarthquakeWidget extends AppWidgetProvider {
 					context.getString(R.string.minimum_values_default)));
 			String where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
 			
-			cursor = context.getContentResolver().query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
+			cursor = context.getContentResolver().query(
+					EarthquakeProvider.CONTENT_URI, null, where, null, null);
 			if (cursor != null && cursor.moveToLast()) {
-				magnitude = cursor.getString(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
-				details = cursor.getString(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
+				magnitude = cursor.getDouble(
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
+				details = cursor.getString(
+						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
 			}
 		} catch (NumberFormatException e) {
 			Log.e(TAG, "error parsing number");
