@@ -10,26 +10,26 @@ import org.qmsos.quakemo.fragment.QuakeListFragment;
 import org.qmsos.quakemo.fragment.QuakeMapFragment;
 import org.qmsos.quakemo.util.UtilCursorAdapter.ShowDialogCallback;
 import org.qmsos.quakemo.util.UtilPagerAdapter;
-import org.qmsos.quakemo.util.UtilResultReceiver;
-import org.qmsos.quakemo.util.UtilResultReceiver.OnReceiveListener;
 
 import android.app.SearchManager;
 import android.app.SearchableInfo;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.Snackbar.Callback;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v4.view.ViewPager;
@@ -50,26 +50,22 @@ import android.view.View;
  */
 public class MainActivity extends AppCompatActivity 
 implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
-	OnReceiveListener, OnPurgeSelectedListener, ShowDialogCallback {
+	OnPurgeSelectedListener, ShowDialogCallback {
+
+	public static final String ACTION_REFRESH_EXECUTED = "org.qmsos.quakemo.ACTION_REFRESH_EXECUTED";
+	public static final String ACTION_PURGE_EXECUTED = "org.qmsos.quakemo.ACTION_PURGE_EXECUTED";
+	public static final String EXTRA_RESULT_CODE = "EXTRA_RESULT_CODE";
+	public static final String EXTRA_ADDED_COUNT = "EXTRA_ADDED_COUNT";
+	public static final String BUNDLE_KEY_QUERY = "BUNDLE_KEY_QUERY";
 
 	private static final String TAG = MainActivity.class.getSimpleName();
-	
-	private static final String STATE_KEY_RECEIVER = "STATE_KEY_RECEIVER";
 
 	// flags used to show different layout of Snackbar.
 	private static final int SNACKBAR_REFRESH = 1;
 	private static final int SNACKBAR_PURGE = 2;
 	private static final int SNACKBAR_NORMAL = 3;
 	
-	/**
-	 * Callback from update service.
-	 */
-	private UtilResultReceiver receiver;
-
-	/**
-	 * Key to the query string passed in bundle.
-	 */
-	public static final String BUNDLE_KEY_QUERY = "BUNDLE_KEY_QUERY";
+	private MessageReceiver messageReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,13 +94,9 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
-		
-		if (savedInstanceState != null) {
-			receiver = savedInstanceState.getParcelable(STATE_KEY_RECEIVER);
-		} else {
-			receiver = new UtilResultReceiver(new Handler());
-		}
-		
+
+		messageReceiver = new MessageReceiver();
+
 		Intent intent = new Intent(this, QuakeUpdateService.class);
 		intent.setAction(QuakeUpdateService.ACTION_REFRESH_AUTO);
 		startService(intent);
@@ -113,14 +105,17 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	@Override
 	protected void onResume() {
 		super.onResume();
-	
-		receiver.setListener(this);
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(ACTION_PURGE_EXECUTED);
+		filter.addAction(ACTION_REFRESH_EXECUTED);
+		LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, filter);
 	}
 
 	@Override
 	protected void onPause() {
-		receiver.setListener(null);
-
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+		
 		super.onPause();
 	}
 
@@ -128,15 +123,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	protected void onDestroy() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
-		
+
 		super.onDestroy();
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable(STATE_KEY_RECEIVER, receiver);
-
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -152,7 +140,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			reload(args);
 		}
 	}
-@Override
+
+	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
 		case (R.id.menu_preferences):
@@ -202,30 +191,6 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			
 			startService(intent);
 		}
-	}
-
-	@Override
-	public void onReceiveResult(int resultCode, Bundle resultData) {
-		String result;
-		switch (resultCode) {
-		case QuakeUpdateService.RESULT_CODE_REFRESHED:
-			result = resultData.getInt(QuakeUpdateService.BUNDLE_KEY_COUNT) + " "
-					+ getString(R.string.snackbar_refreshed);
-			break;
-		case QuakeUpdateService.RESULT_CODE_PURGED:
-			result = getString(R.string.snackbar_purged);
-			break;
-		case QuakeUpdateService.RESULT_CODE_CANCELED:
-			result = getString(R.string.snackbar_canceled);
-			break;
-		case QuakeUpdateService.RESULT_CODE_DISCONNECTED:
-			result = getString(R.string.snackbar_disconnected);
-			break;
-		default:
-			result = null;
-		}
-
-		showSnackbar(SNACKBAR_NORMAL, result);
 	}
 
 	@Override
@@ -352,7 +317,6 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			switch (flag) {
 			case SNACKBAR_REFRESH:
 				intent.setAction(QuakeUpdateService.ACTION_REFRESH_MANUAL);
-				intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
 				snackbar.setCallback(new Callback() {
@@ -366,7 +330,6 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				break;
 			case SNACKBAR_PURGE:
 				intent.setAction(QuakeUpdateService.ACTION_PURGE_DATABASE);
-				intent.putExtra(UtilResultReceiver.RECEIVER, receiver);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
 				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
@@ -426,6 +389,38 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			QuakeMapFragment quakeMap = (QuakeMapFragment) manager.findFragmentByTag(mapTag);
 			if (quakeMap.isAdded()) {
 				quakeMap.getLoaderManager().restartLoader(0, bundle, quakeMap);
+			}
+		}
+	}
+
+	private class MessageReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (action == null) {
+				return;
+			} else if (action.equals(ACTION_REFRESH_EXECUTED) || action.equals(ACTION_PURGE_EXECUTED)) {
+				String result;
+				int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0);
+				switch (resultCode) {
+				case QuakeUpdateService.RESULT_CODE_REFRESHED:
+					result = intent.getIntExtra(EXTRA_ADDED_COUNT, 0) + " "
+							+ getString(R.string.snackbar_refreshed);
+					break;
+				case QuakeUpdateService.RESULT_CODE_PURGED:
+					result = getString(R.string.snackbar_purged);
+					break;
+				case QuakeUpdateService.RESULT_CODE_CANCELED:
+					result = getString(R.string.snackbar_canceled);
+					break;
+				case QuakeUpdateService.RESULT_CODE_DISCONNECTED:
+					result = getString(R.string.snackbar_disconnected);
+					break;
+				default:
+					result = null;
+				}
+				showSnackbar(SNACKBAR_NORMAL, result);
 			}
 		}
 	}

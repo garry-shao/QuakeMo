@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.qmsos.quakemo.data.Earthquake;
-import org.qmsos.quakemo.util.UtilResultReceiver;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -34,10 +33,9 @@ import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.ResultReceiver;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
@@ -68,18 +66,15 @@ public class QuakeUpdateService extends IntentService {
 	public static final String ACTION_PURGE_DATABASE = "org.qmsos.quakemo.ACTION_PURGE_DATABASE";
 
 	// Used in undo purge database feature.
-	public static final String EXTRA_PURGE_BURNDOWN = "org.qmsos.quakemo.EXTRA_PURGE_BURNDOWN";
-	public static final String EXTRA_PURGE_BURNDOWN_YES = "YES";
-	public static final String EXTRA_PURGE_BURNDOWN_NO = "NO";
+	public static final String EXTRA_PURGE_BURNDOWN = "EXTRA_PURGE_BURNDOWN";
+	public static final String EXTRA_PURGE_BURNDOWN_YES = "EXTRA_PURGE_BURNDOWN_YES";
+	public static final String EXTRA_PURGE_BURNDOWN_NO = "EXTRA_PURGE_BURNDOWN_NO";
 	
 	// Result code passed in ResultReceiver.
 	public static final int RESULT_CODE_REFRESHED = 1;
 	public static final int RESULT_CODE_PURGED = 2;
 	public static final int RESULT_CODE_CANCELED = 3;
 	public static final int RESULT_CODE_DISCONNECTED = 4;
-	
-	// Bundle keys used in ResultReceiver.
-	public static final String BUNDLE_KEY_COUNT = "BUNDLE_KEY_COUNT";
 	
 	public static final long ONE_HOUR_IN_MILLISECONDS = 60 * 60 * 1000;
 	
@@ -136,30 +131,30 @@ public class QuakeUpdateService extends IntentService {
 					disableAutoUpdate();
 				}
 			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
-				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
-				if (receiver != null) {
-					if (checkConnection()) {
-						int count = executeRefresh();
-						
-						Bundle bundle = new Bundle();
-						bundle.putInt(BUNDLE_KEY_COUNT, count);
-						receiver.send(RESULT_CODE_REFRESHED, bundle);
-					} else {
-						receiver.send(RESULT_CODE_DISCONNECTED, new Bundle());
-					}
+				Intent localIntent = new Intent(MainActivity.ACTION_REFRESH_EXECUTED);
+				
+				if (checkConnection()) {
+					int count = executeRefresh();
+					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_REFRESHED);
+					localIntent.putExtra(MainActivity.EXTRA_ADDED_COUNT, count);
+				} else {
+					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_DISCONNECTED);
 				}
+
+				LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 			} else if (action.equals(ACTION_PURGE_DATABASE)) {
-				ResultReceiver receiver = intent.getParcelableExtra(UtilResultReceiver.RECEIVER);
-				if (receiver != null) {
-					String burndown = intent.getStringExtra(EXTRA_PURGE_BURNDOWN); 
-					if (burndown.equals(EXTRA_PURGE_BURNDOWN_NO)) {
-						receiver.send(RESULT_CODE_CANCELED, new Bundle());
-					} else if (burndown.equals(EXTRA_PURGE_BURNDOWN_YES)) {
-						purgeContentProvider();
-						
-						receiver.send(RESULT_CODE_PURGED, new Bundle());
-					}
+				Intent localIntent = new Intent(MainActivity.ACTION_PURGE_EXECUTED);
+
+				String burndown = intent.getStringExtra(EXTRA_PURGE_BURNDOWN);
+				if (burndown.equals(EXTRA_PURGE_BURNDOWN_NO)) {
+					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_CANCELED);
+				} else if (burndown.equals(EXTRA_PURGE_BURNDOWN_YES)) {
+					purgeContentProvider();
+					
+					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_PURGED);
 				}
+				
+				LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 			}
 			
 			sendBroadcast(new Intent(ACTION_REFRESH_WIDGET));
