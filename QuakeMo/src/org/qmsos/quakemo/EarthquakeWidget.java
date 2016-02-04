@@ -1,5 +1,7 @@
 package org.qmsos.quakemo;
 
+import org.qmsos.quakemo.util.IpcConstants;
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -42,7 +44,7 @@ public class EarthquakeWidget extends AppWidgetProvider {
 		super.onReceive(context, intent);
 
 		String action = intent.getAction();
-		if (action != null && action.equals(EarthquakeService.ACTION_REFRESH_WIDGET)) {
+		if (action != null && action.equals(IpcConstants.ACTION_REFRESH_WIDGET)) {
 			updateEarthquake(context);
 		}
 	}

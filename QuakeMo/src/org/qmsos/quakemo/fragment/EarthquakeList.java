@@ -1,8 +1,8 @@
 package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.EarthquakeProvider;
-import org.qmsos.quakemo.MainActivity;
 import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.util.IpcConstants;
 import org.qmsos.quakemo.widget.RecyclerViewCursorAdapter;
 
 import android.app.AlarmManager;
@@ -93,8 +93,8 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 				EarthquakeProvider.KEY_MAGNITUDE, EarthquakeProvider.KEY_DETAILS };
 
 		// Create search cursor.
-		if (args != null && args.getString(MainActivity.BUNDLE_KEY_QUERY) != null) {
-			String query = args.getString(MainActivity.BUNDLE_KEY_QUERY);
+		if (args != null && args.getString(IpcConstants.QUERY_CONTENT_KEY) != null) {
+			String query = args.getString(IpcConstants.QUERY_CONTENT_KEY);
 			
 			String where = EarthquakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
 			String sortOrder = EarthquakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";

@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.qmsos.quakemo.util.Earthquake;
+import org.qmsos.quakemo.util.IpcConstants;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -46,37 +47,6 @@ import android.util.Log;
 public class EarthquakeService extends IntentService {
 
 	/**
-	 * The intent action of refreshing widget.
-	 */
-	public static final String ACTION_REFRESH_WIDGET = "org.qmsos.quakemo.ACTION_REFRESH_WIDGET";
-	
-	/**
-	 * The intent action of refreshing manually.
-	 */
-	public static final String ACTION_REFRESH_MANUAL = "org.qmsos.quakemo.ACTION_REFRESH_MANUAL";
-
-	/**
-	 * The intent action of automatic refreshing.
-	 */
-	public static final String ACTION_REFRESH_AUTO = "org.qmsos.quakemo.ACTION_REFRESH_AUTO";
-	
-	/**
-	 * The intent action of purge database.
-	 */
-	public static final String ACTION_PURGE_DATABASE = "org.qmsos.quakemo.ACTION_PURGE_DATABASE";
-
-	// Used in undo purge database feature.
-	public static final String EXTRA_PURGE_BURNDOWN = "EXTRA_PURGE_BURNDOWN";
-	public static final String EXTRA_PURGE_BURNDOWN_YES = "EXTRA_PURGE_BURNDOWN_YES";
-	public static final String EXTRA_PURGE_BURNDOWN_NO = "EXTRA_PURGE_BURNDOWN_NO";
-	
-	// Result code passed in ResultReceiver.
-	public static final int RESULT_CODE_REFRESHED = 1;
-	public static final int RESULT_CODE_PURGED = 2;
-	public static final int RESULT_CODE_CANCELED = 3;
-	public static final int RESULT_CODE_DISCONNECTED = 4;
-	
-	/**
 	 * Class name tag. Debug use only.
 	 */
 	private static final String TAG = EarthquakeService.class.getSimpleName();
@@ -84,12 +54,12 @@ public class EarthquakeService extends IntentService {
 	/**
 	 * Notification ID in this application.
 	 */
-	private static final int NOTIFICATION_ID = 1;
+	private static final int EARTHQUAKE_NOTIFICATION_ID = 3;
 
 	/**
 	 * Unique request code of the auto update alarm's PendingIntent.
 	 */
-	private static final int ALARM_INTENT_REQUEST_CODE = 235;
+	private static final int UPDATE_ALARM_REQUEST_CODE = 5;
 	
 	/**
 	 * Default constructor of this service.
@@ -112,7 +82,7 @@ public class EarthquakeService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		String action = intent.getAction();
 		if (action != null) {
-			if (action.equals(ACTION_REFRESH_AUTO)) {
+			if (action.equals(IpcConstants.ACTION_REFRESH_AUTO)) {
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 				boolean autoRefresh = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
 				if (autoRefresh) {
@@ -128,34 +98,35 @@ public class EarthquakeService extends IntentService {
 				} else {
 					disableAutoUpdate();
 				}
-			} else if (action.equals(ACTION_REFRESH_MANUAL)) {
-				Intent localIntent = new Intent(MainActivity.ACTION_REFRESH_EXECUTED);
+			} else if (action.equals(IpcConstants.ACTION_REFRESH_MANUAL)) {
+				Intent localIntent = new Intent(IpcConstants.ACTION_REFRESH_EXECUTED);
 				
 				if (checkConnection()) {
 					int count = executeRefresh();
-					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_REFRESHED);
-					localIntent.putExtra(MainActivity.EXTRA_ADDED_COUNT, count);
+					
+					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, true);
+					localIntent.putExtra(IpcConstants.EXTRA_ADDED_COUNT, count);
 				} else {
-					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_DISCONNECTED);
+					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
 				}
 
 				LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-			} else if (action.equals(ACTION_PURGE_DATABASE)) {
-				Intent localIntent = new Intent(MainActivity.ACTION_PURGE_EXECUTED);
+			} else if (action.equals(IpcConstants.ACTION_PURGE_DATABASE)) {
+				Intent localIntent = new Intent(IpcConstants.ACTION_PURGE_EXECUTED);
 
-				String burndown = intent.getStringExtra(EXTRA_PURGE_BURNDOWN);
-				if (burndown.equals(EXTRA_PURGE_BURNDOWN_NO)) {
-					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_CANCELED);
-				} else if (burndown.equals(EXTRA_PURGE_BURNDOWN_YES)) {
+				boolean flag = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_DATABASE, false);
+				if (flag) {
 					purgeContentProvider();
 					
-					localIntent.putExtra(MainActivity.EXTRA_RESULT_CODE, RESULT_CODE_PURGED);
+					localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, true);
+				} else {
+					localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, false);
 				}
 				
 				LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 			}
 			
-			sendBroadcast(new Intent(ACTION_REFRESH_WIDGET));
+			sendBroadcast(new Intent(IpcConstants.ACTION_REFRESH_WIDGET));
 		}
 	}
 
@@ -169,8 +140,8 @@ public class EarthquakeService extends IntentService {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
-				ALARM_INTENT_REQUEST_CODE,
-				new Intent(EarthquakeAlarmReceiver.ACTION_REFRESH_ALARM), 
+				UPDATE_ALARM_REQUEST_CODE,
+				new Intent(IpcConstants.ACTION_REFRESH_ALARM), 
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
@@ -187,8 +158,8 @@ public class EarthquakeService extends IntentService {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
-				ALARM_INTENT_REQUEST_CODE,
-				new Intent(EarthquakeAlarmReceiver.ACTION_REFRESH_ALARM),
+				UPDATE_ALARM_REQUEST_CODE,
+				new Intent(IpcConstants.ACTION_REFRESH_ALARM),
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		alarmManager.cancel(alarmIntent);
@@ -463,7 +434,7 @@ public class EarthquakeService extends IntentService {
 	
 			NotificationManager notificationManager = 
 					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			notificationManager.notify(NOTIFICATION_ID, builder.build());
+			notificationManager.notify(EARTHQUAKE_NOTIFICATION_ID, builder.build());
 		}
 	}
 

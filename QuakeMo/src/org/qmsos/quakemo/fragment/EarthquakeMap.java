@@ -4,10 +4,10 @@ import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.qmsos.quakemo.EarthquakeProvider;
-import org.qmsos.quakemo.MainActivity;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.map.EarthquakeOverlay;
 import org.qmsos.quakemo.map.MapTileChecker;
+import org.qmsos.quakemo.util.IpcConstants;
 
 import android.app.AlarmManager;
 import android.content.SharedPreferences;
@@ -98,8 +98,8 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 				EarthquakeProvider.KEY_LONGITUDE };
 
 		// Create search cursor.
-		if (args != null && args.getString(MainActivity.BUNDLE_KEY_QUERY) != null) {
-			String query = args.getString(MainActivity.BUNDLE_KEY_QUERY);
+		if (args != null && args.getString(IpcConstants.QUERY_CONTENT_KEY) != null) {
+			String query = args.getString(IpcConstants.QUERY_CONTENT_KEY);
 
 			String where = EarthquakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
 			String sortOrder = EarthquakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";

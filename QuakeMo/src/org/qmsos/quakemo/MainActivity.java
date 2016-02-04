@@ -6,6 +6,7 @@ import java.util.List;
 import org.qmsos.quakemo.fragment.EarthquakeDetailsDialog;
 import org.qmsos.quakemo.fragment.MaterialPurgeDialog;
 import org.qmsos.quakemo.fragment.MaterialPurgeDialog.OnPurgeSelectedListener;
+import org.qmsos.quakemo.util.IpcConstants;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
@@ -52,12 +53,6 @@ public class MainActivity extends AppCompatActivity
 implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
 	OnPurgeSelectedListener, ShowDialogCallback {
 
-	public static final String ACTION_REFRESH_EXECUTED = "org.qmsos.quakemo.ACTION_REFRESH_EXECUTED";
-	public static final String ACTION_PURGE_EXECUTED = "org.qmsos.quakemo.ACTION_PURGE_EXECUTED";
-	public static final String EXTRA_RESULT_CODE = "EXTRA_RESULT_CODE";
-	public static final String EXTRA_ADDED_COUNT = "EXTRA_ADDED_COUNT";
-	public static final String BUNDLE_KEY_QUERY = "BUNDLE_KEY_QUERY";
-
 	private static final String TAG = MainActivity.class.getSimpleName();
 
 	// flags used to show different layout of Snackbar.
@@ -98,7 +93,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		mMessageReceiver = new MessageReceiver();
 
 		Intent intent = new Intent(this, EarthquakeService.class);
-		intent.setAction(EarthquakeService.ACTION_REFRESH_AUTO);
+		intent.setAction(IpcConstants.ACTION_REFRESH_AUTO);
 		startService(intent);
 	}
 
@@ -107,8 +102,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		super.onResume();
 
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(ACTION_PURGE_EXECUTED);
-		filter.addAction(ACTION_REFRESH_EXECUTED);
+		filter.addAction(IpcConstants.ACTION_PURGE_EXECUTED);
+		filter.addAction(IpcConstants.ACTION_REFRESH_EXECUTED);
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
 	}
 
@@ -135,7 +130,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			String query = intent.getStringExtra(SearchManager.QUERY);
 
 			Bundle args = new Bundle();
-			args.putString(BUNDLE_KEY_QUERY, query);
+			args.putString(IpcConstants.QUERY_CONTENT_KEY, query);
 
 			reload(args);
 		}
@@ -187,7 +182,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				|| key.equals(getString(R.string.PREF_AUTO_FREQUENCY))) {
 			
 			Intent intent = new Intent(this, EarthquakeService.class);
-			intent.setAction(EarthquakeService.ACTION_REFRESH_AUTO);
+			intent.setAction(IpcConstants.ACTION_REFRESH_AUTO);
 			
 			startService(intent);
 		}
@@ -316,7 +311,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			
 			switch (flag) {
 			case SNACKBAR_REFRESH:
-				intent.setAction(EarthquakeService.ACTION_REFRESH_MANUAL);
+				intent.setAction(IpcConstants.ACTION_REFRESH_MANUAL);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
 				snackbar.setCallback(new Callback() {
@@ -329,15 +324,14 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				});
 				break;
 			case SNACKBAR_PURGE:
-				intent.setAction(EarthquakeService.ACTION_PURGE_DATABASE);
+				intent.setAction(IpcConstants.ACTION_PURGE_DATABASE);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
 				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
 	
 					@Override
 					public void onClick(View v) {
-						intent.putExtra(EarthquakeService.EXTRA_PURGE_BURNDOWN,
-								EarthquakeService.EXTRA_PURGE_BURNDOWN_NO);
+						intent.putExtra(IpcConstants.EXTRA_PURGE_DATABASE,	false);
 					}
 				});
 				snackbar.setCallback(new Callback() {
@@ -345,8 +339,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 					@Override
 					public void onDismissed(Snackbar snackbar, int event) {
 						if (event != Callback.DISMISS_EVENT_ACTION) {
-							intent.putExtra(EarthquakeService.EXTRA_PURGE_BURNDOWN,
-									EarthquakeService.EXTRA_PURGE_BURNDOWN_YES);
+							intent.putExtra(IpcConstants.EXTRA_PURGE_DATABASE, true);
 						}
 						startService(intent);
 					}
@@ -398,31 +391,29 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (action == null) {
-				return;
-			} else if (action.equals(ACTION_REFRESH_EXECUTED) || action.equals(ACTION_PURGE_EXECUTED)) {
-				String result;
-				int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0);
-				switch (resultCode) {
-				case EarthquakeService.RESULT_CODE_REFRESHED:
-					result = intent.getIntExtra(EXTRA_ADDED_COUNT, 0) + " "
-							+ getString(R.string.snackbar_refreshed);
-					break;
-				case EarthquakeService.RESULT_CODE_PURGED:
-					result = getString(R.string.snackbar_purged);
-					break;
-				case EarthquakeService.RESULT_CODE_CANCELED:
-					result = getString(R.string.snackbar_canceled);
-					break;
-				case EarthquakeService.RESULT_CODE_DISCONNECTED:
-					result = getString(R.string.snackbar_disconnected);
-					break;
-				default:
-					result = null;
+			if (action != null) {
+				String result = null;
+				if (action.equals(IpcConstants.ACTION_REFRESH_EXECUTED)) {
+					boolean flag = intent.getBooleanExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
+					if (flag) {
+						result = intent.getIntExtra(IpcConstants.EXTRA_ADDED_COUNT, 0) + " "
+								+ getString(R.string.snackbar_refreshed);
+					} else {
+						result = getString(R.string.snackbar_disconnected);
+					}
+				} else if (action.equals(IpcConstants.ACTION_PURGE_EXECUTED)) {
+					boolean flag = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_EXECUTED, false);
+					if (flag) {
+						result = getString(R.string.snackbar_purged);
+					} else {
+						result = getString(R.string.snackbar_canceled);
+					}
 				}
+				
 				showSnackbar(SNACKBAR_NORMAL, result);
 			}
 		}
+
 	}
 
 }
