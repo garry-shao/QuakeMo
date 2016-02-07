@@ -304,9 +304,11 @@ public class EarthquakeService extends IntentService {
 		
 		Cursor cursor = null;
 		try {
-			String[] projections = { "MAX(" + EarthquakeProvider.KEY_TIME + ") AS " + EarthquakeProvider.KEY_TIME };
+			String[] projection = { "MAX(" + EarthquakeProvider.KEY_TIME + ") AS " + 
+					EarthquakeProvider.KEY_TIME };
 			
-			cursor = getContentResolver().query(EarthquakeProvider.CONTENT_URI, projections, null, null, null);
+			cursor = getContentResolver().query(
+					EarthquakeProvider.CONTENT_URI, projection, null, null, null);
 			if (cursor != null && cursor.moveToFirst()) {
 				timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_TIME));
 			}
