@@ -145,6 +145,28 @@ public class EarthquakeProvider extends ContentProvider {
 	}
 
 	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values) {
+		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
+		
+		database.beginTransaction();
+		try {
+			for (ContentValues value : values) {
+				long rowID = database.insert(QuakeDatabaseHelper.EARTHQUAKE_TABLE, "quake", value);
+				if (rowID < 0) {
+					return 0;
+				}
+			}
+			database.setTransactionSuccessful();
+		} finally {
+			database.endTransaction();
+		}
+		
+		getContext().getContentResolver().notifyChange(uri, null);
+		
+		return values.length;
+	}
+
+	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		

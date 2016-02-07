@@ -10,13 +10,13 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.qmsos.quakemo.util.Earthquake;
 import org.qmsos.quakemo.util.IpcConstants;
 
 import android.app.AlarmManager;
@@ -52,16 +52,6 @@ public class EarthquakeService extends IntentService {
 	private static final String TAG = EarthquakeService.class.getSimpleName();
 
 	/**
-	 * Notification ID in this application.
-	 */
-	private static final int EARTHQUAKE_NOTIFICATION_ID = 3;
-
-	/**
-	 * Unique request code of the auto update alarm's PendingIntent.
-	 */
-	private static final int UPDATE_ALARM_REQUEST_CODE = 5;
-	
-	/**
 	 * Default constructor of this service.
 	 */
 	public EarthquakeService() {
@@ -84,19 +74,12 @@ public class EarthquakeService extends IntentService {
 		if (action != null) {
 			if (action.equals(IpcConstants.ACTION_REFRESH_AUTO)) {
 				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-				boolean autoRefresh = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
-				if (autoRefresh) {
-					int frequency = Integer.parseInt(prefs.getString(
-							getString(R.string.PREF_AUTO_FREQUENCY), 
-							getString(R.string.frequency_values_default)));
-					
-					enableAutoUpdate(frequency);
-
-					if (checkConnection()) {
-						executeRefresh();
-					}
-				} else {
-					disableAutoUpdate();
+				boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
+				
+				scheduleAutoRefresh(flagAuto);
+				
+				if (flagAuto && checkConnection()) {
+					executeRefresh();
 				}
 			} else if (action.equals(IpcConstants.ACTION_REFRESH_MANUAL)) {
 				Intent localIntent = new Intent(IpcConstants.ACTION_REFRESH_EXECUTED);
@@ -114,9 +97,9 @@ public class EarthquakeService extends IntentService {
 			} else if (action.equals(IpcConstants.ACTION_PURGE_DATABASE)) {
 				Intent localIntent = new Intent(IpcConstants.ACTION_PURGE_EXECUTED);
 
-				boolean flag = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_DATABASE, false);
-				if (flag) {
-					purgeContentProvider();
+				boolean flagPurge = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_DATABASE, false);
+				if (flagPurge) {
+					executePurgeDatabase();
 					
 					localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, true);
 				} else {
@@ -131,133 +114,215 @@ public class EarthquakeService extends IntentService {
 	}
 
 	/**
-	 * Setting up interval of automatic update.
+	 * Execute the workflow of refreshing for new earthquakes.
 	 * 
-	 * @param frequency
-	 *            update interval, in hours.
-	 */
-	private void enableAutoUpdate(int frequency) {
-		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
-				UPDATE_ALARM_REQUEST_CODE,
-				new Intent(IpcConstants.ACTION_REFRESH_ALARM), 
-				PendingIntent.FLAG_UPDATE_CURRENT);
-
-		long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
-		long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
-		
-		alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
-				timeToRefresh, intervalMillis, alarmIntent);
-	}
-
-	/**
-	 * Cancel automatic update.
-	 */
-	private void disableAutoUpdate() {
-		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 
-				UPDATE_ALARM_REQUEST_CODE,
-				new Intent(IpcConstants.ACTION_REFRESH_ALARM),
-				PendingIntent.FLAG_UPDATE_CURRENT);
-
-		alarmManager.cancel(alarmIntent);
-	}
-
-	/**
-	 * Check if there is a valid connection to Internet.
-	 * 
-	 * @return TRUE if a valid connection exists, FALSE otherwise.
-	 */
-	private boolean checkConnection() {
-		ConnectivityManager manager = 
-				(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo info = manager.getActiveNetworkInfo();
-		if (info != null && info.isConnected()) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			String type = prefs.getString(
-					getString(R.string.PREF_CONNECTION), getString(R.string.connection_values_wifi));
-			if (type.equals(getString(R.string.connection_values_any)) 
-					|| (info.getType()) == ConnectivityManager.TYPE_WIFI) {
-				
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-	/**
-	 * Execute the query instance for new earthquakes.
-	 * 
-	 * @return How many new earthquakes added to content provider.
+	 * @return How many new earthquakes added to database. -1 if some error happened.
 	 */
 	private int executeRefresh() {
-		int count = 0;
+		int errorCount = -1;
 		
-		String result = download(assembleQuery());
-		if (result != null && result.length() > 0) {
-			try {
-				long timeStamp = 0;
-				Earthquake quakeStamp = null;
+		String request = assembleRequest();
+		String result = download(request);
+		
+		if (result == null) {
+			return errorCount;
+		}
+		
+		try {
+			JSONObject reader = new JSONObject(result);
+			JSONArray features = reader.getJSONArray("features");
+			int length = features.length();
+			if (length <= 0) {
+				return errorCount;
+			}
+
+			long timeStamp = 0;
+			ContentValues valueStamp = null;
+
+			LinkedList<ContentValues> valueList = new LinkedList<ContentValues>();
+			for (int i = 0; i < length; i++) {
+				JSONObject feature = features.getJSONObject(i);
 				
-				JSONObject reader = new JSONObject(result);
-				JSONArray features = reader.getJSONArray("features");
-				for (int i = 0; i < features.length(); i++) {
-					JSONObject feature = features.getJSONObject(i);
-			
-					JSONObject properties = feature.getJSONObject("properties");
-					double magnitude = properties.getDouble("mag");
-					String place = properties.getString("place");
-					long time = properties.getLong("time");
-					String url = properties.getString("url");
-			
-					JSONObject geometry = feature.getJSONObject("geometry");
-					JSONArray coordinates = geometry.getJSONArray("coordinates");
-					double longitude = coordinates.getDouble(0);
-					double latitude = coordinates.getDouble(1);
-					double depth = coordinates.getDouble(2);
-			
-					Earthquake earthquake = new Earthquake(time, magnitude, longitude, latitude, depth);
-					earthquake.setDetails(place);
-					earthquake.setLink(url);
-					
-					boolean added = addToProvider(earthquake);
-					if (added) {
-						count++;
+				JSONObject properties = feature.getJSONObject("properties");
+				double magnitude = properties.getDouble("mag");
+				String place = properties.getString("place");
+				long time = properties.getLong("time");
+				String url = properties.getString("url");
+		
+				JSONObject geometry = feature.getJSONObject("geometry");
+				JSONArray coordinates = geometry.getJSONArray("coordinates");
+				double longitude = coordinates.getDouble(0);
+				double latitude = coordinates.getDouble(1);
+				double depth = coordinates.getDouble(2);
+
+				Cursor cursor = null;
+				try {
+					ContentResolver resolver = getContentResolver();
+					String where = EarthquakeProvider.KEY_TIME + " = " + time;
+					cursor = resolver.query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
+					if (cursor != null && !cursor.moveToNext()) {
+						ContentValues value = new ContentValues();
+						value.put(EarthquakeProvider.KEY_TIME, time);
+						value.put(EarthquakeProvider.KEY_MAGNITUDE, magnitude);
+						value.put(EarthquakeProvider.KEY_LONGITUDE, longitude);
+						value.put(EarthquakeProvider.KEY_LATITUDE, latitude);
+						value.put(EarthquakeProvider.KEY_DEPTH, depth);
+						value.put(EarthquakeProvider.KEY_DETAILS, place);
+						value.put(EarthquakeProvider.KEY_LINK, url);
+						
+						valueList.add(value);
 						
 						if (time > timeStamp) {
 							timeStamp = time;
-							quakeStamp = earthquake;
+							valueStamp = value;
 						}
 					}
+				} finally {
+					if (cursor != null && !cursor.isClosed()) {
+						cursor.close();
+					}
 				}
-				
-				if (timeStamp > 0 && quakeStamp != null) {
-					sendNotification(quakeStamp);
-				}
-			} catch (JSONException e) {
-				Log.e(TAG, "Something wrong with the result JSON");
 			}
+			
+			int valueListSize = valueList.size();
+			ContentValues[] values = new ContentValues[valueListSize];
+			valueList.toArray(values);
+			
+			int count = getContentResolver().bulkInsert(EarthquakeProvider.CONTENT_URI, values);
+			if (count > 0 && count == valueListSize && timeStamp > 0 && valueStamp != null) {
+				sendNotification(valueStamp);
+			}
+			
+			return count;
+		} catch (JSONException e) {
+			Log.e(TAG, "Something wrong with the result JSON");
+			
+			return errorCount;
 		}
-		
-		return count;
 	}
 
 	/**
-	 * Purge all earthquakes stored in content provider.
+	 * Purge all earthquakes stored in database.
 	 */
-	private void purgeContentProvider() {
+	private void executePurgeDatabase() {
 		getContentResolver().delete(EarthquakeProvider.CONTENT_URI, null, null);
 	}
 
 	/**
-	 * Assemble query string out of preferences.
+	 * Schedule the behavior of the alarm that invoked repeatedly to execute automatic refresh.
+	 * 
+	 * @param flag
+	 *            TRUE when setting up the alarm, FALSE when canceling the alarm.
+	 */
+	private void scheduleAutoRefresh(boolean flag) {
+		int requestCode = 1;
+		
+		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, requestCode,
+				new Intent(IpcConstants.ACTION_REFRESH_ALARM), PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		if (flag) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			int frequency = Integer.parseInt(prefs.getString(
+					getString(R.string.PREF_AUTO_FREQUENCY), 
+					getString(R.string.frequency_values_default)));
+			
+			long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
+			long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
+			
+			alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
+					timeToRefresh, intervalMillis, alarmIntent);
+		} else {
+			alarmManager.cancel(alarmIntent);
+		}
+	}
+
+	/**
+	 * Create and broadcast a new notification of earthquake.
+	 * 
+	 * @param value
+	 *            The ContentValues instance that contains the earthquake.
+	 */
+	private void sendNotification(ContentValues value) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean flagNotify = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
+		if (flagNotify) {
+			int nofiticationId = 1;
+			
+			PendingIntent launchIntent = 
+					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+	
+			long time = value.getAsLong(EarthquakeProvider.KEY_TIME);
+			double magnitude = value.getAsDouble(EarthquakeProvider.KEY_MAGNITUDE);
+			String details = value.getAsString(EarthquakeProvider.KEY_DETAILS);
+			
+			Notification.Builder builder = new Notification.Builder(this);
+			builder.setAutoCancel(true)
+					.setTicker(getString(R.string.notification_ticker))
+					.setSmallIcon(R.drawable.ic_notification)
+					.setContentIntent(launchIntent)
+					.setWhen(time)
+					.setContentTitle("M " + magnitude)
+					.setContentText(details);
+	
+			boolean flagSound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
+			if (flagSound) {
+				Uri ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+	
+				builder.setSound(ringUri);
+			}
+	
+			NotificationManager notificationManager = 
+					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			notificationManager.notify(nofiticationId, builder.build());
+		}		
+	}
+
+	/**
+	 * Download from remote server for results.
+	 * 
+	 * @param query
+	 *            The query string.
+	 * @return Results of this query, NULL otherwise.
+	 */
+	private String download(String query) {
+		StringBuilder builder = new StringBuilder();
+	
+		try {
+			URL url = new URL(query);
+			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+			try {
+				int responseCode = httpConnection.getResponseCode();
+				if (responseCode == HttpURLConnection.HTTP_OK) {
+					InputStream inStream = httpConnection.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+					
+					String line;
+					while ((line = reader.readLine()) != null) {
+						builder.append(line);
+					}
+				}
+			} catch (IOException e) {
+				Log.e(TAG, "Error reading from the http connection");
+			} finally {
+				httpConnection.disconnect();
+			}
+		} catch (MalformedURLException e) {
+			Log.e(TAG, "Malformed URL");
+		} catch (IOException e) {
+			Log.e(TAG, "Error opening the http connection");
+		}
+	
+		return builder.toString();
+	}
+
+	/**
+	 * Assemble string that sent to remote server.
 	 * 
 	 * @return The assembled string.
 	 */
-	private String assembleQuery() {
+	private String assembleRequest() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -295,9 +360,9 @@ public class EarthquakeService extends IntentService {
 	}
 
 	/**
-	 * Find the time stamp of the recent earthquake. 
+	 * Find the time stamp of most recent earthquake. 
 	 * 
-	 * @return Time stamp of the recent earthquake in milliseconds or 0 if not found.
+	 * @return Time stamp of the most recent earthquake in milliseconds or 0 if not found.
 	 */
 	private long findTimeStamp() {
 		long timeStamp = 0;
@@ -324,120 +389,26 @@ public class EarthquakeService extends IntentService {
 	}
 
 	/**
-	 * Download from remote server for results.
+	 * Check if there is a valid connection to Internet.
 	 * 
-	 * @param query
-	 *            The query string.
-	 * @return Results of this query, NULL otherwise.
+	 * @return TRUE if a valid connection exists, FALSE otherwise.
 	 */
-	private String download(String query) {
-		StringBuilder builder = new StringBuilder();
-
-		try {
-			URL url = new URL(query);
-			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-			try {
-				int responseCode = httpConnection.getResponseCode();
-				if (responseCode == HttpURLConnection.HTTP_OK) {
-					InputStream inStream = httpConnection.getInputStream();
-					BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-					
-					String line;
-					while ((line = reader.readLine()) != null) {
-						builder.append(line);
-					}
-				}
-			} catch (IOException e) {
-				Log.e(TAG, "Error reading from the http connection");
-			} finally {
-				httpConnection.disconnect();
-			}
-		} catch (MalformedURLException e) {
-			Log.e(TAG, "Malformed URL");
-		} catch (IOException e) {
-			Log.e(TAG, "Error opening the http connection");
-		}
-
-		return builder.toString();
-	}
-
-	/**
-	 * Add new earthquake instance to the earthquake content provider.
-	 * 
-	 * @param earthquake
-	 *            the instance to add.
-	 * @return TRUE if earthquake successfully added, FALSE otherwise.
-	 */
-	private boolean addToProvider(Earthquake earthquake) {
-		if (earthquake == null) {
-			return false;
-		}
-		
-		boolean flag = false;
-		
-		Cursor cursor = null;
-		try {
-			ContentResolver resolver = getContentResolver();
-			String where = EarthquakeProvider.KEY_TIME + " = " + earthquake.getTime();
-			cursor = resolver.query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
-			if (cursor != null && !cursor.moveToNext()) {
-				ContentValues values = new ContentValues();
-				values.put(EarthquakeProvider.KEY_TIME, earthquake.getTime());
-				values.put(EarthquakeProvider.KEY_MAGNITUDE, earthquake.getMagnitude());
-				values.put(EarthquakeProvider.KEY_LONGITUDE, earthquake.getLongitude());
-				values.put(EarthquakeProvider.KEY_LATITUDE, earthquake.getLatitude());
-				values.put(EarthquakeProvider.KEY_DEPTH, earthquake.getDepth());
-				values.put(EarthquakeProvider.KEY_DETAILS, earthquake.getDetails());
-				values.put(EarthquakeProvider.KEY_LINK, earthquake.getLink());
-				resolver.insert(EarthquakeProvider.CONTENT_URI, values);
+	private boolean checkConnection() {
+		ConnectivityManager manager = 
+				(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = manager.getActiveNetworkInfo();
+		if (info != null && info.isConnected()) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			String type = prefs.getString(
+					getString(R.string.PREF_CONNECTION), getString(R.string.connection_values_wifi));
+			if (type.equals(getString(R.string.connection_values_any)) 
+					|| (info.getType()) == ConnectivityManager.TYPE_WIFI) {
 				
-				flag = true;
-			}
-		} catch (Exception e) {
-			Log.e(TAG, "Error found when adding earthquake to provider");
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
+				return true;
 			}
 		}
 		
-		return flag;
-	}
-
-	/**
-	 * Create and broadcast a new notification of earthquake.
-	 * 
-	 * @param earthquake
-	 *            the earthquake to notify.
-	 */
-	private void sendNotification(Earthquake earthquake) {
-		Notification.Builder builder = new Notification.Builder(this);
-		builder.setAutoCancel(true)
-				.setTicker(getString(R.string.notification_ticker))
-				.setSmallIcon(R.drawable.ic_notification);
-	
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean notifyToggle = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
-		if (notifyToggle) {
-			PendingIntent launchIntent = 
-					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-	
-			builder.setContentIntent(launchIntent)
-					.setWhen(earthquake.getTime())
-					.setContentTitle("M " + earthquake.getMagnitude())
-					.setContentText(earthquake.getDetails());
-	
-			boolean notifySound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
-			if (notifySound) {
-				Uri ringURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-	
-				builder.setSound(ringURI);
-			}
-	
-			NotificationManager notificationManager = 
-					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			notificationManager.notify(EARTHQUAKE_NOTIFICATION_ID, builder.build());
-		}
+		return false;
 	}
 
 }
