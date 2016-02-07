@@ -139,9 +139,9 @@ public class EarthquakeProvider extends ContentProvider {
 			getContext().getContentResolver().notifyChange(resultUri, null);
 			
 			return resultUri;
+		} else {
+			throw new SQLException("Failed to insert row into " + uri);
 		}
-		
-		throw new SQLException("Failed to insert row into " + uri);
 	}
 
 	@Override
