@@ -87,8 +87,12 @@ public class EarthquakeService extends IntentService {
 				if (checkConnection()) {
 					int count = executeRefresh();
 					
-					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, true);
-					localIntent.putExtra(IpcConstants.EXTRA_ADDED_COUNT, count);
+					if (count >= 0) {
+						localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, true);
+						localIntent.putExtra(IpcConstants.EXTRA_ADDED_COUNT, count);
+					} else {
+						localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
+					}
 				} else {
 					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
 				}
