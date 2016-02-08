@@ -71,50 +71,52 @@ public class EarthquakeService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		String action = intent.getAction();
-		if (action != null) {
-			if (action.equals(IpcConstants.ACTION_REFRESH_AUTO)) {
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-				boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
+		if (action == null) {
+			return;
+		}
+		
+		if (action.equals(IpcConstants.ACTION_REFRESH_AUTO)) {
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
+			
+			scheduleAutoRefresh(flagAuto);
+			
+			if (flagAuto && checkConnection()) {
+				executeRefresh();
+			}
+		} else if (action.equals(IpcConstants.ACTION_REFRESH_MANUAL)) {
+			Intent localIntent = new Intent(IpcConstants.ACTION_REFRESH_EXECUTED);
+			
+			if (checkConnection()) {
+				int count = executeRefresh();
 				
-				scheduleAutoRefresh(flagAuto);
-				
-				if (flagAuto && checkConnection()) {
-					executeRefresh();
-				}
-			} else if (action.equals(IpcConstants.ACTION_REFRESH_MANUAL)) {
-				Intent localIntent = new Intent(IpcConstants.ACTION_REFRESH_EXECUTED);
-				
-				if (checkConnection()) {
-					int count = executeRefresh();
-					
-					if (count >= 0) {
-						localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, true);
-						localIntent.putExtra(IpcConstants.EXTRA_ADDED_COUNT, count);
-					} else {
-						localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
-					}
+				if (count >= 0) {
+					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, true);
+					localIntent.putExtra(IpcConstants.EXTRA_ADDED_COUNT, count);
 				} else {
 					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
 				}
-
-				LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-			} else if (action.equals(IpcConstants.ACTION_PURGE_DATABASE)) {
-				Intent localIntent = new Intent(IpcConstants.ACTION_PURGE_EXECUTED);
-
-				boolean flagPurge = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_DATABASE, false);
-				if (flagPurge) {
-					executePurgeDatabase();
-					
-					localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, true);
-				} else {
-					localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, false);
-				}
-				
-				LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+			} else {
+				localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
 			}
 			
-			sendBroadcast(new Intent(IpcConstants.ACTION_REFRESH_WIDGET));
+			LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+		} else if (action.equals(IpcConstants.ACTION_PURGE_DATABASE)) {
+			Intent localIntent = new Intent(IpcConstants.ACTION_PURGE_EXECUTED);
+			
+			boolean flagPurge = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_DATABASE, false);
+			if (flagPurge) {
+				executePurgeDatabase();
+				
+				localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, true);
+			} else {
+				localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, false);
+			}
+			
+			LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 		}
+		
+		sendBroadcast(new Intent(IpcConstants.ACTION_REFRESH_WIDGET));
 	}
 
 	/**
