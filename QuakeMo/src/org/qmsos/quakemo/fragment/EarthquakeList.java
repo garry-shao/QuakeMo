@@ -3,7 +3,7 @@ package org.qmsos.quakemo.fragment;
 import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.util.IpcConstants;
-import org.qmsos.quakemo.widget.RecyclerViewCursorAdapter;
+import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter;
 
 import android.app.AlarmManager;
 import android.content.SharedPreferences;
@@ -31,7 +31,7 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 
 	private static final String KEY_RECYCLER_VIEW_STATE = "KEY_RECYCLER_VIEW_STATE";
 	
-	private RecyclerViewCursorAdapter mCursorAdapter;
+	private CursorRecyclerViewAdapter mCursorAdapter;
 	private RecyclerView mRecyclerView;
 	
 	@Override
@@ -45,7 +45,7 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		mCursorAdapter = new RecyclerViewCursorAdapter(getContext(), null);
+		mCursorAdapter = new CursorRecyclerViewAdapter(getContext(), null);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 		mRecyclerView.setAdapter(mCursorAdapter);
 	}

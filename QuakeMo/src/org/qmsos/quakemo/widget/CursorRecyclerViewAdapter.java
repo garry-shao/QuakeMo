@@ -22,9 +22,9 @@ import android.widget.TextView;
  * 
  *
  */
-public class RecyclerViewCursorAdapter extends RecyclerViewBaseAdapter<ViewHolder> {
+public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<ViewHolder> {
 
-	public RecyclerViewCursorAdapter(Context context, Cursor cursor) {
+	public CursorRecyclerViewAdapter(Context context, Cursor cursor) {
 		super(context, cursor);
 	}
 

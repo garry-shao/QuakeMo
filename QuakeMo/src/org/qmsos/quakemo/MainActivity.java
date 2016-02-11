@@ -10,7 +10,7 @@ import org.qmsos.quakemo.util.IpcConstants;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
-import org.qmsos.quakemo.widget.RecyclerViewCursorAdapter.ShowDialogCallback;
+import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.ShowDialogCallback;
 
 import android.app.SearchManager;
 import android.app.SearchableInfo;
