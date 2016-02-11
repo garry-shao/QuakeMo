@@ -42,7 +42,7 @@ public class IpcConstants {
 	 * Used in UNDO purging feature, containing extra info to determine whether undo the 
 	 * purging process. 
 	 */
-	public static final String EXTRA_PURGE_DATABASE = "EXTRA_PURGE_DATABASE";
+	public static final String EXTRA_PURGE_DATABASE = BASE_PACKAGE_NAME + "EXTRA_PURGE_DATABASE";
 
 	// below are callback actions, used in LocalBroadcastManager.
 	
@@ -56,12 +56,12 @@ public class IpcConstants {
 	/**
 	 * Used as a boolean field in determine whether the refreshing succeeded(sync with server).
 	 */
-	public static final String EXTRA_REFRESH_EXECUTED = "EXTRA_REFRESH_EXECUTED";
+	public static final String EXTRA_REFRESH_EXECUTED = BASE_PACKAGE_NAME + "EXTRA_REFRESH_EXECUTED";
 
 	/**
 	 * Used as an integer field containing how many new entries(aka earthquakes) added.
 	 */
-	public static final String EXTRA_ADDED_COUNT = "EXTRA_ADDED_COUNT";
+	public static final String EXTRA_ADDED_COUNT = BASE_PACKAGE_NAME + "EXTRA_ADDED_COUNT";
 
 	/**
 	 * Service action: purging database executed, normally used in 
@@ -73,7 +73,7 @@ public class IpcConstants {
 	/**
 	 * Used as a boolean field in determine whether the database is purged.
 	 */
-	public static final String EXTRA_PURGE_EXECUTED = "EXTRA_PURGE_EXECUTED";
+	public static final String EXTRA_PURGE_EXECUTED = BASE_PACKAGE_NAME + "EXTRA_PURGE_EXECUTED";
 
 	/**
 	 * Search feature: Used to pass query string, should be in a bundle.
