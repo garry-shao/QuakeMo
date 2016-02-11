@@ -288,15 +288,16 @@ public class EarthquakeService extends IntentService {
 	/**
 	 * Download from remote server for results.
 	 * 
-	 * @param query
-	 *            The query string.
+	 * @param request
+	 *            The request string of URL.
 	 * @return Results of this query, NULL otherwise.
 	 */
-	private String download(String query) {
+	private String download(String request) {
 		StringBuilder builder = new StringBuilder();
 	
 		try {
-			URL url = new URL(query);
+			// workaround: whitespace makes the url invalid, replace with URL-encode.
+			URL url = new URL(request.replace(" ", "%20"));
 			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 			try {
 				int responseCode = httpConnection.getResponseCode();
