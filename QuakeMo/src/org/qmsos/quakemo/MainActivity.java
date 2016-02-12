@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.qmsos.quakemo.fragment.EarthquakeDetailsDialog;
-import org.qmsos.quakemo.fragment.MaterialPurgeDialog;
-import org.qmsos.quakemo.fragment.MaterialPurgeDialog.OnPurgeSelectedListener;
-import org.qmsos.quakemo.util.IpcConstants;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
+import org.qmsos.quakemo.fragment.MaterialPurgeDialog;
+import org.qmsos.quakemo.fragment.MaterialPurgeDialog.OnPurgeSelectedListener;
+import org.qmsos.quakemo.util.IpcConstants;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.ShowDialogCallback;
 
 import android.app.SearchManager;
@@ -30,6 +30,7 @@ import android.support.design.widget.Snackbar.Callback;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
@@ -353,6 +354,13 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			}
 			
 			if (snackbar != null) {
+				int currentInversePrimaryTextColor = 
+						ContextCompat.getColor(this, R.color.primary_text_default_material_dark);
+				int currentAccentColor = 
+						ContextCompat.getColor(this, R.color.accent_material_light);
+				
+				snackbar.setActionTextColor(currentInversePrimaryTextColor);
+				snackbar.getView().setBackgroundColor(currentAccentColor);
 				snackbar.show();
 			}
 		}
