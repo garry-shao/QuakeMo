@@ -59,9 +59,8 @@ public class EarthquakeDetailsDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle(R.string.dialog_details_title);
-
+		String message = null;
+		String link = null;
 		Cursor cursor = null;
 		try {
 			final long id = getArguments().getLong(KEY_EARTHQUAKE);
@@ -80,44 +79,21 @@ public class EarthquakeDetailsDialog extends DialogFragment {
 						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LATITUDE));
 				String details = cursor.getString(
 						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
-				final String link = cursor.getString(
+				link = cursor.getString(
 						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LINK));
 				
-				String lon = longitude > 0 
-						? Math.abs(longitude) + "\u00b0E" 
-								: Math.abs(longitude) + "\u00b0W";
-				String lat = latitude > 0 
-						? Math.abs(latitude) + "\u00b0N" 
-								: Math.abs(latitude) + "\u00b0S";
+				String lon = 
+						longitude > 0 ? Math.abs(longitude) + "\u00b0E" : Math.abs(longitude) + "\u00b0W";
+				String lat = 
+						latitude > 0 ? Math.abs(latitude) + "\u00b0N" : Math.abs(latitude) + "\u00b0S";
 				
 				DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
-				String dialogDetails = dataFormat.format(new Date(time)) + 
-						"\n\n" + "Magnitude: " + magnitude + 
-						"\n\n" + "Depth: " + depth + " km" + 
-						"\n\n" + "Coord: " + lon + " " + lat + 
-						"\n\n" + details;
 				
-				builder.setMessage(dialogDetails);
-				
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-				boolean linkEnabled = prefs.getBoolean(getString(R.string.PREF_LINK), false);
-				if (linkEnabled) {
-					builder.setPositiveButton(R.string.dialog_details_link, new OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							Intent intent = new Intent(Intent.ACTION_VIEW);
-							intent.setData(Uri.parse(link));
-							
-							PackageManager manager = getContext().getPackageManager();
-							if (manager != null && intent.resolveActivity(manager) != null) {
-								startActivity(intent);
-							}
-						}
-					});
-				}
-			} else {
-				builder.setMessage("earthquake ID does not EXIST!");
+				message = dataFormat.format(new Date(time)) + "\n\n" + 
+						"Magnitude: " + magnitude + "\n\n" + 
+						"Depth: " + depth + " km" + "\n\n" + 
+						"Coord: " + lon + " " + lat + "\n\n" + 
+						details;
 			}
 		} catch (IllegalArgumentException e) {
 			Log.e(TAG, "Columns do not exist");
@@ -125,6 +101,34 @@ public class EarthquakeDetailsDialog extends DialogFragment {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 			}
+		}
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setTitle(R.string.dialog_details_title);
+
+		if (message != null) {
+			builder.setMessage(message);
+		} else {
+			builder.setMessage("earthquake ID does not EXIST!");
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		boolean linkEnabled = prefs.getBoolean(getString(R.string.PREF_LINK), false);
+		if (linkEnabled && link != null) {
+			final String fLink = link;
+			builder.setPositiveButton(R.string.dialog_details_link, new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse(fLink));
+					
+					PackageManager manager = getContext().getPackageManager();
+					if (manager != null && intent.resolveActivity(manager) != null) {
+						startActivity(intent);
+					}
+				}
+			});
 		}
 
 		return builder.create();
