@@ -13,6 +13,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 
 import android.Manifest;
 import android.content.Context;
@@ -34,6 +36,20 @@ public class MapTileChecker {
 
 	private static final int MAX_RETRY = 3;
 
+	/**
+	 * Create offline map-tile source.
+	 * 
+	 * @param aZoomMinLevel
+	 *            minimum zoom level of this map-tile source.
+	 * @param aZoomMaxLevel
+	 *            maximum zoom level of this map-tile source.
+	 * @return The offline map-tile source.
+	 */
+	public static ITileSource offlineTileSource(int aZoomMinLevel, int aZoomMaxLevel) {
+		return new XYTileSource(MapTileChecker.MAP_SOURCE, 
+				aZoomMinLevel, aZoomMaxLevel, 256, ".png", new String[] {});
+	}
+	
 	/**
 	 * Check whether offline map tiles are available, create new ones if not.
 	 * 

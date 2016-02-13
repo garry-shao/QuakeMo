@@ -1,6 +1,5 @@
 package org.qmsos.quakemo.fragment;
 
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.qmsos.quakemo.EarthquakeProvider;
@@ -52,8 +51,7 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 		
 		mMapView = new MapView(getContext());
 		mMapView.setMultiTouchControls(true);
-		mMapView.setTileSource(new XYTileSource(MapTileChecker.MAP_SOURCE, 
-				ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {}));
+		mMapView.setTileSource(MapTileChecker.offlineTileSource(ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX));
 		mMapView.setUseDataConnection(false);
 		mMapView.setTilesScaledToDpi(true);
 
