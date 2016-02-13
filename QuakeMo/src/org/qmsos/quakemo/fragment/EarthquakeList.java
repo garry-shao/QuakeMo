@@ -36,9 +36,9 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mRecyclerView = (RecyclerView) inflater.inflate(R.layout.view_recycler, container, false);
+		View view = inflater.inflate(R.layout.fragment_earthquake_list, container, false);
 
-		return mRecyclerView;
+		return view;
 	}
 
 	@Override
@@ -46,6 +46,8 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 		super.onViewCreated(view, savedInstanceState);
 
 		mCursorAdapter = new CursorRecyclerViewAdapter(getContext(), null);
+		
+		mRecyclerView = (RecyclerView) view.findViewById(R.id.earthquake_list);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 		mRecyclerView.setAdapter(mCursorAdapter);
 	}
