@@ -28,25 +28,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".PreferenceActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/activity_name_preference" >
+            android:label="@string/activity_name_preference"
+            android:parentActivityName=".MainActivity" >
         </activity>
-
-        <meta-data
-            android:name="android.app.default_searchable"
-            android:value=".MainActivity" />
 
         <provider
             android:name=".EarthquakeProvider"

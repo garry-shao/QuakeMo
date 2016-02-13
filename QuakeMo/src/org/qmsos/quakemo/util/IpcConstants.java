@@ -75,9 +75,4 @@ public class IpcConstants {
 	 */
 	public static final String EXTRA_PURGE_EXECUTED = BASE_PACKAGE_NAME + "EXTRA_PURGE_EXECUTED";
 
-	/**
-	 * Search feature: Used to pass query string, should be in a bundle.
-	 */
-	public static final String QUERY_CONTENT_KEY = "QUERY_CONTENT_KEY";
-
 }

@@ -2,7 +2,6 @@ package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.util.IpcConstants;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter;
 
 import android.app.AlarmManager;
@@ -94,38 +93,26 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 		String[] projection = { EarthquakeProvider.KEY_ID, EarthquakeProvider.KEY_TIME, 
 				EarthquakeProvider.KEY_MAGNITUDE, EarthquakeProvider.KEY_DETAILS };
 
-		// Create search cursor.
-		if (args != null && args.getString(IpcConstants.QUERY_CONTENT_KEY) != null) {
-			String query = args.getString(IpcConstants.QUERY_CONTENT_KEY);
-			
-			String where = EarthquakeProvider.KEY_DETAILS + " LIKE \"%" + query + "%\"";
-			String sortOrder = EarthquakeProvider.KEY_DETAILS + " COLLATE LOCALIZED ASC";
-
-			return new CursorLoader(
-				getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, sortOrder);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		
+		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), 
+				getString(R.string.minimum_values_default)));
+		
+		String where;
+		boolean showAll = prefs.getBoolean(getString(R.string.PREF_SHOW_ALL), false);
+		if (showAll) {
+			where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
 		} else {
-		// Create data cursor.
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		
-			int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), 
-					getString(R.string.minimum_values_default)));
-		
-			String where;
-			boolean showAll = prefs.getBoolean(getString(R.string.PREF_SHOW_ALL), false);
-			if (showAll) {
-				where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
-			} else {
-				int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), 
-						getString(R.string.range_values_default)));
-				long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
-				
-				where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
-						+ " AND " + EarthquakeProvider.KEY_TIME + " >= " + startMillis;
-			}
-
-			return new CursorLoader(
-					getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, null);
+			int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), 
+					getString(R.string.range_values_default)));
+			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
+			
+			where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
+					+ " AND " + EarthquakeProvider.KEY_TIME + " >= " + startMillis;
 		}
+		
+		return new CursorLoader(
+				getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, null);
 	}
 
 	@Override

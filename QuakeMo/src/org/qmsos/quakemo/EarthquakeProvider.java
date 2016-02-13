@@ -1,8 +1,5 @@
 package org.qmsos.quakemo;
 
-import java.util.HashMap;
-
-import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -25,8 +22,10 @@ import android.util.Log;
  */
 public class EarthquakeProvider extends ContentProvider {
 	
+	private static final String AUTHORITY = "org.qmsos.quakemo.earthquakeprovider";
+	
 	public static final Uri CONTENT_URI = 
-			Uri.parse("content://org.qmsos.quakemo.earthquakeprovider/earthquakes");
+			Uri.parse("content://" + AUTHORITY + "/earthquakes");
 	
 	//base columns of database
 	public static final String KEY_ID = "_id";
@@ -41,27 +40,12 @@ public class EarthquakeProvider extends ContentProvider {
 	// return code of UriMatcher.
 	private static final int QUAKES = 1;
 	private static final int QUAKE_ID = 2;
-	private static final int SEARCH = 3;
 	
-	private static final HashMap<String, String> SEARCH_PROJECTION_MAP;
 	private static final UriMatcher URI_MATCHER;
 	static {
-		SEARCH_PROJECTION_MAP = new HashMap<String, String>();
-		SEARCH_PROJECTION_MAP.put(SearchManager.SUGGEST_COLUMN_TEXT_1, 
-				KEY_DETAILS + " AS " + SearchManager.SUGGEST_COLUMN_TEXT_1);
-		SEARCH_PROJECTION_MAP.put("_id", KEY_ID + " AS " + "_id");
-		
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", "earthquakes", QUAKES);
-		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", "earthquakes/#", QUAKE_ID);
-		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
-				SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH);
-		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
-				SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH);
-		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
-				SearchManager.SUGGEST_URI_PATH_SHORTCUT, SEARCH);
-		URI_MATCHER.addURI("org.qmsos.quakemo.earthquakeprovider", 
-				SearchManager.SUGGEST_URI_PATH_SHORTCUT + "/*", SEARCH);
+		URI_MATCHER.addURI(AUTHORITY, "earthquakes", QUAKES);
+		URI_MATCHER.addURI(AUTHORITY, "earthquakes/#", QUAKE_ID);
 	}
 	
 	private QuakeDatabaseHelper mDatabaseHelper ;
@@ -89,13 +73,6 @@ public class EarthquakeProvider extends ContentProvider {
 				queryBuilder.appendWhere(KEY_ID + " = " + uri.getPathSegments().get(1));
 			}
 			break;
-		case SEARCH:
-			if (uri.getPathSegments().size() > 1) {
-				queryBuilder.appendWhere(
-						KEY_DETAILS + " LIKE \"%" + uri.getPathSegments().get(1) + "%\"");
-			}
-			queryBuilder.setProjectionMap(SEARCH_PROJECTION_MAP);
-			break;
 		default:
 			break;
 		}
@@ -121,8 +98,6 @@ public class EarthquakeProvider extends ContentProvider {
 			return "vnd.android.cursor.dir/vnd.org.qmsos.quakemo";
 		case QUAKE_ID:
 			return "vnd.android.cursor.item/vnd.org.qmsos.quakemo";
-		case SEARCH:
-			return SearchManager.SUGGEST_MIME_TYPE;
 		default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
 		}

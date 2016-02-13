@@ -12,7 +12,6 @@
     <string name="tab_null">Null</string>
 
     <!-- Strings used in on click menu -->
-    <string name="menu_search">Search</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_purge">Purge</string>
     <string name="menu_refresh">Refresh</string>

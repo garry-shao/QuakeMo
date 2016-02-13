@@ -12,8 +12,6 @@ import org.qmsos.quakemo.fragment.MaterialPurgeDialog.OnPurgeSelectedListener;
 import org.qmsos.quakemo.util.IpcConstants;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.ShowDialogCallback;
 
-import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,7 +20,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -32,16 +29,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.MenuItemCompat.OnActionExpandListener;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.Toolbar.OnMenuItemClickListener;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -53,8 +44,6 @@ import android.view.View;
 public class MainActivity extends AppCompatActivity 
 implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
 	OnPurgeSelectedListener, ShowDialogCallback {
-
-	private static final String TAG = MainActivity.class.getSimpleName();
 
 	// flags used to show different layout of Snackbar.
 	private static final int SNACKBAR_REFRESH = 1;
@@ -72,9 +61,6 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		toolbar.setTitle(R.string.app_name);
 		toolbar.inflateMenu(R.menu.menu_main_options);
 		toolbar.setOnMenuItemClickListener(this);
-		
-		MenuItem searchItem = toolbar.getMenu().findItem(R.id.menu_search);
-		initialSearch(searchItem);
 
 		List<Fragment> fragmentList = new ArrayList<Fragment>();
 		EarthquakeList quakeList = new EarthquakeList();
@@ -111,7 +97,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	@Override
 	protected void onPause() {
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
-		
+
 		super.onPause();
 	}
 
@@ -121,20 +107,6 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
 
 		super.onDestroy();
-	}
-
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-
-		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-			String query = intent.getStringExtra(SearchManager.QUERY);
-
-			Bundle args = new Bundle();
-			args.putString(IpcConstants.QUERY_CONTENT_KEY, query);
-
-			reload(args);
-		}
 	}
 
 	@Override
@@ -198,98 +170,6 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	public void onShowDialog(long id) {
 		EarthquakeDetailsDialog dialog = EarthquakeDetailsDialog.newInstance(this, id);
 		dialog.show(getSupportFragmentManager(), "dialog");
-	}
-
-	/**
-	 * Initialize SearchView, should be used only once.
-	 * 
-	 * @param menuItem
-	 *            The MenuItem of SearchView.
-	 */
-	private void initialSearch(MenuItem menuItem) {
-		if (menuItem == null) {
-			return;
-		}
-		
-		MenuItemCompat.setOnActionExpandListener(menuItem, new OnActionExpandListener() {
-	
-			@Override
-			public boolean onMenuItemActionCollapse(MenuItem item) {
-				if (item.getItemId() == R.id.menu_search) {
-					reload(null);
-					
-					return true;
-				} else {
-					return false;
-				}
-			}
-	
-			@Override
-			public boolean onMenuItemActionExpand(MenuItem item) {
-				if (item.getItemId() == R.id.menu_search) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
-		
-		if (menuItem.getActionView() instanceof SearchView) {
-			final SearchView searchView = (SearchView) menuItem.getActionView();
-			
-			SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-			SearchableInfo searchableInfo = manager.getSearchableInfo(getComponentName());
-			if (searchableInfo != null) {
-				searchView.setSearchableInfo(searchableInfo);
-			}
-			
-			searchView.setOnSuggestionListener(new OnSuggestionListener() {
-				
-				@Override
-				public boolean onSuggestionClick(int position) {
-					Cursor cursor = null;
-					try {
-						Object item = searchView.getSuggestionsAdapter().getItem(position);
-						if (item != null) {
-							cursor = (Cursor) item;
-							
-							String suggestion = cursor.getString(
-									cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_1));
-							
-							searchView.setQuery(suggestion, true);
-						}
-					} catch (IllegalArgumentException e) {
-						Log.e(TAG, "Columns do not exist");
-					} finally {
-						if (cursor != null && !cursor.isClosed()) {
-							cursor.close();
-						}
-					}
-					
-					return true;
-				}
-				
-				@Override
-				public boolean onSuggestionSelect(int position) {
-					return false;
-				}
-			});
-			
-			searchView.setOnQueryTextListener(new OnQueryTextListener() {
-				
-				@Override
-				public boolean onQueryTextChange(String newText) {
-					return false;
-				}
-				
-				@Override
-				public boolean onQueryTextSubmit(String query) {
-					searchView.clearFocus();
-					
-					return false;
-				}
-			});
-		}
 	}
 
 	/**
