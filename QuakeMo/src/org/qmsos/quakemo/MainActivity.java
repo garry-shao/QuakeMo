@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.qmsos.quakemo.fragment.EarthquakeDetailsDialog;
+import org.qmsos.quakemo.fragment.EarthquakeDetailsDialog.OnLinkSelectedListener;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
@@ -20,6 +21,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -43,7 +45,7 @@ import android.view.View;
  */
 public class MainActivity extends AppCompatActivity 
 implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
-	OnPurgeSelectedListener, ShowDialogCallback {
+	OnPurgeSelectedListener, OnLinkSelectedListener, ShowDialogCallback {
 
 	// flags used to show different layout of Snackbar.
 	private static final int SNACKBAR_REFRESH = 1;
@@ -164,6 +166,16 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	@Override
 	public void onPurgeSelected() {
 		showSnackbar(SNACKBAR_PURGE, null);
+	}
+
+	@Override
+	public void onLinkSelected(String link) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse(link));
+		
+		if (intent.resolveActivity(getPackageManager()) != null) {
+			startActivity(intent);
+		}		
 	}
 
 	@Override

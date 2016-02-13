@@ -44,6 +44,9 @@ public class MaterialPurgeDialog extends DialogFragment {
 	 *
 	 */
 	public interface OnPurgeSelectedListener {
+		/**
+		 * Called when the purge action is executed.
+		 */
 		void onPurgeSelected();
 	}
 

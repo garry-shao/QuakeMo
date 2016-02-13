@@ -12,12 +12,9 @@ import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -120,18 +117,31 @@ public class EarthquakeDetailsDialog extends DialogFragment {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Intent intent = new Intent(Intent.ACTION_VIEW);
-					intent.setData(Uri.parse(fLink));
-					
-					PackageManager manager = getContext().getPackageManager();
-					if (manager != null && intent.resolveActivity(manager) != null) {
-						startActivity(intent);
+					try {
+						((OnLinkSelectedListener) getContext()).onLinkSelected(fLink);
+					} catch (ClassCastException e) {
+						throw new ClassCastException("context must implements OnLinkSelectedListener");
 					}
 				}
 			});
 		}
 
 		return builder.create();
+	}
+
+	/**
+	 * Interface for a callback to be invoked when open link action is called.
+	 * 
+	 *
+	 */
+	public interface OnLinkSelectedListener {
+		/**
+		 * Called when open link action is executed.
+		 * 
+		 * @param link
+		 *            The link string.
+		 */
+		void onLinkSelected(String link);
 	}
 
 }
