@@ -8,6 +8,7 @@ import java.util.Locale;
 import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
@@ -35,6 +36,8 @@ public class EarthquakeDetails extends DialogFragment {
 	 */
 	private static final String KEY_EARTHQUAKE = "KEY_EARTHQUAKE";
 
+	private OnLinkSelectedListener mListener;
+
 	/**
 	 * Create a new instance of dialog that shows particular earthquake details.
 	 * 
@@ -52,6 +55,19 @@ public class EarthquakeDetails extends DialogFragment {
 		fragment.setArguments(args);
 
 		return fragment;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		try {
+			mListener = (OnLinkSelectedListener) activity;
+		} catch (ClassCastException e) {
+			String listenerName = OnLinkSelectedListener.class.getSimpleName();
+			
+			throw new ClassCastException(activity.toString() + " must implements " + listenerName);
+		}
 	}
 
 	@Override
@@ -117,11 +133,7 @@ public class EarthquakeDetails extends DialogFragment {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					try {
-						((OnLinkSelectedListener) getContext()).onLinkSelected(fLink);
-					} catch (ClassCastException e) {
-						throw new ClassCastException("context must implements OnLinkSelectedListener");
-					}
+					mListener.onLinkSelected(fLink);
 				}
 			});
 		}

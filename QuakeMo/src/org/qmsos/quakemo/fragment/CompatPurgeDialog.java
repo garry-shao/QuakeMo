@@ -2,6 +2,7 @@ package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.R;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -17,6 +18,21 @@ import android.support.v7.app.AlertDialog;
  */
 public class CompatPurgeDialog extends DialogFragment {
 
+	private OnPurgeSelectedListener mListener;
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		try {
+			mListener = (OnPurgeSelectedListener) activity;
+		} catch (ClassCastException e) {
+			String listenerName = OnPurgeSelectedListener.class.getSimpleName();
+			
+			throw new ClassCastException(activity.toString() + " must implements " + listenerName);
+		}
+	}
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -27,11 +43,7 @@ public class CompatPurgeDialog extends DialogFragment {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				try {
-					((OnPurgeSelectedListener) getContext()).onPurgeSelected();
-				} catch (ClassCastException e) {
-					throw new ClassCastException("context must implements OnPurgeSelectedListener");
-				}
+				mListener.onPurgeSelected();
 			}
 		});
 
