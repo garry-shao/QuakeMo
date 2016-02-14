@@ -26,9 +26,9 @@ import android.util.Log;
  *
  *
  */
-public class EarthquakeDetailsDialog extends DialogFragment {
+public class EarthquakeDetails extends DialogFragment {
 
-	private static final String TAG = EarthquakeDetailsDialog.class.getSimpleName();
+	private static final String TAG = EarthquakeDetails.class.getSimpleName();
 	
 	/**
 	 * Key used to retrieve earthquake id from bundle.
@@ -44,11 +44,11 @@ public class EarthquakeDetailsDialog extends DialogFragment {
 	 *            The id of this earthquake.
 	 * @return The created dialog fragment instance.
 	 */
-	public static EarthquakeDetailsDialog newInstance(Context context, long id) {
+	public static EarthquakeDetails newInstance(Context context, long id) {
 		Bundle args = new Bundle();
 		args.putLong(KEY_EARTHQUAKE, id);
 
-		EarthquakeDetailsDialog fragment = new EarthquakeDetailsDialog();
+		EarthquakeDetails fragment = new EarthquakeDetails();
 		fragment.setArguments(args);
 
 		return fragment;

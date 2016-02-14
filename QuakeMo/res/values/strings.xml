@@ -25,8 +25,11 @@
     <string name="dialog_details_link">Link</string>
     <string name="dialog_purge_title">Purge</string>
     <string name="dialog_purge_message">Are you SURE ?</string>
-    <string name="dialog_positive_button">Confirm</string>
-    <string name="dialog_negative_button">Cancel</string>
+    <string name="dialog_purge_positive">Confirm</string>
+    <string name="dialog_purge_negative">Cancel</string>
+
+    <!-- Strings used in list preferences -->
+    <string name="list_preference_negative_button">Cancel</string>
 
     <!-- Strings used in notification builder -->
     <string name="notification_ticker">Earthquake!</string>

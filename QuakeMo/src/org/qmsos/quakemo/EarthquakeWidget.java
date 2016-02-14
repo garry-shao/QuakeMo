@@ -30,7 +30,7 @@ public class EarthquakeWidget extends AppWidgetProvider {
 		Intent intent = new Intent(context, MainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_quake);
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_earthquake);
 		views.setOnClickPendingIntent(R.id.widget_magnitude, pendingIntent);
 		views.setOnClickPendingIntent(R.id.widget_details, pendingIntent);
 
@@ -90,7 +90,7 @@ public class EarthquakeWidget extends AppWidgetProvider {
 		}
 		
 		for (int i = 0; i < appWidgetIds.length; i++) {
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_quake);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_earthquake);
 			views.setTextViewText(R.id.widget_magnitude, "M " + magnitude);
 			views.setTextViewText(R.id.widget_details, details);
 

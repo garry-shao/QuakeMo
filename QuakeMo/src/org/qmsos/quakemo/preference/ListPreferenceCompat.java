@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.widget;
+package org.qmsos.quakemo.preference;
 
 import org.qmsos.quakemo.R;
 
@@ -20,15 +20,15 @@ import android.util.AttributeSet;
  * 
  *
  */
-public class MaterialListPreference extends ListPreference {
+public class ListPreferenceCompat extends ListPreference {
 
 	private AppCompatDialog mDialog;
 
-	public MaterialListPreference(Context context, AttributeSet attrs) {
+	public ListPreferenceCompat(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public MaterialListPreference(Context context) {
+	public ListPreferenceCompat(Context context) {
 		super(context);
 	}
 
@@ -44,7 +44,7 @@ public class MaterialListPreference extends ListPreference {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setTitle(getTitle());
 		builder.setIcon(getDialogIcon());
-		builder.setNegativeButton(R.string.dialog_negative_button, null);
+		builder.setNegativeButton(R.string.list_preference_negative_button, null);
 		builder.setSingleChoiceItems(getEntries(), preSelect, new OnClickListener() {
 
 			@Override

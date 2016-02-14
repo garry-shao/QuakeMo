@@ -48,9 +48,9 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 			public void onClick(View v) {
 				Context context = v.getContext();
 				try {
-					((ShowDialogCallback) context).onShowDialog(id);
+					((OnViewHolderClickedListener) context).onViewHolderClicked(id);
 				} catch (ClassCastException e) {
-					throw new ClassCastException("context must implements ShowDialogCallback");
+					throw new ClassCastException("context must implements OnViewHolderClickedListener");
 				}
 			}
 		});
@@ -81,14 +81,14 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 	 * 
 	 *
 	 */
-	public interface ShowDialogCallback {
+	public interface OnViewHolderClickedListener {
 		/**
-		 * Callback to show dialog of earthquake.
+		 * Callback when specfic ViewHolder is clicked.
 		 * 
 		 * @param id
-		 *            The ID of earthquake.
+		 *            The ID of the earthquake in ViewHolder.
 		 */
-		void onShowDialog(long id);
+		void onViewHolderClicked(long id);
 	}
 
 }

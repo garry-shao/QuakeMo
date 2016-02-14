@@ -15,15 +15,15 @@ import android.support.v7.app.AlertDialog;
  * 
  *
  */
-public class MaterialPurgeDialog extends DialogFragment {
+public class CompatPurgeDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setTitle(R.string.dialog_purge_title);
 		builder.setMessage(R.string.dialog_purge_message);
-		builder.setNegativeButton(R.string.dialog_negative_button, null);
-		builder.setPositiveButton(R.string.dialog_positive_button, new OnClickListener() {
+		builder.setNegativeButton(R.string.dialog_purge_negative, null);
+		builder.setPositiveButton(R.string.dialog_purge_positive, new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

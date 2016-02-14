@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="org.qmsos.quakemo.fragment.CompatPreference"
+        android:name="org.qmsos.quakemo.fragment.EarthquakePreference"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

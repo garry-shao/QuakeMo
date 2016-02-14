@@ -10,7 +10,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
  * 
  *
  */
-public class CompatPreference extends PreferenceFragmentCompat {
+public class EarthquakePreference extends PreferenceFragmentCompat {
 
 	@Override
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {

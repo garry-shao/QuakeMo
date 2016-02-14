@@ -3,15 +3,15 @@ package org.qmsos.quakemo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.qmsos.quakemo.fragment.EarthquakeDetailsDialog;
-import org.qmsos.quakemo.fragment.EarthquakeDetailsDialog.OnLinkSelectedListener;
+import org.qmsos.quakemo.fragment.EarthquakeDetails;
+import org.qmsos.quakemo.fragment.EarthquakeDetails.OnLinkSelectedListener;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
-import org.qmsos.quakemo.fragment.MaterialPurgeDialog;
-import org.qmsos.quakemo.fragment.MaterialPurgeDialog.OnPurgeSelectedListener;
+import org.qmsos.quakemo.fragment.CompatPurgeDialog;
+import org.qmsos.quakemo.fragment.CompatPurgeDialog.OnPurgeSelectedListener;
 import org.qmsos.quakemo.util.IpcConstants;
-import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.ShowDialogCallback;
+import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.OnViewHolderClickedListener;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -45,7 +45,7 @@ import android.view.View;
  */
 public class MainActivity extends AppCompatActivity 
 implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
-	OnPurgeSelectedListener, OnLinkSelectedListener, ShowDialogCallback {
+	OnPurgeSelectedListener, OnLinkSelectedListener, OnViewHolderClickedListener {
 
 	// flags used to show different layout of Snackbar.
 	private static final int SNACKBAR_REFRESH = 1;
@@ -120,7 +120,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	
 			return true;
 		case (R.id.menu_purge):
-			MaterialPurgeDialog dialog = new MaterialPurgeDialog();
+			CompatPurgeDialog dialog = new CompatPurgeDialog();
 			dialog.show(getSupportFragmentManager(), "dialog");
 	
 			return true;
@@ -179,8 +179,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	}
 
 	@Override
-	public void onShowDialog(long id) {
-		EarthquakeDetailsDialog dialog = EarthquakeDetailsDialog.newInstance(this, id);
+	public void onViewHolderClicked(long id) {
+		EarthquakeDetails dialog = EarthquakeDetails.newInstance(this, id);
 		dialog.show(getSupportFragmentManager(), "dialog");
 	}
 
