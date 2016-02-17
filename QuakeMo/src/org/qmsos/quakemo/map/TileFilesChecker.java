@@ -27,10 +27,9 @@ import android.support.v4.content.ContextCompat;
  * 
  *
  */
-public class MapTileChecker {
+public class TileFilesChecker {
 
-	public static final String MAP_SOURCE = "Mapnik";
-	
+	private static final String MAP_SOURCE = "Mapnik";
 	private static final String MAP_TILE_FILE = MAP_SOURCE + ".zip";
 	private static final String MAP_TILE_HASH = MAP_SOURCE + ".sha";
 
@@ -46,8 +45,7 @@ public class MapTileChecker {
 	 * @return The offline map-tile source.
 	 */
 	public static ITileSource offlineTileSource(int aZoomMinLevel, int aZoomMaxLevel) {
-		return new XYTileSource(MapTileChecker.MAP_SOURCE, 
-				aZoomMinLevel, aZoomMaxLevel, 256, ".png", new String[] {});
+		return new XYTileSource(MAP_SOURCE, aZoomMinLevel, aZoomMaxLevel, 256, ".png", new String[] {});
 	}
 	
 	/**

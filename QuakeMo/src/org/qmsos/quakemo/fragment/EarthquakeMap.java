@@ -4,8 +4,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.map.EarthquakeOverlay;
-import org.qmsos.quakemo.map.MapTileChecker;
+import org.qmsos.quakemo.map.CursorItemOverlay;
+import org.qmsos.quakemo.map.TileFilesChecker;
 
 import android.app.AlarmManager;
 import android.content.SharedPreferences;
@@ -37,7 +37,7 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 	/**
 	 * The earthquake overlay on the map.
 	 */
-	private EarthquakeOverlay mEarthquakeOverlay;
+	private CursorItemOverlay mOverlay;
 
 	/**
 	 * Defined as there is only one view on this fragment.
@@ -46,11 +46,11 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		MapTileChecker.checkMapTileFiles(getContext());
+		TileFilesChecker.checkMapTileFiles(getContext());
 		
 		mMapView = new MapView(getContext());
 		mMapView.setMultiTouchControls(true);
-		mMapView.setTileSource(MapTileChecker.offlineTileSource(ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX));
+		mMapView.setTileSource(TileFilesChecker.offlineTileSource(ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX));
 		mMapView.setUseDataConnection(false);
 		mMapView.setTilesScaledToDpi(true);
 
@@ -68,8 +68,8 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 			mMapView.getController().setZoom(ZOOM_LEVEL_MIN);
 		}
 
-		mEarthquakeOverlay = new EarthquakeOverlay(getContext(), null);
-		mMapView.getOverlays().add(mEarthquakeOverlay);
+		mOverlay = new CursorItemOverlay(getContext(), null);
+		mMapView.getOverlays().add(mOverlay);
 
 		return mMapView;
 	}
@@ -118,13 +118,13 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mEarthquakeOverlay.swapCursor(data);
+		mOverlay.swapCursor(data);
 		mMapView.invalidate();
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mEarthquakeOverlay.swapCursor(null);
+		mOverlay.swapCursor(null);
 		mMapView.invalidate();
 	}
 

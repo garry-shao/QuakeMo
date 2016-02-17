@@ -21,29 +21,27 @@ import android.graphics.Point;
  *
  *
  */
-public class EarthquakeOverlay extends Overlay {
+public class CursorItemOverlay extends Overlay {
 
-	/**
-	 * Radius of earthquake dot symbol.
-	 */
+	// Radius of each dot.
 	private static final int RADIUS = 3;
 
 	private boolean mDataValid;
 	private Cursor mCursor;
 	private Paint mPaint;
 	
-	/**
-	 * Earthquake geoPoints stored.
-	 */
+	// Each GeoPoint of earthquake stored.
 	private List<GeoPoint> mGeoPoints;
 
 	/**
-	 * Constructor of earthquake overlay.
+	 * Constructor of overlay that shows geo points of earthquake on map.
 	 * 
 	 * @param context
 	 *            Context of this overlay associated to.
+	 * @param cursor
+	 *            The cursor contained of longitude&latitude of each earthquake.
 	 */
-	public EarthquakeOverlay(Context context, Cursor cursor) {
+	public CursorItemOverlay(Context context, Cursor cursor) {
 		super(context);
 		
 		init(context, cursor);
