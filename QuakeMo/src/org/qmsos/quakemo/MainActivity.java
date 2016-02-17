@@ -200,64 +200,64 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	 */
 	private void showSnackbar(int flag, String text) {
 		View view = findViewById(R.id.coordinator_layout);
-		if (view != null) {
+		if (view == null) {
+			return;
+		}
+		
+		final Intent intent = new Intent(this, EarthquakeService.class);
+		
+		Snackbar snackbar = null;
+		switch (flag) {
+		case SNACKBAR_REFRESH:
+			intent.setAction(IntentConstants.ACTION_REFRESH_MANUAL);
 			
-			Snackbar snackbar = null;
-			
-			final Intent intent = new Intent(this, EarthquakeService.class);
-			
-			switch (flag) {
-			case SNACKBAR_REFRESH:
-				intent.setAction(IntentConstants.ACTION_REFRESH_MANUAL);
-				
-				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
-				snackbar.setCallback(new Callback() {
-	
-					@Override
-					public void onDismissed(Snackbar snackbar, int event) {
-						startService(intent);
-					}
-				});
-				break;
-			case SNACKBAR_PURGE:
-				intent.setAction(IntentConstants.ACTION_PURGE_DATABASE);
-				
-				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
-				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
-	
-					@Override
-					public void onClick(View v) {
-						intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE,	false);
-					}
-				});
-				snackbar.setCallback(new Callback() {
-	
-					@Override
-					public void onDismissed(Snackbar snackbar, int event) {
-						if (event != Callback.DISMISS_EVENT_ACTION) {
-							intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, true);
-						}
-						startService(intent);
-					}
-				});
-				break;
-			case SNACKBAR_NORMAL:
-				if (text != null) {
-					snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+			snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
+			snackbar.setCallback(new Callback() {
+
+				@Override
+				public void onDismissed(Snackbar snackbar, int event) {
+					startService(intent);
 				}
-				break;
-			}
+			});
+			break;
+		case SNACKBAR_PURGE:
+			intent.setAction(IntentConstants.ACTION_PURGE_DATABASE);
 			
-			if (snackbar != null) {
-				int currentInversePrimaryTextColor = 
-						ContextCompat.getColor(this, R.color.primary_text_default_material_dark);
-				int currentAccentColor = 
-						ContextCompat.getColor(this, R.color.accent_material_light);
-				
-				snackbar.setActionTextColor(currentInversePrimaryTextColor);
-				snackbar.getView().setBackgroundColor(currentAccentColor);
-				snackbar.show();
+			snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
+			snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE,	false);
+				}
+			});
+			snackbar.setCallback(new Callback() {
+
+				@Override
+				public void onDismissed(Snackbar snackbar, int event) {
+					if (event != Callback.DISMISS_EVENT_ACTION) {
+						intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, true);
+					}
+					startService(intent);
+				}
+			});
+			break;
+		case SNACKBAR_NORMAL:
+			if (text != null) {
+				snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
 			}
+			break;
+		}
+		
+		if (snackbar != null) {
+			int currentInversePrimaryTextColor = 
+					ContextCompat.getColor(this, R.color.primary_text_default_material_dark);
+			int currentAccentColor = 
+					ContextCompat.getColor(this, R.color.accent_material_light);
+			
+			snackbar.setActionTextColor(currentInversePrimaryTextColor);
+			snackbar.getView().setBackgroundColor(currentAccentColor);
+			snackbar.show();
 		}
 	}
 
@@ -294,27 +294,29 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			if (action != null) {
-				String result = null;
-				if (action.equals(IntentConstants.ACTION_REFRESH_EXECUTED)) {
-					boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, false);
-					if (flag) {
-						result = intent.getIntExtra(IntentConstants.EXTRA_ADDED_COUNT, 0) + " "
-								+ getString(R.string.snackbar_refreshed);
-					} else {
-						result = getString(R.string.snackbar_disconnected);
-					}
-				} else if (action.equals(IntentConstants.ACTION_PURGE_EXECUTED)) {
-					boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_PURGE_EXECUTED, false);
-					if (flag) {
-						result = getString(R.string.snackbar_purged);
-					} else {
-						result = getString(R.string.snackbar_canceled);
-					}
-				}
-				
-				showSnackbar(SNACKBAR_NORMAL, result);
+			if (action == null) {
+				return;
 			}
+			
+			String result = null;
+			if (action.equals(IntentConstants.ACTION_REFRESH_EXECUTED)) {
+				boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, false);
+				if (flag) {
+					result = intent.getIntExtra(IntentConstants.EXTRA_ADDED_COUNT, 0) + " "
+							+ getString(R.string.snackbar_refreshed);
+				} else {
+					result = getString(R.string.snackbar_disconnected);
+				}
+			} else if (action.equals(IntentConstants.ACTION_PURGE_EXECUTED)) {
+				boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_PURGE_EXECUTED, false);
+				if (flag) {
+					result = getString(R.string.snackbar_purged);
+				} else {
+					result = getString(R.string.snackbar_canceled);
+				}
+			}
+			
+			showSnackbar(SNACKBAR_NORMAL, result);
 		}
 
 	}
