@@ -38,16 +38,19 @@
         <provider
             android:name=".EarthquakeProvider"
             android:authorities="org.qmsos.quakemo.earthquakeprovider"
+            android:enabled="true"
             android:exported="false" >
         </provider>
 
         <service
             android:name=".EarthquakeService"
-            android:enabled="true" >
+            android:enabled="true"
+            android:exported="false" >
         </service>
 
         <receiver
             android:name=".EarthquakeAlarmReceiver"
+            android:enabled="true"
             android:exported="false" >
             <intent-filter>
                 <action android:name="org.qmsos.quakemo.ACTION_REFRESH_ALARM" />
@@ -56,6 +59,7 @@
         <receiver
             android:name=".EarthquakeWidget"
             android:enabled="true"
+            android:exported="true"
             android:label="@string/widget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
