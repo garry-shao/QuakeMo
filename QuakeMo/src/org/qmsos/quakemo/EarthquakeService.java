@@ -17,7 +17,7 @@ import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.qmsos.quakemo.util.IpcConstants;
+import org.qmsos.quakemo.util.IntentConstants;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -75,7 +75,7 @@ public class EarthquakeService extends IntentService {
 			return;
 		}
 		
-		if (action.equals(IpcConstants.ACTION_REFRESH_AUTO)) {
+		if (action.equals(IntentConstants.ACTION_REFRESH_AUTO)) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
 			
@@ -84,39 +84,39 @@ public class EarthquakeService extends IntentService {
 			if (flagAuto && checkConnection()) {
 				executeRefresh();
 			}
-		} else if (action.equals(IpcConstants.ACTION_REFRESH_MANUAL)) {
-			Intent localIntent = new Intent(IpcConstants.ACTION_REFRESH_EXECUTED);
+		} else if (action.equals(IntentConstants.ACTION_REFRESH_MANUAL)) {
+			Intent localIntent = new Intent(IntentConstants.ACTION_REFRESH_EXECUTED);
 			
 			if (checkConnection()) {
 				int count = executeRefresh();
 				
 				if (count >= 0) {
-					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, true);
-					localIntent.putExtra(IpcConstants.EXTRA_ADDED_COUNT, count);
+					localIntent.putExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, true);
+					localIntent.putExtra(IntentConstants.EXTRA_ADDED_COUNT, count);
 				} else {
-					localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
+					localIntent.putExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, false);
 				}
 			} else {
-				localIntent.putExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
+				localIntent.putExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, false);
 			}
 			
 			LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-		} else if (action.equals(IpcConstants.ACTION_PURGE_DATABASE)) {
-			Intent localIntent = new Intent(IpcConstants.ACTION_PURGE_EXECUTED);
+		} else if (action.equals(IntentConstants.ACTION_PURGE_DATABASE)) {
+			Intent localIntent = new Intent(IntentConstants.ACTION_PURGE_EXECUTED);
 			
-			boolean flagPurge = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_DATABASE, false);
+			boolean flagPurge = intent.getBooleanExtra(IntentConstants.EXTRA_PURGE_DATABASE, false);
 			if (flagPurge) {
 				executePurgeDatabase();
 				
-				localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, true);
+				localIntent.putExtra(IntentConstants.EXTRA_PURGE_EXECUTED, true);
 			} else {
-				localIntent.putExtra(IpcConstants.EXTRA_PURGE_EXECUTED, false);
+				localIntent.putExtra(IntentConstants.EXTRA_PURGE_EXECUTED, false);
 			}
 			
 			LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 		}
 		
-		sendBroadcast(new Intent(IpcConstants.ACTION_REFRESH_WIDGET));
+		sendBroadcast(new Intent(IntentConstants.ACTION_REFRESH_WIDGET));
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class EarthquakeService extends IntentService {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, requestCode,
-				new Intent(IpcConstants.ACTION_REFRESH_ALARM), PendingIntent.FLAG_UPDATE_CURRENT);
+				new Intent(IntentConstants.ACTION_REFRESH_ALARM), PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		if (flag) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

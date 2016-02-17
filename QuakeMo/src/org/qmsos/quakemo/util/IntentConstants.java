@@ -6,7 +6,7 @@ package org.qmsos.quakemo.util;
  * 
  *
  */
-public class IpcConstants {
+public class IntentConstants {
 
 	// base package name, normally app's package name.
 	private static final String BASE_PACKAGE_NAME = "org.qmsos.quakemo" + ".";

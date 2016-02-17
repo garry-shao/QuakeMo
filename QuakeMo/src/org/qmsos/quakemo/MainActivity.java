@@ -10,7 +10,7 @@ import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
 import org.qmsos.quakemo.fragment.CompatPurgeDialog;
 import org.qmsos.quakemo.fragment.CompatPurgeDialog.OnPurgeSelectedListener;
-import org.qmsos.quakemo.util.IpcConstants;
+import org.qmsos.quakemo.util.IntentConstants;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.OnViewHolderClickedListener;
 
 import android.content.BroadcastReceiver;
@@ -71,7 +71,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		fragmentList.add(quakeMap);
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		viewPager.setAdapter(new EarthquakePagerAdapter(getSupportFragmentManager(), fragmentList, this));
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		viewPager.setAdapter(new EarthquakePagerAdapter(fragmentManager, fragmentList, this));
 
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
@@ -82,7 +83,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		mMessageReceiver = new MessageReceiver();
 
 		Intent intent = new Intent(this, EarthquakeService.class);
-		intent.setAction(IpcConstants.ACTION_REFRESH_AUTO);
+		intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
 		startService(intent);
 	}
 
@@ -91,8 +92,9 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		super.onResume();
 
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(IpcConstants.ACTION_PURGE_EXECUTED);
-		filter.addAction(IpcConstants.ACTION_REFRESH_EXECUTED);
+		filter.addAction(IntentConstants.ACTION_PURGE_EXECUTED);
+		filter.addAction(IntentConstants.ACTION_REFRESH_EXECUTED);
+		
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
 	}
 
@@ -145,19 +147,21 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		if (key.equals(getString(R.string.PREF_WIDGET))) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-			int newState = prefs.getBoolean(key, false) ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+			int newState = prefs.getBoolean(key, false) 
+					? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 					: PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 
+			ComponentName componentName = new ComponentName(this, EarthquakeWidget.class);
+			
 			PackageManager manager = getPackageManager();
-			manager.setComponentEnabledSetting(new ComponentName(this, EarthquakeWidget.class), newState,
-					PackageManager.DONT_KILL_APP);
+			manager.setComponentEnabledSetting(componentName, newState,	PackageManager.DONT_KILL_APP);
 		}
 		
 		if (key.equals(getString(R.string.PREF_AUTO_REFRESH)) 
 				|| key.equals(getString(R.string.PREF_AUTO_FREQUENCY))) {
 			
 			Intent intent = new Intent(this, EarthquakeService.class);
-			intent.setAction(IpcConstants.ACTION_REFRESH_AUTO);
+			intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
 			
 			startService(intent);
 		}
@@ -204,27 +208,26 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			
 			switch (flag) {
 			case SNACKBAR_REFRESH:
-				intent.setAction(IpcConstants.ACTION_REFRESH_MANUAL);
+				intent.setAction(IntentConstants.ACTION_REFRESH_MANUAL);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
 				snackbar.setCallback(new Callback() {
 	
 					@Override
 					public void onDismissed(Snackbar snackbar, int event) {
-						
 						startService(intent);
 					}
 				});
 				break;
 			case SNACKBAR_PURGE:
-				intent.setAction(IpcConstants.ACTION_PURGE_DATABASE);
+				intent.setAction(IntentConstants.ACTION_PURGE_DATABASE);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
 				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
 	
 					@Override
 					public void onClick(View v) {
-						intent.putExtra(IpcConstants.EXTRA_PURGE_DATABASE,	false);
+						intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE,	false);
 					}
 				});
 				snackbar.setCallback(new Callback() {
@@ -232,7 +235,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 					@Override
 					public void onDismissed(Snackbar snackbar, int event) {
 						if (event != Callback.DISMISS_EVENT_ACTION) {
-							intent.putExtra(IpcConstants.EXTRA_PURGE_DATABASE, true);
+							intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, true);
 						}
 						startService(intent);
 					}
@@ -293,16 +296,16 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			String action = intent.getAction();
 			if (action != null) {
 				String result = null;
-				if (action.equals(IpcConstants.ACTION_REFRESH_EXECUTED)) {
-					boolean flag = intent.getBooleanExtra(IpcConstants.EXTRA_REFRESH_EXECUTED, false);
+				if (action.equals(IntentConstants.ACTION_REFRESH_EXECUTED)) {
+					boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, false);
 					if (flag) {
-						result = intent.getIntExtra(IpcConstants.EXTRA_ADDED_COUNT, 0) + " "
+						result = intent.getIntExtra(IntentConstants.EXTRA_ADDED_COUNT, 0) + " "
 								+ getString(R.string.snackbar_refreshed);
 					} else {
 						result = getString(R.string.snackbar_disconnected);
 					}
-				} else if (action.equals(IpcConstants.ACTION_PURGE_EXECUTED)) {
-					boolean flag = intent.getBooleanExtra(IpcConstants.EXTRA_PURGE_EXECUTED, false);
+				} else if (action.equals(IntentConstants.ACTION_PURGE_EXECUTED)) {
+					boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_PURGE_EXECUTED, false);
 					if (flag) {
 						result = getString(R.string.snackbar_purged);
 					} else {
