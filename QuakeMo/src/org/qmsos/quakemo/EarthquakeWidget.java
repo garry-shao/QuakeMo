@@ -1,5 +1,6 @@
 package org.qmsos.quakemo;
 
+import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 import org.qmsos.quakemo.util.IntentConstants;
 
 import android.app.PendingIntent;
@@ -69,15 +70,12 @@ public class EarthquakeWidget extends AppWidgetProvider {
 			int minMagnitude = Integer.parseInt(prefs.getString(
 					context.getString(R.string.PREF_SHOW_MINIMUM), 
 					context.getString(R.string.minimum_values_default)));
-			String where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
+			String where = Entity.MAGNITUDE + " >= " + minMagnitude;
 			
-			cursor = context.getContentResolver().query(
-					EarthquakeProvider.CONTENT_URI, null, where, null, null);
+			cursor = context.getContentResolver().query(Entity.CONTENT_URI, null, where, null, null);
 			if (cursor != null && cursor.moveToLast()) {
-				magnitude = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
-				details = cursor.getString(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
+				magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
+				details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));
 			}
 		} catch (NumberFormatException e) {
 			Log.e(TAG, "error parsing number");

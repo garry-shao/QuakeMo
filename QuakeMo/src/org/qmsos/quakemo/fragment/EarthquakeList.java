@@ -1,7 +1,7 @@
 package org.qmsos.quakemo.fragment;
 
-import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter;
 
 import android.app.AlarmManager;
@@ -90,8 +90,7 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { EarthquakeProvider.KEY_ID, EarthquakeProvider.KEY_TIME, 
-				EarthquakeProvider.KEY_MAGNITUDE, EarthquakeProvider.KEY_DETAILS };
+		String[] projection = { Entity.ID, Entity.TIME, Entity.MAGNITUDE, Entity.DETAILS };
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		
@@ -101,18 +100,17 @@ public class EarthquakeList extends Fragment implements LoaderCallbacks<Cursor> 
 		String where;
 		boolean showAll = prefs.getBoolean(getString(R.string.PREF_SHOW_ALL), false);
 		if (showAll) {
-			where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude;
+			where = Entity.MAGNITUDE + " >= " + minMagnitude;
 		} else {
 			int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), 
 					getString(R.string.range_values_default)));
 			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 			
-			where = EarthquakeProvider.KEY_MAGNITUDE + " >= " + minMagnitude
-					+ " AND " + EarthquakeProvider.KEY_TIME + " >= " + startMillis;
+			where = Entity.MAGNITUDE + " >= " + minMagnitude
+					+ " AND " +Entity.TIME + " >= " + startMillis;
 		}
 		
-		return new CursorLoader(
-				getContext(), EarthquakeProvider.CONTENT_URI, projection, where, null, null);
+		return new CursorLoader(getContext(), Entity.CONTENT_URI, projection, where, null, null);
 	}
 
 	@Override

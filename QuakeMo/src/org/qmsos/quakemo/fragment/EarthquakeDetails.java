@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -78,22 +78,15 @@ public class EarthquakeDetails extends DialogFragment {
 		try {
 			final long id = getArguments().getLong(KEY_EARTHQUAKE);
 			cursor = getContext().getContentResolver().query(
-					ContentUris.withAppendedId(EarthquakeProvider.CONTENT_URI, id), null, null, null, null);
+					ContentUris.withAppendedId(Entity.CONTENT_URI, id), null, null, null, null);
 			if (cursor != null && cursor.moveToFirst()) {
-				long time = cursor.getLong(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_TIME));
-				double magnitude = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
-				double depth = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DEPTH));
-				double longitude = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LONGITUDE));
-				double latitude = cursor.getDouble(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LATITUDE));
-				String details = cursor.getString(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
-				link = cursor.getString(
-						cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LINK));
+				long time = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
+				double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
+				double depth = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.DEPTH));
+				double longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.LONGITUDE));
+				double latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.LATITUDE));
+				String details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));
+				link = cursor.getString(cursor.getColumnIndexOrThrow(Entity.LINK));
 				
 				String lon = 
 						longitude > 0 ? Math.abs(longitude) + "\u00b0E" : Math.abs(longitude) + "\u00b0W";

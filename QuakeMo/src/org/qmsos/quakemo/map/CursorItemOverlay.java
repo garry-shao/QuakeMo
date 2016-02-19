@@ -7,7 +7,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
-import org.qmsos.quakemo.EarthquakeProvider;
+import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -100,10 +100,8 @@ public class CursorItemOverlay extends Overlay {
 			
 			if (mCursor.moveToFirst()) {
 				do {
-					double latitude = mCursor.getDouble(
-							mCursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LATITUDE));
-					double longitude = mCursor.getDouble(
-							mCursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_LONGITUDE));
+					double latitude = mCursor.getDouble(mCursor.getColumnIndexOrThrow(Entity.LATITUDE));
+					double longitude = mCursor.getDouble(mCursor.getColumnIndexOrThrow(Entity.LONGITUDE));
 					GeoPoint geoPoint = new GeoPoint(latitude, longitude);
 					
 					mGeoPoints.add(geoPoint);

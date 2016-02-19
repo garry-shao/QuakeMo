@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.qmsos.quakemo.EarthquakeProvider;
 import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -42,12 +42,12 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 	public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
 
-		final long id = cursor.getLong(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_ID));
-		long time = cursor.getLong(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_TIME));
-		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_MAGNITUDE));
+		final long id = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.ID));
+		long time = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
+		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
 
 		String info = dateFormat.format(new Date(time)) + " - " + "M " + magnitude;
-		String details = cursor.getString(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_DETAILS));
+		String details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));
 
 		((RecyclerViewHolder) holder).mInfoView.setText(info);
 		((RecyclerViewHolder) holder).mDetailsView.setText(details);

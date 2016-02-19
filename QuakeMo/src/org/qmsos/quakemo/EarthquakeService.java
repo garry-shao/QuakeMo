@@ -17,6 +17,7 @@ import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 import org.qmsos.quakemo.util.IntentConstants;
 
 import android.app.AlarmManager;
@@ -164,17 +165,17 @@ public class EarthquakeService extends IntentService {
 				Cursor cursor = null;
 				try {
 					ContentResolver resolver = getContentResolver();
-					String where = EarthquakeProvider.KEY_TIME + " = " + time;
-					cursor = resolver.query(EarthquakeProvider.CONTENT_URI, null, where, null, null);
+					String where = Entity.TIME + " = " + time;
+					cursor = resolver.query(Entity.CONTENT_URI, null, where, null, null);
 					if (cursor != null && !cursor.moveToNext()) {
 						ContentValues value = new ContentValues();
-						value.put(EarthquakeProvider.KEY_TIME, time);
-						value.put(EarthquakeProvider.KEY_MAGNITUDE, magnitude);
-						value.put(EarthquakeProvider.KEY_LONGITUDE, longitude);
-						value.put(EarthquakeProvider.KEY_LATITUDE, latitude);
-						value.put(EarthquakeProvider.KEY_DEPTH, depth);
-						value.put(EarthquakeProvider.KEY_DETAILS, place);
-						value.put(EarthquakeProvider.KEY_LINK, url);
+						value.put(Entity.TIME, time);
+						value.put(Entity.MAGNITUDE, magnitude);
+						value.put(Entity.LONGITUDE, longitude);
+						value.put(Entity.LATITUDE, latitude);
+						value.put(Entity.DEPTH, depth);
+						value.put(Entity.DETAILS, place);
+						value.put(Entity.LINK, url);
 						
 						valueList.add(value);
 						
@@ -194,7 +195,7 @@ public class EarthquakeService extends IntentService {
 			ContentValues[] values = new ContentValues[valueListSize];
 			valueList.toArray(values);
 			
-			int count = getContentResolver().bulkInsert(EarthquakeProvider.CONTENT_URI, values);
+			int count = getContentResolver().bulkInsert(Entity.CONTENT_URI, values);
 			if (count > 0 && count == valueListSize && timeStamp > 0 && valueStamp != null) {
 				sendNotification(valueStamp);
 			}
@@ -211,7 +212,7 @@ public class EarthquakeService extends IntentService {
 	 * Purge all earthquakes stored in database.
 	 */
 	private void executePurgeDatabase() {
-		getContentResolver().delete(EarthquakeProvider.CONTENT_URI, null, null);
+		getContentResolver().delete(Entity.CONTENT_URI, null, null);
 	}
 
 	/**
@@ -259,9 +260,9 @@ public class EarthquakeService extends IntentService {
 			PendingIntent launchIntent = 
 					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 	
-			long time = value.getAsLong(EarthquakeProvider.KEY_TIME);
-			double magnitude = value.getAsDouble(EarthquakeProvider.KEY_MAGNITUDE);
-			String details = value.getAsString(EarthquakeProvider.KEY_DETAILS);
+			long time = value.getAsLong(Entity.TIME);
+			double magnitude = value.getAsDouble(Entity.MAGNITUDE);
+			String details = value.getAsString(Entity.DETAILS);
 			
 			Notification.Builder builder = new Notification.Builder(this);
 			builder.setAutoCancel(true)
@@ -376,13 +377,11 @@ public class EarthquakeService extends IntentService {
 		
 		Cursor cursor = null;
 		try {
-			String[] projection = { "MAX(" + EarthquakeProvider.KEY_TIME + ") AS " + 
-					EarthquakeProvider.KEY_TIME };
+			String[] projection = { "MAX(" + Entity.TIME + ") AS " + Entity.TIME };
 			
-			cursor = getContentResolver().query(
-					EarthquakeProvider.CONTENT_URI, projection, null, null, null);
+			cursor = getContentResolver().query(Entity.CONTENT_URI, projection, null, null, null);
 			if (cursor != null && cursor.moveToFirst()) {
-				timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(EarthquakeProvider.KEY_TIME));
+				timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
 			}
 		} catch (IllegalArgumentException e) {
 			Log.e(TAG, "Column does not exists");
