@@ -82,6 +82,13 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 	}
 
 	@Override
+	public void onDestroyView() {
+		getLoaderManager().destroyLoader(0);
+		
+		super.onDestroyView();
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putParcelable(KEY_CENTER, (GeoPoint) mMapView.getMapCenter());
 		outState.putInt(KEY_ZOOM_LEVEL, mMapView.getZoomLevel());
