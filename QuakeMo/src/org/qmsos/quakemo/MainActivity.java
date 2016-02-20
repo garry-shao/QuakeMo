@@ -183,8 +183,13 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	}
 
 	@Override
-	public void onViewHolderClicked(long id) {
-		EarthquakeDetails dialog = EarthquakeDetails.newInstance(this, id);
+	public void onLinkInvalid() {
+		showSnackbar(SNACKBAR_NORMAL, getString(R.string.snackbar_invalid));
+	}
+
+	@Override
+	public void onViewHolderClicked(long earthquakeId) {
+		EarthquakeDetails dialog = EarthquakeDetails.newInstance(this, earthquakeId);
 		dialog.show(getSupportFragmentManager(), "dialog");
 	}
 

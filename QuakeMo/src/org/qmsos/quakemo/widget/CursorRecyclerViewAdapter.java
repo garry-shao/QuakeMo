@@ -42,7 +42,7 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 	public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
 
-		final long id = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.ID));
+		final long earthquakeId = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.ID));
 		long time = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
 		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
 
@@ -56,7 +56,7 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 
 			@Override
 			public void onClick(View v) {
-				mListener.onViewHolderClicked(id);
+				mListener.onViewHolderClicked(earthquakeId);
 			}
 		});
 	}
@@ -90,10 +90,10 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 		/**
 		 * Callback when specfic ViewHolder is clicked.
 		 * 
-		 * @param id
+		 * @param earthquakeId
 		 *            The ID of the earthquake in ViewHolder.
 		 */
-		void onViewHolderClicked(long id);
+		void onViewHolderClicked(long earthquakeId);
 	}
 
 }

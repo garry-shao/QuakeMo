@@ -42,6 +42,7 @@
     <string name="snackbar_undo">Undo</string>
     <string name="snackbar_canceled">Canceled</string>
     <string name="snackbar_disconnected">No network!</string>
+    <string name="snackbar_invalid">Invalid link!</string>
 
     <!-- Strings used in preferences -->
     <string name="pref_cat_display_title">Display</string>
