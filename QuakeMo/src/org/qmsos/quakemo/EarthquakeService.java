@@ -254,36 +254,37 @@ public class EarthquakeService extends IntentService {
 	private void sendNotification(ContentValues value) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean flagNotify = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
-		if (flagNotify) {
-			int nofiticationId = 1;
-			
-			PendingIntent launchIntent = 
-					PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-	
-			long time = value.getAsLong(Entity.TIME);
-			double magnitude = value.getAsDouble(Entity.MAGNITUDE);
-			String details = value.getAsString(Entity.DETAILS);
-			
-			Notification.Builder builder = new Notification.Builder(this);
-			builder.setAutoCancel(true)
-					.setTicker(getString(R.string.notification_ticker))
-					.setSmallIcon(R.drawable.ic_notification)
-					.setContentIntent(launchIntent)
-					.setWhen(time)
-					.setContentTitle("M " + magnitude)
-					.setContentText(details);
-	
-			boolean flagSound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
-			if (flagSound) {
-				Uri ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-	
-				builder.setSound(ringUri);
-			}
-	
-			NotificationManager notificationManager = 
-					(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			notificationManager.notify(nofiticationId, builder.build());
-		}		
+		if (!flagNotify) {
+			return;
+		}
+		
+		PendingIntent launchIntent = 
+				PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+
+		long time = value.getAsLong(Entity.TIME);
+		double magnitude = value.getAsDouble(Entity.MAGNITUDE);
+		String details = value.getAsString(Entity.DETAILS);
+		
+		Notification.Builder builder = new Notification.Builder(this);
+		builder.setAutoCancel(true)
+				.setTicker(getString(R.string.notification_ticker))
+				.setSmallIcon(R.drawable.ic_notification)
+				.setContentIntent(launchIntent)
+				.setWhen(time)
+				.setContentTitle("M " + magnitude)
+				.setContentText(details);
+
+		boolean flagSound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
+		if (flagSound) {
+			Uri ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+			builder.setSound(ringUri);
+		}
+
+		int nofiticationId = 1;
+		NotificationManager notificationManager = 
+				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.notify(nofiticationId, builder.build());
 	}
 
 	/**

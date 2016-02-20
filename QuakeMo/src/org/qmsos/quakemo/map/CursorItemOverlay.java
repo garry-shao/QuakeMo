@@ -95,18 +95,19 @@ public class CursorItemOverlay extends Overlay {
 	}
 
 	private void changeDataSet() {
-		if (mDataValid) {
-			mGeoPoints.clear();
-			
-			if (mCursor.moveToFirst()) {
-				do {
-					double latitude = mCursor.getDouble(mCursor.getColumnIndexOrThrow(Entity.LATITUDE));
-					double longitude = mCursor.getDouble(mCursor.getColumnIndexOrThrow(Entity.LONGITUDE));
-					GeoPoint geoPoint = new GeoPoint(latitude, longitude);
-					
-					mGeoPoints.add(geoPoint);
-				} while (mCursor.moveToNext());
-			}
+		if (!mDataValid) {
+			return;
+		}
+		
+		mGeoPoints.clear();
+		if (mCursor.moveToFirst()) {
+			do {
+				double latitude = mCursor.getDouble(mCursor.getColumnIndexOrThrow(Entity.LATITUDE));
+				double longitude = mCursor.getDouble(mCursor.getColumnIndexOrThrow(Entity.LONGITUDE));
+				GeoPoint geoPoint = new GeoPoint(latitude, longitude);
+				
+				mGeoPoints.add(geoPoint);
+			} while (mCursor.moveToNext());
 		}
 	}
 
