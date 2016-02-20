@@ -57,20 +57,20 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".EarthquakeWidget"
+            android:name=".EarthquakeAppWidget"
             android:enabled="true"
             android:exported="true"
-            android:label="@string/widget_name" >
+            android:label="@string/appwidget_name" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <intent-filter>
-                <action android:name="org.qmsos.quakemo.ACTION_REFRESH_WIDGET" />
+                <action android:name="org.qmsos.quakemo.ACTION_REFRESH_APPWIDGET" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info" />
+                android:resource="@xml/appwidget_info" />
         </receiver>
     </application>
 

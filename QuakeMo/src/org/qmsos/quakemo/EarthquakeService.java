@@ -117,7 +117,7 @@ public class EarthquakeService extends IntentService {
 			LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
 		}
 		
-		sendBroadcast(new Intent(IntentConstants.ACTION_REFRESH_WIDGET));
+		sendBroadcast(new Intent(IntentConstants.ACTION_REFRESH_APPWIDGET));
 	}
 
 	/**

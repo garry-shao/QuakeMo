@@ -19,9 +19,9 @@ public class IntentConstants {
 	public static final String ACTION_REFRESH_ALARM = BASE_PACKAGE_NAME + "ACTION_REFRESH_ALARM";
 
 	/**
-	 * Service action: refreshing widget.
+	 * Service action: refreshing appwidget.
 	 */
-	public static final String ACTION_REFRESH_WIDGET = BASE_PACKAGE_NAME + "ACTION_REFRESH_WIDGET";
+	public static final String ACTION_REFRESH_APPWIDGET = BASE_PACKAGE_NAME + "ACTION_REFRESH_APPWIDGET";
 
 	/**
 	 * Service action: automatic refreshing for new earthquakes.

@@ -16,9 +16,9 @@
     <string name="menu_purge">Purge</string>
     <string name="menu_refresh">Refresh</string>
 
-    <!-- Strings used in widget -->
-    <string name="widget_name">QuakeMo</string>
-    <string name="widget_empty"></string>
+    <!-- Strings used in appwidget -->
+    <string name="appwidget_name">QuakeMo</string>
+    <string name="appwidget_empty"></string>
 
     <!-- Strings used in popup dialog -->
     <string name="dialog_details_title">Earthquake Details</string>

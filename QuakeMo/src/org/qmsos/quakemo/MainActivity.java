@@ -151,7 +151,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 					PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
 					PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 
-			ComponentName componentName = new ComponentName(this, EarthquakeWidget.class);
+			ComponentName componentName = new ComponentName(this, EarthquakeAppWidget.class);
 			
 			getPackageManager().setComponentEnabledSetting(
 					componentName, newState, PackageManager.DONT_KILL_APP);
