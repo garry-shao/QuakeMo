@@ -135,10 +135,10 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 			String details = data.getString(data.getColumnIndexOrThrow(Entity.DETAILS));
 			mLink = data.getString(data.getColumnIndexOrThrow(Entity.LINK));
 			
-			String lon = 
-					longitude > 0 ? Math.abs(longitude) + "\u00b0E" : Math.abs(longitude) + "\u00b0W";
-			String lat = 
-					latitude > 0 ? Math.abs(latitude) + "\u00b0N" : Math.abs(latitude) + "\u00b0S";
+			String lon = longitude > 0 ? 
+					Math.abs(longitude) + "\u00b0E" : Math.abs(longitude) + "\u00b0W";
+			String lat = latitude > 0 ? 
+					Math.abs(latitude) + "\u00b0N" : Math.abs(latitude) + "\u00b0S";
 			
 			DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
 			

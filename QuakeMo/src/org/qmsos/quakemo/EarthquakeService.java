@@ -350,7 +350,8 @@ public class EarthquakeService extends IntentService {
 			}
 		} else {
 			int range = Integer.parseInt(prefs.getString(
-					getString(R.string.PREF_QUERY_RANGE), getString(R.string.range_values_default)));
+					getString(R.string.PREF_QUERY_RANGE), 
+					getString(R.string.range_values_default)));
 			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 			if (startMillis < timeStamp) {
 				startTime = dateFormat.format(new Date(timeStamp));
@@ -359,13 +360,13 @@ public class EarthquakeService extends IntentService {
 			}
 		}
 		String minMagnitude = prefs.getString(
-				getString(R.string.PREF_QUERY_MINIMUM), getString(R.string.minimum_values_default));
+				getString(R.string.PREF_QUERY_MINIMUM), 
+				getString(R.string.minimum_values_default));
 
-		String query = "http://earthquake.usgs.gov/fdsnws/event/1/query?" + "format=geojson" + 
-				"&" + "starttime=" + startTime + 
-				"&" + "minmagnitude=" + minMagnitude;
-
-		return query;
+		return "http://earthquake.usgs.gov/fdsnws/event/1/query?" + 
+				"format=" + "geojson" + 
+				"&starttime=" + startTime + 
+				"&minmagnitude=" + minMagnitude;
 	}
 
 	/**
@@ -407,9 +408,11 @@ public class EarthquakeService extends IntentService {
 		if (info != null && info.isConnected()) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String type = prefs.getString(
-					getString(R.string.PREF_CONNECTION), getString(R.string.connection_values_wifi));
-			if (type.equals(getString(R.string.connection_values_any)) 
-					|| (info.getType()) == ConnectivityManager.TYPE_WIFI) {
+					getString(R.string.PREF_CONNECTION), 
+					getString(R.string.connection_values_wifi));
+			
+			if (type.equals(getString(R.string.connection_values_any)) || 
+					(info.getType()) == ConnectivityManager.TYPE_WIFI) {
 				
 				return true;
 			}

@@ -137,9 +137,9 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(getString(R.string.PREF_SHOW_MINIMUM)) 
-				|| key.equals(getString(R.string.PREF_SHOW_RANGE))
-				|| key.equals(getString(R.string.PREF_SHOW_ALL))) {
+		if (key.equals(getString(R.string.PREF_SHOW_MINIMUM)) || 
+				key.equals(getString(R.string.PREF_SHOW_RANGE)) || 
+				key.equals(getString(R.string.PREF_SHOW_ALL))) {
 
 			reload(null);
 		}
@@ -147,18 +147,18 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		if (key.equals(getString(R.string.PREF_WIDGET))) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-			int newState = prefs.getBoolean(key, false) 
-					? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-					: PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+			int newState = prefs.getBoolean(key, false) ? 
+					PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
+					PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 
 			ComponentName componentName = new ComponentName(this, EarthquakeWidget.class);
 			
-			PackageManager manager = getPackageManager();
-			manager.setComponentEnabledSetting(componentName, newState,	PackageManager.DONT_KILL_APP);
+			getPackageManager().setComponentEnabledSetting(
+					componentName, newState, PackageManager.DONT_KILL_APP);
 		}
 		
-		if (key.equals(getString(R.string.PREF_AUTO_REFRESH)) 
-				|| key.equals(getString(R.string.PREF_AUTO_FREQUENCY))) {
+		if (key.equals(getString(R.string.PREF_AUTO_REFRESH)) || 
+				key.equals(getString(R.string.PREF_AUTO_FREQUENCY))) {
 			
 			Intent intent = new Intent(this, EarthquakeService.class);
 			intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
@@ -307,8 +307,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			if (action.equals(IntentConstants.ACTION_REFRESH_EXECUTED)) {
 				boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, false);
 				if (flag) {
-					result = intent.getIntExtra(IntentConstants.EXTRA_ADDED_COUNT, 0) + " "
-							+ getString(R.string.snackbar_refreshed);
+					result = intent.getIntExtra(IntentConstants.EXTRA_ADDED_COUNT, 0) + 
+							" "	+ getString(R.string.snackbar_refreshed);
 				} else {
 					result = getString(R.string.snackbar_disconnected);
 				}

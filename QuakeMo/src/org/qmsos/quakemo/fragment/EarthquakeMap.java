@@ -102,7 +102,8 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 		
-		int minMagnitude = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_MINIMUM), 
+		int minMagnitude = Integer.parseInt(prefs.getString(
+				getString(R.string.PREF_SHOW_MINIMUM), 
 				getString(R.string.minimum_values_default)));
 		
 		String where;
@@ -110,12 +111,14 @@ public class EarthquakeMap extends Fragment implements LoaderCallbacks<Cursor> {
 		if (showAll) {
 			where = Entity.MAGNITUDE + " >= " + minMagnitude;
 		} else {
-			int range = Integer.parseInt(prefs.getString(getString(R.string.PREF_SHOW_RANGE), 
+			int range = Integer.parseInt(prefs.getString(
+					getString(R.string.PREF_SHOW_RANGE), 
 					getString(R.string.range_values_default)));
+			
 			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 			
-			where = Entity.MAGNITUDE + " >= " + minMagnitude
-					+ " AND " + Entity.TIME + " >= " + startMillis;
+			where = Entity.MAGNITUDE + " >= " + minMagnitude + " AND " + 
+					Entity.TIME + " >= " + startMillis;
 		}
 		
 		return new CursorLoader(getContext(), Entity.CONTENT_URI, projection, where, null, null);
