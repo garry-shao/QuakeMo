@@ -25,7 +25,6 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -130,82 +129,55 @@ public class EarthquakeService extends IntentService {
 		
 		String request = assembleRequest();
 		String result = download(request);
-		
 		if (result == null) {
 			return errorCount;
 		}
 		
-		try {
-			JSONObject reader = new JSONObject(result);
-			JSONArray features = reader.getJSONArray("features");
-			int length = features.length();
-			if (length <= 0) {
-				return errorCount;
-			}
-
-			long timeStamp = 0;
-			ContentValues valueStamp = null;
-
-			LinkedList<ContentValues> valueList = new LinkedList<ContentValues>();
-			for (int i = 0; i < length; i++) {
-				JSONObject feature = features.getJSONObject(i);
-				
-				JSONObject properties = feature.getJSONObject("properties");
-				double magnitude = properties.getDouble("mag");
-				String place = properties.getString("place");
-				long time = properties.getLong("time");
-				String url = properties.getString("url");
+		ContentValues[] rawValues = parseDownloaded(result);
+		if (rawValues == null) {
+			return errorCount;
+		}
 		
-				JSONObject geometry = feature.getJSONObject("geometry");
-				JSONArray coordinates = geometry.getJSONArray("coordinates");
-				double longitude = coordinates.getDouble(0);
-				double latitude = coordinates.getDouble(1);
-				double depth = coordinates.getDouble(2);
-
-				Cursor cursor = null;
-				try {
-					ContentResolver resolver = getContentResolver();
-					String where = Entity.TIME + " = " + time;
-					cursor = resolver.query(Entity.CONTENT_URI, null, where, null, null);
-					if (cursor != null && !cursor.moveToNext()) {
-						ContentValues value = new ContentValues();
-						value.put(Entity.TIME, time);
-						value.put(Entity.MAGNITUDE, magnitude);
-						value.put(Entity.LONGITUDE, longitude);
-						value.put(Entity.LATITUDE, latitude);
-						value.put(Entity.DEPTH, depth);
-						value.put(Entity.DETAILS, place);
-						value.put(Entity.LINK, url);
-						
-						valueList.add(value);
-						
-						if (time > timeStamp) {
-							timeStamp = time;
-							valueStamp = value;
-						}
-					}
-				} finally {
-					if (cursor != null && !cursor.isClosed()) {
-						cursor.close();
-					}
+		long latestTimestamp = 0;
+		ContentValues latestCheckedValue = null;
+		
+		LinkedList<ContentValues> checkedListOfValues = new LinkedList<ContentValues>();
+		for (int i = 0; i < rawValues.length; i++) {
+			ContentValues rawValue = rawValues[i];
+			
+			long time = rawValue.getAsLong(Entity.TIME);
+			
+			Cursor cursor = null;
+			try {
+				String where = Entity.TIME + " = " + time;
+				
+				cursor = getContentResolver().query(Entity.CONTENT_URI, null, where, null, null);
+				if (cursor != null && !cursor.moveToNext()) {
+					checkedListOfValues.add(rawValue);
+				}
+			} finally {
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
 				}
 			}
 			
-			int valueListSize = valueList.size();
-			ContentValues[] values = new ContentValues[valueListSize];
-			valueList.toArray(values);
-			
-			int count = getContentResolver().bulkInsert(Entity.CONTENT_URI, values);
-			if (count > 0 && count == valueListSize && timeStamp > 0 && valueStamp != null) {
-				sendNotification(valueStamp);
+			if (time > latestTimestamp) {
+				latestTimestamp = time;
+				latestCheckedValue = rawValue;
 			}
-			
-			return count;
-		} catch (JSONException e) {
-			Log.e(TAG, "Something wrong with the result JSON");
-			
-			return errorCount;
 		}
+		
+		ContentValues[] checkedValues = new ContentValues[checkedListOfValues.size()];
+		checkedValues = checkedListOfValues.toArray(checkedValues);
+		
+		int count = getContentResolver().bulkInsert(Entity.CONTENT_URI, checkedValues);
+		if (count > 0 && count == checkedValues.length && 
+				latestTimestamp > 0 && latestCheckedValue != null) {
+			
+			sendNotification(latestCheckedValue);
+		}
+		
+		return count;
 	}
 
 	/**
@@ -243,6 +215,67 @@ public class EarthquakeService extends IntentService {
 		} else {
 			alarmManager.cancel(alarmIntent);
 		}
+	}
+
+	/**
+	 * Parse the downloaded raw string to an array of formatted ContentValues. 
+	 * 
+	 * @param results
+	 *            The raw string that downloaded from remote server.
+	 * @return The parsed array of ContentValues or NULL if the raw string is invalid.
+	 */
+	private ContentValues[] parseDownloaded(String results) {
+		JSONArray features = null;
+		int rawLength = 0;
+		try {
+			JSONObject reader = new JSONObject(results);
+			features = reader.getJSONArray("features");
+			rawLength = features.length();
+		} catch (JSONException e) {
+			Log.e(TAG, "Something wrong with the result JSON");
+			
+			return null;
+		}
+		
+		if (features == null || rawLength <= 0) {
+			return null;
+		}
+		
+		ContentValues[] rawValues = new ContentValues[rawLength];
+		for (int i = 0; i < rawLength; i++) {
+			try {
+				JSONObject feature = features.getJSONObject(i);
+
+				JSONObject properties = feature.getJSONObject("properties");
+				double magnitude = properties.getDouble("mag");
+				String place = properties.getString("place");
+				long time = properties.getLong("time");
+				String url = properties.getString("url");
+
+				JSONObject geometry = feature.getJSONObject("geometry");
+				JSONArray coordinates = geometry.getJSONArray("coordinates");
+				double longitude = coordinates.getDouble(0);
+				double latitude = coordinates.getDouble(1);
+				double depth = coordinates.getDouble(2);
+
+				ContentValues value = new ContentValues();
+				value.put(Entity.TIME, time);
+				value.put(Entity.MAGNITUDE, magnitude);
+				value.put(Entity.LONGITUDE, longitude);
+				value.put(Entity.LATITUDE, latitude);
+				value.put(Entity.DEPTH, depth);
+				value.put(Entity.DETAILS, place);
+				value.put(Entity.LINK, url);
+				
+				rawValues[i] = value;
+			} catch (JSONException e) {
+				Log.e(TAG, "Something wrong with the result JSON");
+				
+				return null;
+			}
+		}
+		
+		return rawValues;
 	}
 
 	/**
