@@ -28,7 +28,7 @@
             android:title="@string/pref_query_minimum_title" />
 
         <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="TRUE"
+            android:defaultValue="FALSE"
             android:key="@string/PREF_AUTO_REFRESH"
             android:summary="@string/pref_auto_toggle_summary"
             android:title="@string/pref_auto_toggle_title" />
