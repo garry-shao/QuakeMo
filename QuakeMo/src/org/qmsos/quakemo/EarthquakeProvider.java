@@ -57,9 +57,8 @@ public class EarthquakeProvider extends ContentProvider {
 		
 		switch (URI_MATCHER.match(uri)) {
 		case QUAKE_ID:
-			if (uri.getPathSegments().size() > 1) {
-				queryBuilder.appendWhere(Entity.ID + " = " + uri.getPathSegments().get(1));
-			}
+			queryBuilder.appendWhere(Entity.ID + " = " + uri.getPathSegments().get(1));
+			
 			break;
 		default:
 			break;
@@ -95,9 +94,9 @@ public class EarthquakeProvider extends ContentProvider {
 	public Uri insert(Uri uri, ContentValues values) {
 		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
-		long rowID = database.insert(DatabaseHelper.TABLE_EARTHQUAKE, "earthquake", values);
-		if (rowID > 0) {
-			Uri resultUri = ContentUris.withAppendedId(Entity.CONTENT_URI, rowID);
+		long rowId = database.insert(DatabaseHelper.TABLE_EARTHQUAKE, "earthquake", values);
+		if (rowId > 0) {
+			Uri resultUri = ContentUris.withAppendedId(Entity.CONTENT_URI, rowId);
 			
 			getContext().getContentResolver().notifyChange(resultUri, null);
 			
@@ -114,8 +113,9 @@ public class EarthquakeProvider extends ContentProvider {
 		database.beginTransaction();
 		try {
 			for (ContentValues value : values) {
-				long rowID = database.insert(DatabaseHelper.TABLE_EARTHQUAKE, "earthquake", value);
-				if (rowID < 0) {
+				long rowId = database.insert(DatabaseHelper.TABLE_EARTHQUAKE, "earthquake", value);
+				if (rowId < 0) {
+					// some insert in transaction failed, abort and roll back.
 					return 0;
 				}
 			}
