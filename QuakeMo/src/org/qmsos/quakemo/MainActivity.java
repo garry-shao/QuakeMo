@@ -255,13 +255,13 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		}
 		
 		if (snackbar != null) {
-			int currentInversePrimaryTextColor = 
-					ContextCompat.getColor(this, R.color.primary_text_default_material_dark);
-			int currentAccentColor = 
-					ContextCompat.getColor(this, R.color.accent_material_light);
+			int snackbarActionTextColor = 
+					ContextCompat.getColor(this, R.color.snackbar_action_text_color);
+			int snakbarBackgroundColor = 
+					ContextCompat.getColor(this, R.color.snackbar_background_color);
 			
-			snackbar.setActionTextColor(currentInversePrimaryTextColor);
-			snackbar.getView().setBackgroundColor(currentAccentColor);
+			snackbar.setActionTextColor(snackbarActionTextColor);
+			snackbar.getView().setBackgroundColor(snakbarBackgroundColor);
 			snackbar.show();
 		}
 	}
