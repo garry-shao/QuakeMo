@@ -1,37 +1,16 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.    -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.        -->
-    </style>
-
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-
-    <style name="AppCompatTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="preferenceTheme">@style/preferenceTheme</item>
-        <item name="toolbarStyle">@style/toolbarStyle</item>
-        <item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>
-        <item name="editTextColor">?android:attr/textColorPrimaryInverse</item>
-    </style>
-    
-    <!-- TabLayout theme. -->
+    <!-- TabLayout style. -->
     <style name="tabLayout" parent="Widget.Design.TabLayout">
         <item name="tabTextAppearance">@style/tabTextAppearance</item>
     </style>
     <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
     </style>
-    
-    <!-- Toolbar theme. -->
-    <style name="toolbarStyle" parent="Widget.AppCompat.Toolbar">
+
+    <!-- Toolbar style. -->
+    <style name="toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorAccent</item>
         <item name="titleTextAppearance">
             @style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse
@@ -40,19 +19,13 @@
             @style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse
         </item>
     </style>
-    
-    <!-- Preferences theme. -->
-    <!-- Hack of PreferenceThemeOverlay.v14.Material, Change textStyle & textSize -->
-    <style name="preferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
-        <item name="preferenceFragmentListStyle">@style/AppCompatTheme.PreferenceFragmentList</item>
-    </style>
-    
-    <style name="AppCompatTheme.PreferenceFragmentList">
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-    </style>
 
-    <style name="Preference_TextAppearanceMaterialBody2">
+	<!-- Belows are hack of PreferenceThemeOverlay.v14.Material, since i did not find
+	    other methods to use customized style, if only use these whose names are defined 
+	    in the theme mentioned above.
+	-->
+    <!-- Preference Style. -->
+	<style name="Preference_TextAppearanceMaterialBody2">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textStyle">bold</item>
@@ -63,5 +36,6 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textStyle">normal</item>
     </style>
+    <!-- End of style hack. -->
 
 </resources>
