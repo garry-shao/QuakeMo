@@ -1,5 +1,6 @@
 package org.qmsos.quakemo.fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.qmsos.quakemo.R;
@@ -26,6 +27,13 @@ public class EarthquakePagerAdapter extends FragmentPagerAdapter {
 		super(fm);
 
 		this.mFragmentList = fragmentList;
+		this.mContext = context;
+	}
+	
+	public EarthquakePagerAdapter(FragmentManager fm, Context context) {
+		super(fm);
+		
+		this.mFragmentList = new ArrayList<Fragment>();
 		this.mContext = context;
 	}
 
@@ -56,16 +64,9 @@ public class EarthquakePagerAdapter extends FragmentPagerAdapter {
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		Fragment fragment = (Fragment) super.instantiateItem(container, position);
-		switch (position) {
-		case 0:
-			String firstTag = fragment.getTag();
-			mTags.append(0, firstTag);
-			break;
-		case 1:
-			String secondTag = fragment.getTag();
-			mTags.append(1, secondTag);
-			break;
-		}
+		
+		String tag = fragment.getTag();
+		mTags.append(position, tag);
 
 		return fragment;
 	}
@@ -82,6 +83,19 @@ public class EarthquakePagerAdapter extends FragmentPagerAdapter {
 	 */
 	public String getTag(int position) {
 		return mTags.get(position);
+	}
+
+	/**
+	 * Add a fragment to the this adapter, notice that the same fragment will not
+	 * be added twice or more.
+	 * 
+	 * @param fragment
+	 *            The fragment that will be added.
+	 */
+	public void addPage(Fragment fragment) {
+		if ((fragment != null) && !mFragmentList.contains(fragment)) {
+			mFragmentList.add(fragment);
+		}
 	}
 
 }

@@ -1,15 +1,13 @@
 package org.qmsos.quakemo;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.qmsos.quakemo.fragment.BaseLoaderFragment;
+import org.qmsos.quakemo.fragment.CompatPurgeDialog;
+import org.qmsos.quakemo.fragment.CompatPurgeDialog.OnPurgeSelectedListener;
 import org.qmsos.quakemo.fragment.EarthquakeDetails;
 import org.qmsos.quakemo.fragment.EarthquakeDetails.OnLinkSelectedListener;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
-import org.qmsos.quakemo.fragment.CompatPurgeDialog;
-import org.qmsos.quakemo.fragment.CompatPurgeDialog.OnPurgeSelectedListener;
 import org.qmsos.quakemo.util.IntentConstants;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.OnViewHolderClickedListener;
 
@@ -64,15 +62,12 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		toolbar.inflateMenu(R.menu.menu_main_options);
 		toolbar.setOnMenuItemClickListener(this);
 
-		List<Fragment> fragmentList = new ArrayList<Fragment>();
-		EarthquakeList quakeList = new EarthquakeList();
-		EarthquakeMap quakeMap = new EarthquakeMap();
-		fragmentList.add(quakeList);
-		fragmentList.add(quakeMap);
-
+		EarthquakePagerAdapter adapter = new EarthquakePagerAdapter(getSupportFragmentManager(), this);
+		adapter.addPage(new EarthquakeList());
+		adapter.addPage(new EarthquakeMap());
+		
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		viewPager.setAdapter(new EarthquakePagerAdapter(fragmentManager, fragmentList, this));
+		viewPager.setAdapter(adapter);
 
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
@@ -278,18 +273,20 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
 		EarthquakePagerAdapter adapter = (EarthquakePagerAdapter) viewPager.getAdapter();
 
-		String listTag = adapter.getTag(0);
-		if (listTag != null && manager.findFragmentByTag(listTag) != null) {
-			EarthquakeList quakeList = (EarthquakeList) manager.findFragmentByTag(listTag);
-			if (quakeList.isAdded()) {
-				quakeList.getLoaderManager().restartLoader(0, bundle, quakeList);
+		int count = adapter.getCount();
+		for (int i = 0; i < count; i++) {
+			String tag = adapter.getTag(i);
+			if (tag == null) {
+				return;
 			}
-		}
-		String mapTag = adapter.getTag(1);
-		if (mapTag != null && manager.findFragmentByTag(mapTag) != null) {
-			EarthquakeMap quakeMap = (EarthquakeMap) manager.findFragmentByTag(mapTag);
-			if (quakeMap.isAdded()) {
-				quakeMap.getLoaderManager().restartLoader(0, bundle, quakeMap);
+			
+			Fragment rawFragment = manager.findFragmentByTag(tag);
+			if ((rawFragment != null) && rawFragment.isAdded() && 
+					(rawFragment instanceof BaseLoaderFragment)) {
+				
+				BaseLoaderFragment castedFragment = (BaseLoaderFragment) rawFragment;
+				
+				castedFragment.getLoaderManager().restartLoader(0, bundle, castedFragment);
 			}
 		}
 	}
