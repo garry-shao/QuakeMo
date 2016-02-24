@@ -291,6 +291,9 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		}
 	}
 
+	/**
+	 * Private Receiver used when receiving local broadcast from Service thread.
+	 */
 	private class MessageReceiver extends BroadcastReceiver {
 
 		@Override
