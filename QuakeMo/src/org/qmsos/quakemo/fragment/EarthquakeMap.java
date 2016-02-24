@@ -2,9 +2,11 @@ package org.qmsos.quakemo.fragment;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.map.CursorItemOverlay;
 import org.qmsos.quakemo.map.TileFilesChecker;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
@@ -37,10 +39,24 @@ public class EarthquakeMap extends BaseLoaderFragment {
 	private MapView mMapView;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		TileFilesChecker.checkMapTileFiles(getContext());
+	public void onAttach(Context context) {
+		super.onAttach(context);
 		
-		mMapView = new MapView(getContext());
+		TileFilesChecker.checkMapTileFiles(context);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_earthquake_map, container, false);
+		
+		return view;
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		
+		mMapView = (MapView) view.findViewById(R.id.earthquake_map);
 		mMapView.setMultiTouchControls(true);
 		mMapView.setTileSource(TileFilesChecker.offlineTileSource(ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX));
 		mMapView.setUseDataConnection(false);
@@ -62,8 +78,6 @@ public class EarthquakeMap extends BaseLoaderFragment {
 
 		mOverlay = new CursorItemOverlay(getContext(), null);
 		mMapView.getOverlays().add(mOverlay);
-
-		return mMapView;
 	}
 
 	@Override
