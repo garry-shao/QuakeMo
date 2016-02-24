@@ -1,10 +1,9 @@
 package org.qmsos.quakemo.fragment;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.map.CursorItemOverlay;
 import org.qmsos.quakemo.map.TileFilesChecker;
+import org.qmsos.quakemo.widget.CustomMapView;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -21,22 +20,12 @@ import android.view.ViewGroup;
  */
 public class EarthquakeMap extends BaseLoaderFragment {
 
-	private static final String KEY_CENTER = "KEY_CENTER";
-	private static final String KEY_ZOOM_LEVEL = "KEY_ZOOM_LEVEL";
-
-	// Confine zoom levels of MapView.
-	private static final int ZOOM_LEVEL_MIN = 1;
-	private static final int ZOOM_LEVEL_MAX = 4;
-	
 	/**
 	 * The earthquake overlay on the map.
 	 */
 	private CursorItemOverlay mOverlay;
 
-	/**
-	 * Defined as there is only one view on this fragment.
-	 */
-	private MapView mMapView;
+	private CustomMapView mMapView;
 
 	@Override
 	public void onAttach(Context context) {
@@ -56,38 +45,14 @@ public class EarthquakeMap extends BaseLoaderFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		
-		mMapView = (MapView) view.findViewById(R.id.earthquake_map);
+		mMapView = (CustomMapView) view.findViewById(R.id.earthquake_map);
 		mMapView.setMultiTouchControls(true);
-		mMapView.setTileSource(TileFilesChecker.offlineTileSource(ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX));
+		mMapView.setTileSource(TileFilesChecker.offlineTileSource());
 		mMapView.setUseDataConnection(false);
 		mMapView.setTilesScaledToDpi(true);
 
-		if (savedInstanceState != null) {
-			GeoPoint center = savedInstanceState.getParcelable(KEY_CENTER);
-			if (center != null) {
-				mMapView.getController().setCenter(center);
-			}
-
-			int zoomLevel = savedInstanceState.getInt(KEY_ZOOM_LEVEL);
-			if (zoomLevel > 0) {
-				mMapView.getController().setZoom(zoomLevel);
-			}
-		} else {
-			mMapView.getController().setZoom(ZOOM_LEVEL_MIN);
-		}
-
 		mOverlay = new CursorItemOverlay(getContext(), null);
 		mMapView.getOverlays().add(mOverlay);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		if (mMapView != null) {
-			outState.putParcelable(KEY_CENTER, (GeoPoint) mMapView.getMapCenter());
-			outState.putInt(KEY_ZOOM_LEVEL, mMapView.getZoomLevel());
-		}
-
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override

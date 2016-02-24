@@ -33,21 +33,22 @@ public class TileFilesChecker {
 	private static final String MAP_TILE_FILE = MAP_SOURCE + ".zip";
 	private static final String MAP_TILE_HASH = MAP_SOURCE + ".sha";
 
+	// Zoom levels of the offline map-tile source.
+	private static final int ZOOM_LEVEL_MIN = 1;
+	private static final int ZOOM_LEVEL_MAX = 4;
+	
+	// Max retry count before abort.
 	private static final int MAX_RETRY = 3;
 
 	/**
 	 * Create offline map-tile source.
 	 * 
-	 * @param aZoomMinLevel
-	 *            minimum zoom level of this map-tile source.
-	 * @param aZoomMaxLevel
-	 *            maximum zoom level of this map-tile source.
 	 * @return The offline map-tile source.
 	 */
-	public static ITileSource offlineTileSource(int aZoomMinLevel, int aZoomMaxLevel) {
-		return new XYTileSource(MAP_SOURCE, aZoomMinLevel, aZoomMaxLevel, 256, ".png", new String[] {});
+	public static ITileSource offlineTileSource() {
+		return new XYTileSource(MAP_SOURCE, ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {});
 	}
-	
+
 	/**
 	 * Check whether offline map tiles are available, create new ones if not.
 	 * 
