@@ -76,6 +76,9 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		// Initialize here in order to prepare infos that are used in 
+		// onCreateDialog(), remember onCreateDialog() is called after 
+		// onCreate() and before onCreateView(). 
 		getLoaderManager().initLoader(0, null, this);
 	}
 
