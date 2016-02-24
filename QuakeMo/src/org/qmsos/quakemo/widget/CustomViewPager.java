@@ -8,17 +8,17 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * Customized ViewPager to make MapView answer map-related gesture only.
+ * Customized ViewPager that makes MapView answering the scroll gestures first.
  * 
  *
  */
-public class MapViewPager extends ViewPager {
+public class CustomViewPager extends ViewPager {
 
-	public MapViewPager(Context context, AttributeSet attrs) {
+	public CustomViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public MapViewPager(Context context) {
+	public CustomViewPager(Context context) {
 		super(context);
 	}
 
