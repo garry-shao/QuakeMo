@@ -1,7 +1,5 @@
 package org.qmsos.quakemo.widget;
 
-import org.osmdroid.views.MapView;
-
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -24,7 +22,7 @@ public class CustomViewPager extends ViewPager {
 
 	@Override
 	protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
-		if (v instanceof MapView) {
+		if (v instanceof CustomMapView) {
 			return true;
 		} else {
 			return super.canScroll(v, checkV, dx, x, y);
