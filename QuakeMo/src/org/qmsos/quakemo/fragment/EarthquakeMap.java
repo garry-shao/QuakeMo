@@ -47,9 +47,9 @@ public class EarthquakeMap extends BaseLoaderFragment {
 		
 		mMapView = (CustomMapView) view.findViewById(R.id.earthquake_map);
 		mMapView.setMultiTouchControls(true);
-		mMapView.setTileSource(TileFilesChecker.offlineTileSource());
-		mMapView.setUseDataConnection(false);
 		mMapView.setTilesScaledToDpi(true);
+		mMapView.setUseDataConnection(false);
+		mMapView.setTileSource(TileFilesChecker.offlineTileSource());
 
 		mOverlay = new CursorItemOverlay(getContext(), null);
 		mMapView.getOverlays().add(mOverlay);

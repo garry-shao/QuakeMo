@@ -16,10 +16,7 @@ import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
 
 /**
  * Utility class use to checker if the offline map tiles used in MapView class
@@ -56,11 +53,16 @@ public class TileFilesChecker {
 	 *            The associated context.
 	 */
 	public static void checkMapTileFiles(Context context) {
-		if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) 
-				!= PackageManager.PERMISSION_GRANTED) {
-			return;
-		}
-
+		// Change osmdroid's path, but there are still bugs: since the paths are 
+		// static final fields, the tiles-base path created before the change, so
+		// that still created on old configuration, but since we are using offline
+		// map-tiles, blocking this file creation by revoking the permission does
+		// no harm except an error line on log.
+		String cachePath = context.getCacheDir().getAbsolutePath();
+		String filePath = context.getFilesDir().getAbsolutePath();
+		OpenStreetMapTileProviderConstants.setCachePath(cachePath);
+		OpenStreetMapTileProviderConstants.setOfflineMapsPath(filePath);
+		
 		boolean flag = false;
 		for (int i = 0; i < MAX_RETRY && !flag; i++) {
 			File mapTileFile = new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
