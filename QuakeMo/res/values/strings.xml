@@ -58,17 +58,17 @@
     <string name="pref_category_display">Display</string>
     <string name="pref_display_all_summary">Show all earthquakes stored</string>
     <string name="pref_display_all_title">Show all</string>
-    <string name="pref_display_range_title">Range</string>
-    <string name="pref_display_link_summary">Show a link to website</string>
+    <string name="pref_display_range_title">Show range</string>
+    <string name="pref_display_link_summary">Show a link to website on details</string>
     <string name="pref_display_link_title">Show link</string>
     
     <string name="pref_category_component">Component</string>
     <string name="pref_notify_toggle_summary">Enable notification</string>
     <string name="pref_notify_toggle_title">Notification</string>
     <string name="pref_notify_sound_summary">Notification with sound</string>
-    <string name="pref_notify_sound_title">Sound</string>
-    <string name="pref_widget_toggle_summary">Register widget to android</string>
-    <string name="pref_widget_toggle_title">Widget</string>
+    <string name="pref_notify_sound_title">With sound</string>
+    <string name="pref_app_widget_toggle_summary">Register app widget</string>
+    <string name="pref_app_widget_toggle_title">App widget</string>
 
     <!-- Keys for shared preferences. DO NOT MODIFY -->
     <string name="PREF_REFRESH_CONNECTION_TYPE">PREF_REFRESH_CONNECTION</string>
@@ -85,10 +85,10 @@
     
     <string name="PREF_NOTIFY_TOGGLE">PREF_NOTIFY_TOGGLE</string>
     <string name="PREF_NOTIFY_SOUND">PREF_NOTIFY_SOUND</string>
-    <string name="PREF_WIDGET_TOGGLE">PREF_WIDGET_TOGGLE</string>
+    <string name="PREF_APP_WIDGET_TOGGLE">PREF_APP_WIDGET_TOGGLE</string>
     
     <!-- Default values in /array. CHECK before modify -->
-    <string name="range_values_default">3</string>
+    <string name="range_values_default">1</string>
     <string name="frequency_values_default">3</string>
     <string name="minimum_values_default">5</string>
     

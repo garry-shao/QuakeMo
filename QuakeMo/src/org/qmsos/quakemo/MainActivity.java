@@ -138,7 +138,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			reload(null);
 		}
 
-		if (key.equals(getString(R.string.PREF_WIDGET_TOGGLE))) {
+		if (key.equals(getString(R.string.PREF_APP_WIDGET_TOGGLE))) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 			int newState = prefs.getBoolean(key, false) ? 
