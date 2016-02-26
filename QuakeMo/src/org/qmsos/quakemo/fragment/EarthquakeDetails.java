@@ -101,8 +101,8 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		boolean linkEnabled = prefs.getBoolean(getString(R.string.PREF_LINK), false);
-		if (linkEnabled) {
+		boolean displayLink = prefs.getBoolean(getString(R.string.PREF_DISPLAY_LINK), false);
+		if (displayLink) {
 			builder.setPositiveButton(R.string.dialog_details_link, new OnClickListener() {
 				
 				@Override

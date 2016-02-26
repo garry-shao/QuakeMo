@@ -9,9 +9,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -66,13 +64,7 @@ public class EarthquakeAppWidget extends AppWidgetProvider {
 
 		Cursor cursor = null;
 		try {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-			int minMagnitude = Integer.parseInt(prefs.getString(
-					context.getString(R.string.PREF_SHOW_MINIMUM), 
-					context.getString(R.string.minimum_values_default)));
-			String where = Entity.MAGNITUDE + " >= " + minMagnitude;
-			
-			cursor = context.getContentResolver().query(Entity.CONTENT_URI, null, where, null, null);
+			cursor = context.getContentResolver().query(Entity.CONTENT_URI, null, null, null, null);
 			if (cursor != null && cursor.moveToLast()) {
 				magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
 				details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));

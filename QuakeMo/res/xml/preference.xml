@@ -1,75 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_auto_title" >
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="TRUE"
-            android:disableDependentsState="true"
-            android:key="@string/PREF_QUERY_FOLLOW"
-            android:summary="@string/pref_query_follow_summary"
-            android:title="@string/pref_query_follow_title" />
-
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_category_refresh" >
         <org.qmsos.quakemo.preference.ListPreferenceCompat
-            android:defaultValue="@string/range_values_default"
-            android:dependency="@string/PREF_QUERY_FOLLOW"
-            android:dialogTitle="@string/pref_query_range_title"
-            android:entries="@array/range_entries"
-            android:entryValues="@array/range_values"
-            android:key="@string/PREF_QUERY_RANGE"
+            android:defaultValue="@string/connection_type_values_wifi"
+            android:dialogTitle="@string/pref_refresh_connection_type_title"
+            android:entries="@array/connection_type_entries"
+            android:entryValues="@array/connection_type_values"
+            android:key="@string/PREF_REFRESH_CONNECTION_TYPE"
             android:summary="%s"
-            android:title="@string/pref_query_range_title" />
-        <org.qmsos.quakemo.preference.ListPreferenceCompat
-            android:defaultValue="@string/minimum_values_default"
-            android:dialogTitle="@string/pref_query_minimum_title"
-            android:entries="@array/minimum_entries"
-            android:entryValues="@array/minimum_values"
-            android:key="@string/PREF_QUERY_MINIMUM"
-            android:summary="%s"
-            android:title="@string/pref_query_minimum_title" />
+            android:title="@string/pref_refresh_connection_type_title" />
 
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="FALSE"
-            android:key="@string/PREF_AUTO_REFRESH"
-            android:summary="@string/pref_auto_toggle_summary"
-            android:title="@string/pref_auto_toggle_title" />
+            android:key="@string/PREF_REFRESH_AUTO_TOGGLE"
+            android:summary="@string/pref_refresh_auto_toggle_summary"
+            android:title="@string/pref_refresh_auto_toggle_title" />
 
         <org.qmsos.quakemo.preference.ListPreferenceCompat
             android:defaultValue="@string/frequency_values_default"
-            android:dependency="@string/PREF_AUTO_REFRESH"
-            android:dialogTitle="@string/pref_auto_frequency_title"
+            android:dependency="@string/PREF_REFRESH_AUTO_TOGGLE"
+            android:dialogTitle="@string/pref_refresh_auto_frequency_title"
             android:entries="@array/frequency_entries"
             android:entryValues="@array/frequency_values"
-            android:key="@string/PREF_AUTO_FREQUENCY"
+            android:key="@string/PREF_REFRESH_AUTO_FREQUENCY"
             android:summary="%s"
-            android:title="@string/pref_auto_frequency_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_display_title" >
+            android:title="@string/pref_refresh_auto_frequency_title" />
+
         <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="FALSE"
+            android:defaultValue="TRUE"
             android:disableDependentsState="true"
-            android:key="@string/PREF_SHOW_ALL"
-            android:summary="@string/pref_show_all_summary"
-            android:title="@string/pref_show_all_title" />
+            android:key="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
+            android:summary="@string/pref_refresh_parameter_seamless_summary"
+            android:title="@string/pref_refresh_parameter_seamless_title" />
 
         <org.qmsos.quakemo.preference.ListPreferenceCompat
             android:defaultValue="@string/range_values_default"
-            android:dependency="@string/PREF_SHOW_ALL"
-            android:dialogTitle="@string/pref_show_range_title"
+            android:dependency="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
+            android:dialogTitle="@string/pref_refresh_parameter_range_title"
             android:entries="@array/range_entries"
             android:entryValues="@array/range_values"
-            android:key="@string/PREF_SHOW_RANGE"
+            android:key="@string/PREF_REFRESH_PARAMETER_RANGE"
             android:summary="%s"
-            android:title="@string/pref_show_range_title" />
+            android:title="@string/pref_refresh_parameter_range_title" />
         <org.qmsos.quakemo.preference.ListPreferenceCompat
             android:defaultValue="@string/minimum_values_default"
-            android:dialogTitle="@string/pref_show_minimum_title"
+            android:dialogTitle="@string/pref_refresh_parameter_minimum_title"
             android:entries="@array/minimum_entries"
             android:entryValues="@array/minimum_values"
-            android:key="@string/PREF_SHOW_MINIMUM"
+            android:key="@string/PREF_REFRESH_PARAMETER_MINIMUM"
             android:summary="%s"
-            android:title="@string/pref_show_minimum_title" />
+            android:title="@string/pref_refresh_parameter_minimum_title" />
     </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_notify_title" >
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_category_display" >
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="FALSE"
+            android:key="@string/PREF_DISPLAY_LINK"
+            android:summary="@string/pref_display_link_summary"
+            android:title="@string/pref_display_link_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="FALSE"
+            android:disableDependentsState="true"
+            android:key="@string/PREF_DISPLAY_ALL"
+            android:summary="@string/pref_display_all_summary"
+            android:title="@string/pref_display_all_title" />
+
+        <org.qmsos.quakemo.preference.ListPreferenceCompat
+            android:defaultValue="@string/range_values_default"
+            android:dependency="@string/PREF_DISPLAY_ALL"
+            android:dialogTitle="@string/pref_display_range_title"
+            android:entries="@array/range_entries"
+            android:entryValues="@array/range_values"
+            android:key="@string/PREF_DISPLAY_RANGE"
+            android:summary="%s"
+            android:title="@string/pref_display_range_title" />
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_category_component" >
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="TRUE"
             android:key="@string/PREF_NOTIFY_TOGGLE"
@@ -81,28 +87,11 @@
             android:key="@string/PREF_NOTIFY_SOUND"
             android:summary="@string/pref_notify_sound_summary"
             android:title="@string/pref_notify_sound_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_component_title" >
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="FALSE"
-            android:key="@string/PREF_WIDGET"
-            android:summary="@string/pref_widget_summary"
-            android:title="@string/pref_widget_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="FALSE"
-            android:key="@string/PREF_LINK"
-            android:summary="@string/pref_link_summary"
-            android:title="@string/pref_link_title" />
-    </android.support.v7.preference.PreferenceCategory>
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_cat_connection_title" >
-        <org.qmsos.quakemo.preference.ListPreferenceCompat
-            android:defaultValue="@string/connection_values_wifi"
-            android:dialogTitle="@string/pref_connection_title"
-            android:entries="@array/connection_entries"
-            android:entryValues="@array/connection_values"
-            android:key="@string/PREF_CONNECTION"
-            android:summary="%s"
-            android:title="@string/pref_connection_title" />
+            android:key="@string/PREF_WIDGET_TOGGLE"
+            android:summary="@string/pref_widget_toggle_summary"
+            android:title="@string/pref_widget_toggle_title" />
     </android.support.v7.preference.PreferenceCategory>
 
 </android.support.v7.preference.PreferenceScreen>

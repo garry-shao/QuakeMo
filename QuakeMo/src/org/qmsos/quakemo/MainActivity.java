@@ -132,14 +132,13 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if (key.equals(getString(R.string.PREF_SHOW_MINIMUM)) || 
-				key.equals(getString(R.string.PREF_SHOW_RANGE)) || 
-				key.equals(getString(R.string.PREF_SHOW_ALL))) {
+		if (key.equals(getString(R.string.PREF_DISPLAY_RANGE)) || 
+				key.equals(getString(R.string.PREF_DISPLAY_ALL))) {
 
 			reload(null);
 		}
 
-		if (key.equals(getString(R.string.PREF_WIDGET))) {
+		if (key.equals(getString(R.string.PREF_WIDGET_TOGGLE))) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 			int newState = prefs.getBoolean(key, false) ? 
@@ -152,8 +151,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 					componentName, newState, PackageManager.DONT_KILL_APP);
 		}
 		
-		if (key.equals(getString(R.string.PREF_AUTO_REFRESH)) || 
-				key.equals(getString(R.string.PREF_AUTO_FREQUENCY))) {
+		if (key.equals(getString(R.string.PREF_REFRESH_AUTO_TOGGLE)) || 
+				key.equals(getString(R.string.PREF_REFRESH_AUTO_FREQUENCY))) {
 			
 			Intent intent = new Intent(this, EarthquakeService.class);
 			intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);

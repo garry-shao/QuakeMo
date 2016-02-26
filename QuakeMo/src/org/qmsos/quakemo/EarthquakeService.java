@@ -77,7 +77,7 @@ public class EarthquakeService extends IntentService {
 		
 		if (action.equals(IntentConstants.ACTION_REFRESH_AUTO)) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_AUTO_REFRESH), false);
+			boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
 			
 			scheduleAutoRefresh(flagAuto);
 			
@@ -204,7 +204,7 @@ public class EarthquakeService extends IntentService {
 		if (flag) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			int frequency = Integer.parseInt(prefs.getString(
-					getString(R.string.PREF_AUTO_FREQUENCY), 
+					getString(R.string.PREF_REFRESH_AUTO_FREQUENCY), 
 					getString(R.string.frequency_values_default)));
 			
 			long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
@@ -373,7 +373,7 @@ public class EarthquakeService extends IntentService {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		boolean querySeamless = prefs.getBoolean(getString(R.string.PREF_QUERY_FOLLOW), false);
+		boolean querySeamless = prefs.getBoolean(getString(R.string.PREF_REFRESH_PARAMETER_SEAMLESS), false);
 		if (querySeamless) {
 			long defaultStartMillis = System.currentTimeMillis() - 7 * AlarmManager.INTERVAL_DAY;
 			if (timeStamp > defaultStartMillis) {
@@ -383,7 +383,7 @@ public class EarthquakeService extends IntentService {
 			}
 		} else {
 			int range = Integer.parseInt(prefs.getString(
-					getString(R.string.PREF_QUERY_RANGE), 
+					getString(R.string.PREF_REFRESH_PARAMETER_RANGE), 
 					getString(R.string.range_values_default)));
 			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 			if (startMillis < timeStamp) {
@@ -393,7 +393,7 @@ public class EarthquakeService extends IntentService {
 			}
 		}
 		String minMagnitude = prefs.getString(
-				getString(R.string.PREF_QUERY_MINIMUM), 
+				getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM), 
 				getString(R.string.minimum_values_default));
 
 		return "http://earthquake.usgs.gov/fdsnws/event/1/query?" + 
@@ -441,10 +441,10 @@ public class EarthquakeService extends IntentService {
 		if (info != null && info.isConnected()) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String type = prefs.getString(
-					getString(R.string.PREF_CONNECTION), 
-					getString(R.string.connection_values_wifi));
+					getString(R.string.PREF_REFRESH_CONNECTION_TYPE), 
+					getString(R.string.connection_type_values_wifi));
 			
-			if (type.equals(getString(R.string.connection_values_any)) || 
+			if (type.equals(getString(R.string.connection_type_values_any)) || 
 					(info.getType()) == ConnectivityManager.TYPE_WIFI) {
 				
 				return true;

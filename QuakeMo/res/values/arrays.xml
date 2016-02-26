@@ -43,13 +43,13 @@
         <item>6</item>
         <item>7</item>
     </string-array>
-    <string-array name="connection_entries">
+    <string-array name="connection_type_entries">
         <item>Wi-Fi only</item>
         <item>Any network</item>
     </string-array>
-    <string-array name="connection_values">
-        <item>@string/connection_values_wifi</item>
-        <item>@string/connection_values_any</item>
+    <string-array name="connection_type_values">
+        <item>@string/connection_type_values_wifi</item>
+        <item>@string/connection_type_values_any</item>
     </string-array>
 
 </resources>
