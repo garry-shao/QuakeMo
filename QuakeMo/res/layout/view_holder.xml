@@ -10,9 +10,9 @@
         android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/view_holder_margin_top"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceListItem" />
+        android:textAppearance="@style/textAppearanceListItemHead" />
 
     <TextView
         android:id="@+id/details"
@@ -22,7 +22,6 @@
         android:layout_below="@id/info"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="14sp" />
+        android:textAppearance="@style/textAppearanceListItemBody" />
 
 </RelativeLayout>
