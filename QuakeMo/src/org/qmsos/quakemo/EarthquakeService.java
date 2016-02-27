@@ -438,20 +438,23 @@ public class EarthquakeService extends IntentService {
 		ConnectivityManager manager = 
 				(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = manager.getActiveNetworkInfo();
-		if (info != null && info.isConnected()) {
+		
+		if (info == null || !info.isConnected()) {
+			return false;
+		}
+		
+		if (info.getType() == ConnectivityManager.TYPE_WIFI) {
+			return true;
+		} else {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			String type = prefs.getString(
-					getString(R.string.PREF_REFRESH_CONNECTION_TYPE), 
-					getString(R.string.connection_type_values_wifi));
-			
-			if (type.equals(getString(R.string.connection_type_values_any)) || 
-					(info.getType()) == ConnectivityManager.TYPE_WIFI) {
-				
+			String type = prefs.getString(getString(R.string.PREF_REFRESH_CONNECTION_TYPE), 
+					getString(R.string.connection_type_values_default));
+			if (type.equals(getString(R.string.connection_type_values_default))) {
+				return false;
+			} else {
 				return true;
 			}
 		}
-		
-		return false;
 	}
 
 }

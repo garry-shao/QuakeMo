@@ -100,9 +100,6 @@
     <string name="range_values_default">1</string>
     <string name="frequency_values_default">3</string>
     <string name="minimum_values_default">5</string>
-    
-    <!-- Values used in connection array's values -->
-    <string name="connection_type_values_wifi">wifi</string>
-    <string name="connection_type_values_any">any</string>
+    <string name="connection_type_values_default">wifi</string>
 
 </resources>
