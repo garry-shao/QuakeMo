@@ -50,6 +50,9 @@
     <string name="pref_refresh_auto_toggle_summary">Enable automatic refresh</string>
     <string name="pref_refresh_auto_toggle_title">Automatic</string>
     <string name="pref_refresh_auto_frequency_title">Frequency</string>
+    
+    <string name="pref_refresh_parameters_summary">Set such as range, minimum etc.</string>
+    <string name="pref_refresh_parameters_title">Parameters</string>
     <string name="pref_refresh_parameter_range_title">Range</string>
     <string name="pref_refresh_parameter_minimum_title">Minimum</string>
     <string name="pref_refresh_parameter_seamless_summary">Up to the timestamp</string>
@@ -74,6 +77,8 @@
     <string name="PREF_REFRESH_CONNECTION_TYPE">PREF_REFRESH_CONNECTION</string>
     <string name="PREF_REFRESH_AUTO_TOGGLE">PREF_REFRESH_AUTO_TOGGLE</string>
     <string name="PREF_REFRESH_AUTO_FREQUENCY">PREF_REFRESH_AUTO_FREQUENCY</string>
+    
+    <string name="PREF_REFRESH_PARAMETERS">PREF_REFRESH_PARAMETERS</string>
     
     <string name="PREF_REFRESH_PARAMETER_SEAMLESS">PREF_REFRESH_PARAMETER_SEAMLESS</string>
     <string name="PREF_REFRESH_PARAMETER_RANGE">PREF_REFRESH_PARAMETER_RANGE</string>

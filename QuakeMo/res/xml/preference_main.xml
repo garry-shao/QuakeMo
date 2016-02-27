@@ -27,30 +27,10 @@
             android:summary="%s"
             android:title="@string/pref_refresh_auto_frequency_title" />
 
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="TRUE"
-            android:disableDependentsState="true"
-            android:key="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
-            android:summary="@string/pref_refresh_parameter_seamless_summary"
-            android:title="@string/pref_refresh_parameter_seamless_title" />
-
-        <org.qmsos.quakemo.preference.ListPreferenceCompat
-            android:defaultValue="@string/range_values_default"
-            android:dependency="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
-            android:dialogTitle="@string/pref_refresh_parameter_range_title"
-            android:entries="@array/range_entries"
-            android:entryValues="@array/range_values"
-            android:key="@string/PREF_REFRESH_PARAMETER_RANGE"
-            android:summary="%s"
-            android:title="@string/pref_refresh_parameter_range_title" />
-        <org.qmsos.quakemo.preference.ListPreferenceCompat
-            android:defaultValue="@string/minimum_values_default"
-            android:dialogTitle="@string/pref_refresh_parameter_minimum_title"
-            android:entries="@array/minimum_entries"
-            android:entryValues="@array/minimum_values"
-            android:key="@string/PREF_REFRESH_PARAMETER_MINIMUM"
-            android:summary="%s"
-            android:title="@string/pref_refresh_parameter_minimum_title" />
+        <android.support.v7.preference.Preference
+            android:key="@string/PREF_REFRESH_PARAMETERS"
+            android:summary="@string/pref_refresh_parameters_summary"
+            android:title="@string/pref_refresh_parameters_title" />
     </android.support.v7.preference.PreferenceCategory>
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_category_display" >
         <android.support.v7.preference.SwitchPreferenceCompat
