@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.fragment;
+package org.qmsos.quakemo.dialog;
 
 import org.qmsos.quakemo.R;
 
@@ -16,18 +16,18 @@ import android.support.v7.app.AlertDialog;
  * 
  *
  */
-public class CompatPurgeDialog extends DialogFragment {
+public class Confirmation extends DialogFragment {
 
-	private OnPurgeSelectedListener mListener;
+	private OnConfirmationSelectedListener mListener;
 	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		
 		try {
-			mListener = (OnPurgeSelectedListener) activity;
+			mListener = (OnConfirmationSelectedListener) activity;
 		} catch (ClassCastException e) {
-			String listenerName = OnPurgeSelectedListener.class.getSimpleName();
+			String listenerName = OnConfirmationSelectedListener.class.getSimpleName();
 			
 			throw new ClassCastException(activity.toString() + " must implements " + listenerName);
 		}
@@ -36,14 +36,14 @@ public class CompatPurgeDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle(R.string.dialog_purge_title);
-		builder.setMessage(R.string.dialog_purge_message);
-		builder.setNegativeButton(R.string.dialog_purge_negative, null);
-		builder.setPositiveButton(R.string.dialog_purge_positive, new OnClickListener() {
+		builder.setTitle(R.string.dialog_confirmation_title);
+		builder.setMessage(R.string.dialog_confirmation_message);
+		builder.setNegativeButton(R.string.dialog_confirmation_negative, null);
+		builder.setPositiveButton(R.string.dialog_confirmation_positive, new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mListener.onPurgeSelected();
+				mListener.onConfirmationSelected();
 			}
 		});
 
@@ -51,15 +51,15 @@ public class CompatPurgeDialog extends DialogFragment {
 	}
 
 	/**
-	 * Interface for a callback to be invoked when purging action is called.
+	 * Interface for a callback to be invoked when the action is confirmed.
 	 * 
 	 *
 	 */
-	public interface OnPurgeSelectedListener {
+	public interface OnConfirmationSelectedListener {
 		/**
-		 * Called when the purge action is executed.
+		 * Called when the action is confirmed.
 		 */
-		void onPurgeSelected();
+		void onConfirmationSelected();
 	}
 
 }

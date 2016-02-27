@@ -2,7 +2,7 @@
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_category_refresh" >
-        <org.qmsos.quakemo.preference.ListPreferenceCompat
+        <org.qmsos.quakemo.preference.ListPreferenceCustom
             android:defaultValue="@string/connection_type_values_wifi"
             android:dialogTitle="@string/pref_refresh_connection_type_title"
             android:entries="@array/connection_type_entries"
@@ -17,7 +17,7 @@
             android:summary="@string/pref_refresh_auto_toggle_summary"
             android:title="@string/pref_refresh_auto_toggle_title" />
 
-        <org.qmsos.quakemo.preference.ListPreferenceCompat
+        <org.qmsos.quakemo.preference.ListPreferenceCustom
             android:defaultValue="@string/frequency_values_default"
             android:dependency="@string/PREF_REFRESH_AUTO_TOGGLE"
             android:dialogTitle="@string/pref_refresh_auto_frequency_title"
@@ -45,7 +45,7 @@
             android:summary="@string/pref_display_all_summary"
             android:title="@string/pref_display_all_title" />
 
-        <org.qmsos.quakemo.preference.ListPreferenceCompat
+        <org.qmsos.quakemo.preference.ListPreferenceCustom
             android:defaultValue="@string/range_values_default"
             android:dependency="@string/PREF_DISPLAY_ALL"
             android:dialogTitle="@string/pref_display_range_title"

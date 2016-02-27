@@ -15,20 +15,20 @@ import android.support.v7.preference.ListPreference;
 import android.util.AttributeSet;
 
 /**
- * A workaround of ListPreference since that in support library has bug on when
- * configuration changed.
+ * Customized ListPreference since ListPreferenceDialogFragmentCompat that 
+ * in support library has bug when configuration changed.
  * 
  *
  */
-public class ListPreferenceCompat extends ListPreference {
+public class ListPreferenceCustom extends ListPreference {
 
 	private AppCompatDialog mDialog;
 
-	public ListPreferenceCompat(Context context, AttributeSet attrs) {
+	public ListPreferenceCustom(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public ListPreferenceCompat(Context context) {
+	public ListPreferenceCustom(Context context) {
 		super(context);
 	}
 

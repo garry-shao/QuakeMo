@@ -23,10 +23,10 @@
     <!-- Strings used in popup dialog -->
     <string name="dialog_details_title">Earthquake Details</string>
     <string name="dialog_details_link">Link</string>
-    <string name="dialog_purge_title">Purge</string>
-    <string name="dialog_purge_message">Are you SURE ?</string>
-    <string name="dialog_purge_positive">Confirm</string>
-    <string name="dialog_purge_negative">Cancel</string>
+    <string name="dialog_confirmation_title">Purge</string>
+    <string name="dialog_confirmation_message">Are you SURE ?</string>
+    <string name="dialog_confirmation_positive">Confirm</string>
+    <string name="dialog_confirmation_negative">Cancel</string>
 
     <!-- Strings used in preferences -->
     <string name="list_preference_negative_button">Cancel</string>

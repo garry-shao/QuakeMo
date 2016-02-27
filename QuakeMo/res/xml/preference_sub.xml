@@ -8,7 +8,7 @@
         android:summary="@string/pref_refresh_parameter_seamless_summary"
         android:title="@string/pref_refresh_parameter_seamless_title" />
 
-    <org.qmsos.quakemo.preference.ListPreferenceCompat
+    <org.qmsos.quakemo.preference.ListPreferenceCustom
         android:defaultValue="@string/range_values_default"
         android:dependency="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
         android:dialogTitle="@string/pref_refresh_parameter_range_title"
@@ -17,7 +17,7 @@
         android:key="@string/PREF_REFRESH_PARAMETER_RANGE"
         android:summary="%s"
         android:title="@string/pref_refresh_parameter_range_title" />
-    <org.qmsos.quakemo.preference.ListPreferenceCompat
+    <org.qmsos.quakemo.preference.ListPreferenceCustom
         android:defaultValue="@string/minimum_values_default"
         android:dialogTitle="@string/pref_refresh_parameter_minimum_title"
         android:entries="@array/minimum_entries"

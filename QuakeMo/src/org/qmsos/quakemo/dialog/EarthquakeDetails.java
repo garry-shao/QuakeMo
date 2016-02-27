@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.fragment;
+package org.qmsos.quakemo.dialog;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -1,10 +1,10 @@
 package org.qmsos.quakemo;
 
+import org.qmsos.quakemo.dialog.Confirmation;
+import org.qmsos.quakemo.dialog.Confirmation.OnConfirmationSelectedListener;
+import org.qmsos.quakemo.dialog.EarthquakeDetails;
+import org.qmsos.quakemo.dialog.EarthquakeDetails.OnLinkSelectedListener;
 import org.qmsos.quakemo.fragment.BaseLoaderFragment;
-import org.qmsos.quakemo.fragment.CompatPurgeDialog;
-import org.qmsos.quakemo.fragment.CompatPurgeDialog.OnPurgeSelectedListener;
-import org.qmsos.quakemo.fragment.EarthquakeDetails;
-import org.qmsos.quakemo.fragment.EarthquakeDetails.OnLinkSelectedListener;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
@@ -43,7 +43,7 @@ import android.view.View;
  */
 public class MainActivity extends AppCompatActivity 
 implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
-	OnPurgeSelectedListener, OnLinkSelectedListener, OnViewHolderClickedListener {
+	OnConfirmationSelectedListener, OnLinkSelectedListener, OnViewHolderClickedListener {
 
 	// flags used to show different layout of Snackbar.
 	private static final int SNACKBAR_REFRESH = 1;
@@ -117,7 +117,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	
 			return true;
 		case (R.id.menu_purge):
-			CompatPurgeDialog dialog = new CompatPurgeDialog();
+			Confirmation dialog = new Confirmation();
 			dialog.show(getSupportFragmentManager(), "dialog");
 	
 			return true;
@@ -162,7 +162,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	}
 
 	@Override
-	public void onPurgeSelected() {
+	public void onConfirmationSelected() {
 		showSnackbar(SNACKBAR_PURGE, null);
 	}
 
