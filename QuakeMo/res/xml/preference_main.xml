@@ -11,7 +11,7 @@
             android:summary="%s"
             android:title="@string/pref_refresh_connection_type_title" />
 
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <org.qmsos.quakemo.preference.SwitchPreferenceCustom
             android:defaultValue="FALSE"
             android:key="@string/PREF_REFRESH_AUTO_TOGGLE"
             android:summary="@string/pref_refresh_auto_toggle_summary"

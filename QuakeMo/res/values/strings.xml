@@ -28,8 +28,12 @@
     <string name="dialog_purge_positive">Confirm</string>
     <string name="dialog_purge_negative">Cancel</string>
 
-    <!-- Strings used in list preferences -->
+    <!-- Strings used in preferences -->
     <string name="list_preference_negative_button">Cancel</string>
+    <string name="switch_preference_negative_button">No</string>
+    <string name="switch_preference_positive_button">Yes</string>
+    <string name="switch_preference_title">Warning</string>
+    <string name="switch_preference_message">May cost money updating, are you SURE ?</string>
 
     <!-- Strings used in notification builder -->
     <string name="notification_ticker">Earthquake!</string>
