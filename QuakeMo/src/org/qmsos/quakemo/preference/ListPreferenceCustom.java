@@ -2,7 +2,6 @@ package org.qmsos.quakemo.preference;
 
 import org.qmsos.quakemo.R;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -60,8 +59,8 @@ public class ListPreferenceCustom extends ListPreference {
 			}
 		});
 
-		final Dialog fDialog = mDialog = builder.create();
-		fDialog.show();
+		mDialog = builder.create();
+		mDialog.show();
 	}
 
 	@Override

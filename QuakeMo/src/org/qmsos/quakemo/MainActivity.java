@@ -21,7 +21,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.Snackbar.Callback;
 import android.support.design.widget.TabLayout;
@@ -31,6 +30,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.Toolbar.OnMenuItemClickListener;
 import android.view.MenuItem;
@@ -72,6 +72,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
 
+		PreferenceManager.setDefaultValues(this, R.xml.preference_main, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preference_sub, true);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 

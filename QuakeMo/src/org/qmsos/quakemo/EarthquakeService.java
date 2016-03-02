@@ -35,8 +35,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -373,7 +373,8 @@ public class EarthquakeService extends IntentService {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		boolean querySeamless = prefs.getBoolean(getString(R.string.PREF_REFRESH_PARAMETER_SEAMLESS), false);
+		boolean querySeamless = prefs.getBoolean(
+				getString(R.string.PREF_REFRESH_PARAMETER_SEAMLESS), false);
 		if (querySeamless) {
 			long defaultStartMillis = System.currentTimeMillis() - 7 * AlarmManager.INTERVAL_DAY;
 			if (timeStamp > defaultStartMillis) {

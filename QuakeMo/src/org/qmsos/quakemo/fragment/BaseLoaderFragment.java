@@ -7,11 +7,11 @@ import android.app.AlarmManager;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.preference.PreferenceManager;
 
 /**
  * Abstract class that used as template class, implementing loader callback.
