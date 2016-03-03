@@ -3,7 +3,6 @@ package org.qmsos.quakemo.fragment;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 
-import android.app.AlarmManager;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -20,6 +19,8 @@ import android.support.v7.preference.PreferenceManager;
  */
 public abstract class BaseLoaderFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
+	private static final long INTERVAL_DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -50,7 +51,7 @@ public abstract class BaseLoaderFragment extends Fragment implements LoaderCallb
 					getString(R.string.PREF_DISPLAY_RANGE), 
 					getString(R.string.range_values_default)));
 			
-			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
+			long startMillis = System.currentTimeMillis() - range * INTERVAL_DAY_IN_MILLIS;
 			
 			where = Entity.TIME + " >= " + startMillis;
 		}
