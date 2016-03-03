@@ -75,9 +75,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		mMessageReceiver = new MessageReceiver();
 		mMessageReceiver.setContainerContext(this);
 
-		Intent intent = new Intent(this, EarthquakeService.class);
-		intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
-		startService(intent);
+		configureService();
 	}
 
 	@Override
@@ -133,29 +131,17 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		if (key.equals(getString(R.string.PREF_DISPLAY_RANGE)) || 
 				key.equals(getString(R.string.PREF_DISPLAY_ALL))) {
 
-			reload(null);
+			reloadData(null);
 		}
 
 		if (key.equals(getString(R.string.PREF_APP_WIDGET_TOGGLE))) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-			int newState = prefs.getBoolean(key, false) ? 
-					PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
-					PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-
-			ComponentName componentName = new ComponentName(this, EarthquakeAppWidget.class);
-			
-			getPackageManager().setComponentEnabledSetting(
-					componentName, newState, PackageManager.DONT_KILL_APP);
+			configurePackage();
 		}
 		
 		if (key.equals(getString(R.string.PREF_REFRESH_AUTO_TOGGLE)) || 
 				key.equals(getString(R.string.PREF_REFRESH_AUTO_FREQUENCY))) {
 			
-			Intent intent = new Intent(this, EarthquakeService.class);
-			intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
-			
-			startService(intent);
+			configureService();
 		}
 	}
 
@@ -187,12 +173,42 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	}
 
 	/**
+	 * Configure the state of some components in package based on user preferences.
+	 */
+	private void configurePackage() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean flagAppWidget = prefs.getBoolean(getString(R.string.PREF_APP_WIDGET_TOGGLE), false);
+
+		int newState = flagAppWidget ? 
+				PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
+				PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+
+		ComponentName componentName = new ComponentName(this, EarthquakeAppWidget.class);
+		
+		getPackageManager().setComponentEnabledSetting(
+				componentName, newState, PackageManager.DONT_KILL_APP);
+	}
+
+	/**
+	 * Configure the state of background service based on user preferences.
+	 */
+	private void configureService() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
+		
+		Intent intent = new Intent(this, EarthquakeService.class);
+		intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
+		intent.putExtra(IntentConstants.EXTRA_REFRESH_AUTO, flagAuto);
+		startService(intent);
+	}
+
+	/**
 	 * Reload all the cursors for new data.
 	 * 
 	 * @param bundle
 	 *            May used to pass extra arguments to create new cursor.
 	 */
-	private void reload(Bundle bundle) {
+	private void reloadData(Bundle bundle) {
 		FragmentManager manager = getSupportFragmentManager();
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);

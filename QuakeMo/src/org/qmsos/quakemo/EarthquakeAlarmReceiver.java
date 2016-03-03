@@ -20,6 +20,7 @@ public class EarthquakeAlarmReceiver extends BroadcastReceiver {
 		if (action != null && action.equals(IntentConstants.ACTION_REFRESH_ALARM)) {
 			Intent refreshIntent = new Intent(context, EarthquakeService.class);
 			refreshIntent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
+			refreshIntent.putExtra(IntentConstants.EXTRA_REFRESH_AUTO, true);
 			
 			context.startService(refreshIntent);
 		}

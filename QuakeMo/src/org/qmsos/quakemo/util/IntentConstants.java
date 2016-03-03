@@ -29,6 +29,11 @@ public class IntentConstants {
 	public static final String ACTION_REFRESH_AUTO = BASE_PACKAGE_NAME + "ACTION_REFRESH_AUTO";
 	
 	/**
+	 * Used as a boolean field in determine whether start the automatic refreshing.
+	 */
+	public static final String EXTRA_REFRESH_AUTO = BASE_PACKAGE_NAME + "EXTRA_REFRESH_AUTO";
+	
+	/**
 	 * Activity action: manually refreshing for new earthquakes.
 	 */
 	public static final String ACTION_REFRESH_MANUAL = BASE_PACKAGE_NAME + "ACTION_REFRESH_MANUAL";

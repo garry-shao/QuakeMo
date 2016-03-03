@@ -76,8 +76,7 @@ public class EarthquakeService extends IntentService {
 		}
 		
 		if (action.equals(IntentConstants.ACTION_REFRESH_AUTO)) {
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
+			boolean flagAuto = intent.getBooleanExtra(IntentConstants.EXTRA_REFRESH_AUTO, false);
 			
 			scheduleAutoRefresh(flagAuto);
 			
