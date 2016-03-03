@@ -67,15 +67,14 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 		tabLayout.setupWithViewPager(viewPager);
 
-		PreferenceManager.setDefaultValues(this, R.xml.preference_main, false);
-		PreferenceManager.setDefaultValues(this, R.xml.preference_sub, true);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		mMessageReceiver = new MessageReceiver();
 		mMessageReceiver.setContainerContext(this);
 
-		configureService();
+		configureDefaults();
+		scheduleService();
 	}
 
 	@Override
@@ -141,7 +140,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		if (key.equals(getString(R.string.PREF_REFRESH_AUTO_TOGGLE)) || 
 				key.equals(getString(R.string.PREF_REFRESH_AUTO_FREQUENCY))) {
 			
-			configureService();
+			scheduleService();
 		}
 	}
 
@@ -173,6 +172,23 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	}
 
 	/**
+	 * Initialize default values of preferences, only execute once.
+	 */
+	private void configureDefaults() {
+		// key used to mark the initialization, should not be exposed to xml resources.
+		String keyInitialized = "PREF_DEFAULT_INITIALIZED";
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean flagInitialized = prefs.getBoolean(keyInitialized, false);
+		if (!flagInitialized) {
+			PreferenceManager.setDefaultValues(this, R.xml.preference_main, true);
+			PreferenceManager.setDefaultValues(this, R.xml.preference_sub, true);
+			
+			prefs.edit().putBoolean(keyInitialized, true).apply();
+		}
+	}
+
+	/**
 	 * Configure the state of some components in package based on user preferences.
 	 */
 	private void configurePackage() {
@@ -190,9 +206,9 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	}
 
 	/**
-	 * Configure the state of background service based on user preferences.
+	 * Schedule the state of background service based on user preferences.
 	 */
-	private void configureService() {
+	private void scheduleService() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
 		
