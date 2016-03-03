@@ -45,11 +45,6 @@ public class MainActivity extends AppCompatActivity
 implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
 	OnConfirmationSelectedListener, OnLinkSelectedListener, OnViewHolderClickedListener {
 
-	// flags used to show different layout of Snackbar.
-	private static final int SNACKBAR_REFRESH = 1;
-	private static final int SNACKBAR_PURGE = 2;
-	private static final int SNACKBAR_NORMAL = 3;
-	
 	private MessageReceiver mMessageReceiver;
 
 	@Override
@@ -78,6 +73,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		prefs.registerOnSharedPreferenceChangeListener(this);
 
 		mMessageReceiver = new MessageReceiver();
+		mMessageReceiver.setContainerContext(this);
 
 		Intent intent = new Intent(this, EarthquakeService.class);
 		intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
@@ -124,7 +120,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	
 			return true;
 		case (R.id.menu_refresh):
-			showSnackbar(SNACKBAR_REFRESH, null);
+			SnackbarFactory.showSnackbar(this, SnackbarFactory.REFRESH, null);
 	
 			return true;
 		default:
@@ -165,7 +161,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 
 	@Override
 	public void onConfirmationSelected() {
-		showSnackbar(SNACKBAR_PURGE, null);
+		SnackbarFactory.showSnackbar(this, SnackbarFactory.PURGE, null);
 	}
 
 	@Override
@@ -180,86 +176,14 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 
 	@Override
 	public void onLinkInvalid() {
-		showSnackbar(SNACKBAR_NORMAL, getString(R.string.snackbar_invalid));
+		String invalidText = getString(R.string.snackbar_invalid);
+		SnackbarFactory.showSnackbar(this, SnackbarFactory.NORMAL, invalidText);
 	}
 
 	@Override
 	public void onViewHolderClicked(long earthquakeId) {
 		EarthquakeDetails dialog = EarthquakeDetails.newInstance(this, earthquakeId);
 		dialog.show(getSupportFragmentManager(), "dialog");
-	}
-
-	/**
-	 * Implementation of showing snackbar, should use {@link #showSnackbar(int)} or 
-	 * {@link #showSnackbar(String)}.
-	 * 
-	 * @param flag
-	 *            layout of the snackbar, either {@link SNACKBAR_REFRESH},  
-	 *            {@link SNACKBAR_PURGE} or {@link SNACKBAR_NORMAL}.
-	 * @param text
-	 *            Text shown on snackbar, used when flag is {@link SNACKBAR_NORMAL}.
-	 */
-	private void showSnackbar(int flag, String text) {
-		View view = findViewById(R.id.coordinator_layout);
-		if (view == null) {
-			return;
-		}
-		
-		final Intent intent = new Intent(this, EarthquakeService.class);
-		
-		Snackbar snackbar = null;
-		switch (flag) {
-		case SNACKBAR_REFRESH:
-			intent.setAction(IntentConstants.ACTION_REFRESH_MANUAL);
-			
-			snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
-			snackbar.setCallback(new Callback() {
-
-				@Override
-				public void onDismissed(Snackbar snackbar, int event) {
-					startService(intent);
-				}
-			});
-			break;
-		case SNACKBAR_PURGE:
-			intent.setAction(IntentConstants.ACTION_PURGE_DATABASE);
-			
-			snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
-			snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE,	false);
-				}
-			});
-			snackbar.setCallback(new Callback() {
-
-				@Override
-				public void onDismissed(Snackbar snackbar, int event) {
-					if (event != Callback.DISMISS_EVENT_ACTION) {
-						intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, true);
-					}
-					startService(intent);
-				}
-			});
-			break;
-		case SNACKBAR_NORMAL:
-			if (text != null) {
-				snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
-			}
-			break;
-		}
-		
-		if (snackbar != null) {
-			int snackbarActionTextColor = 
-					ContextCompat.getColor(this, R.color.snackbar_action_text_color);
-			int snakbarBackgroundColor = 
-					ContextCompat.getColor(this, R.color.snackbar_background_color);
-			
-			snackbar.setActionTextColor(snackbarActionTextColor);
-			snackbar.getView().setBackgroundColor(snakbarBackgroundColor);
-			snackbar.show();
-		}
 	}
 
 	/**
@@ -297,6 +221,18 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	 */
 	private class MessageReceiver extends BroadcastReceiver {
 
+		private Context mContainerContext;
+		
+		/**
+		 * Set the Context that this receiver running inside.
+		 * 
+		 * @param containerContext
+		 *            The container context.
+		 */
+		public void setContainerContext(Context containerContext) {
+			mContainerContext = containerContext;
+		}
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
@@ -322,9 +258,109 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				}
 			}
 			
-			showSnackbar(SNACKBAR_NORMAL, result);
+			SnackbarFactory.showSnackbar(mContainerContext, SnackbarFactory.NORMAL, result);
 		}
 
+	}
+
+	/**
+	 * Factory class customized that construct & show Snackbar.
+	 */
+	private static class SnackbarFactory {
+
+		/**
+		 * Style of normal.
+		 */
+		static final int NORMAL = 1;
+
+		/**
+		 * Style of update from web server.
+		 */
+		static final int REFRESH = 2;
+
+		/**
+		 * Style of purge database.
+		 */
+		static final int PURGE = 3;
+
+		/**
+		 * Construct & show Snackbar based on the following parameters.
+		 * 
+		 * @param context
+		 *            The context that the constructed Snackbar running inside.
+		 * @param flag
+		 *            Layout of the snackbar, either {@link #NORMAL}, {@link #REFRESH} 
+		 *            or {@link #PURGE}.
+		 * @param text
+		 *            Text shown on snackbar, used when flag is {@link #NORMAL}.
+		 */
+		static void showSnackbar(Context context, int flag, String text) {
+			if ((context == null) || !(context instanceof MainActivity)) {
+				return;
+			}
+			View view = ((MainActivity) context).findViewById(R.id.coordinator_layout);
+			if (view == null) {
+				return;
+			}
+			
+			final Context fContext = context;
+			final Intent intent = new Intent(fContext, EarthquakeService.class);
+			
+			Snackbar snackbar = null;
+			switch (flag) {
+			case NORMAL:
+				if (text != null) {
+					snackbar = Snackbar.make(view, text, Snackbar.LENGTH_SHORT);
+				}
+				break;
+			case REFRESH:
+				intent.setAction(IntentConstants.ACTION_REFRESH_MANUAL);
+				
+				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
+				snackbar.setCallback(new Callback() {
+
+					@Override
+					public void onDismissed(Snackbar snackbar, int event) {
+						fContext.startService(intent);
+					}
+				});
+				break;
+			case PURGE:
+				intent.setAction(IntentConstants.ACTION_PURGE_DATABASE);
+				
+				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
+				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, false);
+					}
+				});
+				snackbar.setCallback(new Callback() {
+
+					@Override
+					public void onDismissed(Snackbar snackbar, int event) {
+						if (event != Callback.DISMISS_EVENT_ACTION) {
+							intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, true);
+						}
+						fContext.startService(intent);
+					}
+				});
+				break;
+			}
+			
+			if (snackbar != null) {
+				int snackbarActionTextColor = 
+						ContextCompat.getColor(fContext, R.color.snackbar_action_text_color);
+				int snakbarBackgroundColor = 
+						ContextCompat.getColor(fContext, R.color.snackbar_background_color);
+				
+				snackbar.setActionTextColor(snackbarActionTextColor);
+				snackbar.getView().setBackgroundColor(snakbarBackgroundColor);
+				snackbar.show();
+			}
+		}		
+	
 	}
 
 }
