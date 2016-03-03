@@ -8,7 +8,6 @@ import java.util.Locale;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
@@ -60,15 +59,15 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 		
 		try {
-			mListener = (OnLinkSelectedListener) activity;
+			mListener = (OnLinkSelectedListener) context;
 		} catch (ClassCastException e) {
 			String listenerName = OnLinkSelectedListener.class.getSimpleName();
 			
-			throw new ClassCastException(activity.toString() + " must implements " + listenerName);
+			throw new ClassCastException(context.toString() + " must implements " + listenerName);
 		}
 	}
 

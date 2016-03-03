@@ -2,8 +2,8 @@ package org.qmsos.quakemo.dialog;
 
 import org.qmsos.quakemo.R;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
@@ -21,15 +21,15 @@ public class Confirmation extends DialogFragment {
 	private OnConfirmationSelectedListener mListener;
 	
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 		
 		try {
-			mListener = (OnConfirmationSelectedListener) activity;
+			mListener = (OnConfirmationSelectedListener) context;
 		} catch (ClassCastException e) {
 			String listenerName = OnConfirmationSelectedListener.class.getSimpleName();
 			
-			throw new ClassCastException(activity.toString() + " must implements " + listenerName);
+			throw new ClassCastException(context.toString() + " must implements " + listenerName);
 		}
 	}
 
