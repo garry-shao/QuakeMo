@@ -1,13 +1,13 @@
-package org.qmsos.quakemo.provider;
+package org.qmsos.quakemo.contract;
 
 import android.net.Uri;
 
 /**
- * The contract between the earthquake provider and other components. Contains
- * definitions for the supported URIs and data columns.
+ * The contract of the earthquake provider. Contains definition of the supported 
+ * URIs and data columns.
  *
  */
-public final class EarthquakeContract {
+public final class ProviderContract {
 
 	/**
 	 * Authority used in CRUD operations from earthquake provider.

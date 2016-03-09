@@ -1,12 +1,11 @@
-package org.qmsos.quakemo.util;
+package org.qmsos.quakemo.contract;
 
 /**
- * Utility class containing various information(action, bundle's key etc.) in app's components, 
- * including Inter-Process Communication.
- * 
+ * The contract of the intents in application scope. Contains definition of intent
+ * action and intent's extra key.
  *
  */
-public class IntentConstants {
+public class IntentContract {
 
 	// base package name, normally app's package name.
 	private static final String BASE_PACKAGE_NAME = "org.qmsos.quakemo" + ".";

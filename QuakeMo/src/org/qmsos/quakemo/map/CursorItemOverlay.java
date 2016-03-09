@@ -7,7 +7,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.osmdroid.views.overlay.Overlay;
-import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
 
 import android.content.Context;
 import android.database.Cursor;

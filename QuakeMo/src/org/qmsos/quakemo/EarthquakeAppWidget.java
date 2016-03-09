@@ -1,7 +1,7 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
-import org.qmsos.quakemo.util.IntentConstants;
+import org.qmsos.quakemo.contract.IntentContract;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -43,7 +43,7 @@ public class EarthquakeAppWidget extends AppWidgetProvider {
 		super.onReceive(context, intent);
 
 		String action = intent.getAction();
-		if (action != null && action.equals(IntentConstants.ACTION_REFRESH_APPWIDGET)) {
+		if (action != null && action.equals(IntentContract.ACTION_REFRESH_APPWIDGET)) {
 			updateEarthquake(context);
 		}
 	}

@@ -1,5 +1,6 @@
 package org.qmsos.quakemo;
 
+import org.qmsos.quakemo.contract.IntentContract;
 import org.qmsos.quakemo.dialog.Confirmation;
 import org.qmsos.quakemo.dialog.Confirmation.OnConfirmationSelectedListener;
 import org.qmsos.quakemo.dialog.EarthquakeDetails;
@@ -8,7 +9,6 @@ import org.qmsos.quakemo.fragment.BaseLoaderFragment;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
 import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
-import org.qmsos.quakemo.util.IntentConstants;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.OnViewHolderClickedListener;
 
 import android.content.BroadcastReceiver;
@@ -82,8 +82,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		super.onResume();
 
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(IntentConstants.ACTION_PURGE_EXECUTED);
-		filter.addAction(IntentConstants.ACTION_REFRESH_EXECUTED);
+		filter.addAction(IntentContract.ACTION_PURGE_EXECUTED);
+		filter.addAction(IntentContract.ACTION_REFRESH_EXECUTED);
 		
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
 	}
@@ -213,8 +213,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
 		
 		Intent intent = new Intent(this, EarthquakeService.class);
-		intent.setAction(IntentConstants.ACTION_REFRESH_AUTO);
-		intent.putExtra(IntentConstants.EXTRA_REFRESH_AUTO, flagAuto);
+		intent.setAction(IntentContract.ACTION_REFRESH_AUTO);
+		intent.putExtra(IntentContract.EXTRA_REFRESH_AUTO, flagAuto);
 		startService(intent);
 	}
 
@@ -273,16 +273,16 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			}
 			
 			String result = null;
-			if (action.equals(IntentConstants.ACTION_REFRESH_EXECUTED)) {
-				boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_REFRESH_EXECUTED, false);
+			if (action.equals(IntentContract.ACTION_REFRESH_EXECUTED)) {
+				boolean flag = intent.getBooleanExtra(IntentContract.EXTRA_REFRESH_EXECUTED, false);
 				if (flag) {
-					result = intent.getIntExtra(IntentConstants.EXTRA_ADDED_COUNT, 0) + 
+					result = intent.getIntExtra(IntentContract.EXTRA_ADDED_COUNT, 0) + 
 							" "	+ getString(R.string.snackbar_refreshed);
 				} else {
 					result = getString(R.string.snackbar_disconnected);
 				}
-			} else if (action.equals(IntentConstants.ACTION_PURGE_EXECUTED)) {
-				boolean flag = intent.getBooleanExtra(IntentConstants.EXTRA_PURGE_EXECUTED, false);
+			} else if (action.equals(IntentContract.ACTION_PURGE_EXECUTED)) {
+				boolean flag = intent.getBooleanExtra(IntentContract.EXTRA_PURGE_EXECUTED, false);
 				if (flag) {
 					result = getString(R.string.snackbar_purged);
 				} else {
@@ -346,7 +346,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				}
 				break;
 			case REFRESH:
-				intent.setAction(IntentConstants.ACTION_REFRESH_MANUAL);
+				intent.setAction(IntentContract.ACTION_REFRESH_MANUAL);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
 				snackbar.setCallback(new Callback() {
@@ -358,14 +358,14 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				});
 				break;
 			case PURGE:
-				intent.setAction(IntentConstants.ACTION_PURGE_DATABASE);
+				intent.setAction(IntentContract.ACTION_PURGE_DATABASE);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_purging, Snackbar.LENGTH_LONG);
 				snackbar.setAction(R.string.snackbar_undo, new View.OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, false);
+						intent.putExtra(IntentContract.EXTRA_PURGE_DATABASE, false);
 					}
 				});
 				snackbar.setCallback(new Callback() {
@@ -373,7 +373,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 					@Override
 					public void onDismissed(Snackbar snackbar, int event) {
 						if (event != Callback.DISMISS_EVENT_ACTION) {
-							intent.putExtra(IntentConstants.EXTRA_PURGE_DATABASE, true);
+							intent.putExtra(IntentContract.EXTRA_PURGE_DATABASE, true);
 						}
 						fContext.startService(intent);
 					}

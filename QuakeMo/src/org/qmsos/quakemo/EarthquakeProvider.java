@@ -1,7 +1,7 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.provider.EarthquakeContract;
-import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
+import org.qmsos.quakemo.contract.ProviderContract;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -32,8 +32,8 @@ public class EarthquakeProvider extends ContentProvider {
 	private static final UriMatcher URI_MATCHER;
 	static {
 		URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-		URI_MATCHER.addURI(EarthquakeContract.AUTHORITY, "earthquakes", QUAKES);
-		URI_MATCHER.addURI(EarthquakeContract.AUTHORITY, "earthquakes/#", QUAKE_ID);
+		URI_MATCHER.addURI(ProviderContract.AUTHORITY, "earthquakes", QUAKES);
+		URI_MATCHER.addURI(ProviderContract.AUTHORITY, "earthquakes/#", QUAKE_ID);
 	}
 	
 	private DatabaseHelper mDatabaseHelper ;

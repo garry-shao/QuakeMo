@@ -1,7 +1,7 @@
 package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.provider.EarthquakeContract.Entity;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
