@@ -5,7 +5,7 @@ package org.qmsos.quakemo.contract;
  * action and intent's extra key.
  *
  */
-public class IntentContract {
+public final class IntentContract {
 
 	// base package name, normally app's package name.
 	private static final String BASE_PACKAGE_NAME = "org.qmsos.quakemo" + ".";
