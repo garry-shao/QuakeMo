@@ -117,10 +117,10 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 				
 				return true;
 			} else {
-				return super.onKeyDown(keyCode, event);
+				return super.onKeyUp(keyCode, event);
 			}
 		} else {
-			return super.onKeyDown(keyCode, event);
+			return super.onKeyUp(keyCode, event);
 		}
 	}
 
