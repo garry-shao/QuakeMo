@@ -33,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.Toolbar.OnMenuItemClickListener;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -101,6 +102,26 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
 
 		super.onDestroy();
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
+			Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+			if (toolbar != null) {
+				if (toolbar.isOverflowMenuShowing()) {
+					toolbar.hideOverflowMenu();
+				} else {
+					toolbar.showOverflowMenu();
+				}
+				
+				return true;
+			} else {
+				return super.onKeyDown(keyCode, event);
+			}
+		} else {
+			return super.onKeyDown(keyCode, event);
+		}
 	}
 
 	@Override
