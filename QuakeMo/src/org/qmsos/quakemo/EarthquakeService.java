@@ -323,38 +323,54 @@ public class EarthquakeService extends IntentService {
 	 * Download from remote server for results.
 	 * 
 	 * @param request
-	 *            The request string of URL.
-	 * @return Results of this query, NULL otherwise.
+	 *            The URL string of request, <b>should comply with URL-Encoding</b>.
+	 * @return Results of this request, NULL otherwise.
 	 */
 	private String download(String request) {
-		StringBuilder builder = new StringBuilder();
-	
+		if (request == null) {
+			return null;
+		}
+		
+		URL url = null;
 		try {
-			// workaround: whitespace makes the url invalid, replace with URL-encode.
-			URL url = new URL(request.replace(" ", "%20"));
-			HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-			try {
-				int responseCode = httpConnection.getResponseCode();
-				if (responseCode == HttpURLConnection.HTTP_OK) {
-					InputStream inStream = httpConnection.getInputStream();
-					BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
-					
-					String line;
-					while ((line = reader.readLine()) != null) {
-						builder.append(line);
-					}
+			url = new URL(request);
+		} catch (MalformedURLException e) {
+			Log.e(TAG, "The provided URL is Malformed. " + e.getMessage());
+			
+			return null;
+		}
+		
+		HttpURLConnection httpConnection = null;
+		try {
+			httpConnection = (HttpURLConnection) url.openConnection();
+		} catch (IOException e) {
+			Log.e(TAG, "Error opening connection. " + e.getMessage());
+			
+			return null;
+		}
+		
+		StringBuilder builder = new StringBuilder();
+		try {
+			int responseCode = httpConnection.getResponseCode();
+			if (responseCode == HttpURLConnection.HTTP_OK) {
+				InputStream inStream = httpConnection.getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inStream));
+				
+				String line;
+				while ((line = reader.readLine()) != null) {
+					builder.append(line);
 				}
-			} catch (IOException e) {
-				Log.e(TAG, "Error reading from the http connection");
-			} finally {
+			}
+		} catch (IOException e) {
+			Log.e(TAG, "Error reading from the connection. " + e.getMessage());
+			
+			return null;
+		} finally {
+			if (httpConnection != null) {
 				httpConnection.disconnect();
 			}
-		} catch (MalformedURLException e) {
-			Log.e(TAG, "Malformed URL");
-		} catch (IOException e) {
-			Log.e(TAG, "Error opening the http connection");
 		}
-	
+		
 		return builder.toString();
 	}
 
