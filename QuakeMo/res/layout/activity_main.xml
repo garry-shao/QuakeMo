@@ -26,9 +26,7 @@
             android:id="@+id/tab_layout"
             style="@style/tabLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabSelectedTextColor="?attr/colorAccent" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -3,7 +3,9 @@
 
     <!-- TabLayout style. -->
     <style name="tabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabGravity">fill</item>
         <item name="tabTextAppearance">@style/tabTextAppearance</item>
+        <item name="tabSelectedTextColor">?attr/colorAccent</item>
     </style>
     <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
