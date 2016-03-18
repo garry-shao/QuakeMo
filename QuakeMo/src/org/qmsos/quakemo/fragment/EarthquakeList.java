@@ -5,11 +5,9 @@ import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +18,8 @@ import android.view.ViewGroup;
  *
  */
 public class EarthquakeList extends BaseLoaderFragment {
-
-	private static final String KEY_RECYCLER_VIEW_STATE = "KEY_RECYCLER_VIEW_STATE";
 	
 	private CursorRecyclerViewAdapter mCursorAdapter;
-	private RecyclerView mRecyclerView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,36 +34,9 @@ public class EarthquakeList extends BaseLoaderFragment {
 
 		mCursorAdapter = new CursorRecyclerViewAdapter(getContext(), null);
 		
-		mRecyclerView = (RecyclerView) view.findViewById(R.id.earthquake_list);
-		mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-		mRecyclerView.setAdapter(mCursorAdapter);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		LayoutManager layoutManager = null;
-		if (mRecyclerView != null) {
-			layoutManager = mRecyclerView.getLayoutManager();
-		}
-		
-		if ((layoutManager != null) && (layoutManager instanceof LinearLayoutManager)) {
-			outState.putParcelable(KEY_RECYCLER_VIEW_STATE, layoutManager.onSaveInstanceState());
-		}
-		
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onViewStateRestored(Bundle savedInstanceState) {
-		super.onViewStateRestored(savedInstanceState);
-		
-		if (savedInstanceState != null) {
-			Parcelable savedRecyclerViewState = savedInstanceState.getParcelable(KEY_RECYCLER_VIEW_STATE);
-			LayoutManager layoutManager = mRecyclerView.getLayoutManager();
-			if (layoutManager instanceof LinearLayoutManager) {
-				layoutManager.onRestoreInstanceState(savedRecyclerViewState);
-			}
-		}
+		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.earthquake_list);
+		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+		recyclerView.setAdapter(mCursorAdapter);
 	}
 
 	@Override
