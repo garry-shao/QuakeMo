@@ -1,24 +1,22 @@
 package org.qmsos.quakemo.widget;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 
 /**
- * Customized MapView class that restores extra information when configuration changed. 
+ * Customized Toolbar class that keeping title in SavedState.
  *
  */
-public class CustomMapView extends MapView {
+public class CustomToolbar extends Toolbar {
 
-	public CustomMapView(Context context, AttributeSet attrs) {
+	public CustomToolbar(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public CustomMapView(Context context) {
+	public CustomToolbar(Context context) {
 		super(context);
 	}
 
@@ -26,12 +24,10 @@ public class CustomMapView extends MapView {
 	protected Parcelable onSaveInstanceState() {
 		Parcelable superState = super.onSaveInstanceState();
 		
-		GeoPoint center = (GeoPoint) getMapCenter();
-		int zoomLevel = getZoomLevel();
-		
+		String title = getTitle().toString();
+
 		SavedState savedState = new SavedState(superState);
-		savedState.mCenter = center;
-		savedState.mZoomLevel = zoomLevel;
+		savedState.mTitle = title;
 		
 		return savedState;
 	}
@@ -46,9 +42,8 @@ public class CustomMapView extends MapView {
 		SavedState savedState = (SavedState) state;
 		super.onRestoreInstanceState(savedState.getSuperState());
 		
-		if (savedState.mCenter != null && savedState.mZoomLevel >= 0) {
-			getController().setCenter(savedState.mCenter);
-			getController().setZoom(savedState.mZoomLevel);
+		if (savedState.mTitle != null) {
+			setTitle(savedState.mTitle);
 		}
 	}
 
@@ -57,8 +52,7 @@ public class CustomMapView extends MapView {
 	 */
 	static class SavedState extends BaseSavedState {
 
-		private GeoPoint mCenter;
-		private int mZoomLevel;
+		private String mTitle;
 
 		SavedState(Parcelable superState) {
 			super(superState);
@@ -66,8 +60,7 @@ public class CustomMapView extends MapView {
 
 		@Override
 		public void writeToParcel(Parcel out, int flags) {
-			out.writeParcelable(mCenter, 0);
-			out.writeInt(mZoomLevel);
+			out.writeString(mTitle);
 			
 			super.writeToParcel(out, flags);
 		}
@@ -83,13 +76,13 @@ public class CustomMapView extends MapView {
 			public SavedState[] newArray(int size) {
 				return new SavedState[size];
 			}
+			
 		};
 
 		private SavedState(Parcel source) {
 			super(source);
 			
-			mCenter = source.readParcelable(null);
-			mZoomLevel = source.readInt();
+			mTitle = source.readString();
 		}
 
 	}

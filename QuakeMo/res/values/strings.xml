@@ -48,34 +48,36 @@
     <string name="pref_refresh_auto_toggle_title">Automatic</string>
     <string name="pref_refresh_auto_frequency_title">Frequency</string>
     
-    <string name="pref_refresh_parameters_summary">Set such as range, minimum etc.</string>
-    <string name="pref_refresh_parameters_title">Parameters</string>
+    <string name="pref_category_parameter">Parameter</string>
     <string name="pref_refresh_parameter_range_title">Range</string>
     <string name="pref_refresh_parameter_minimum_title">Minimum</string>
     <string name="pref_refresh_parameter_seamless_summary">Up to the timestamp</string>
     <string name="pref_refresh_parameter_seamless_title">Seamless</string>
     
-    <string name="pref_category_display">Display</string>
     <string name="pref_display_all_summary">Show all earthquakes stored</string>
     <string name="pref_display_all_title">Show all</string>
     <string name="pref_display_range_title">Show range</string>
     <string name="pref_display_link_summary">Show a link to website on details</string>
     <string name="pref_display_link_title">Show link</string>
     
-    <string name="pref_category_component">Component</string>
     <string name="pref_notify_toggle_summary">Enable notification</string>
     <string name="pref_notify_toggle_title">Notification</string>
     <string name="pref_notify_sound_summary">Notification with sound</string>
     <string name="pref_notify_sound_title">With sound</string>
     <string name="pref_app_widget_toggle_summary">Register app widget</string>
     <string name="pref_app_widget_toggle_title">App widget</string>
+    
+    <string name="pref_about_content_title">USGS, Osmdroid, OpenStreetMap</string>
+    
+    <string name="pref_header_about_title">About</string>
+    <string name="pref_header_component_title">Component</string>
+    <string name="pref_header_display_title">Display</string>
+    <string name="pref_header_refresh_title">Refresh</string>
 
     <!-- Keys for shared preferences. DO NOT MODIFY -->
     <string name="PREF_REFRESH_CONNECTION_TYPE">PREF_REFRESH_CONNECTION</string>
     <string name="PREF_REFRESH_AUTO_TOGGLE">PREF_REFRESH_AUTO_TOGGLE</string>
     <string name="PREF_REFRESH_AUTO_FREQUENCY">PREF_REFRESH_AUTO_FREQUENCY</string>
-    
-    <string name="PREF_REFRESH_PARAMETERS">PREF_REFRESH_PARAMETERS</string>
     
     <string name="PREF_REFRESH_PARAMETER_SEAMLESS">PREF_REFRESH_PARAMETER_SEAMLESS</string>
     <string name="PREF_REFRESH_PARAMETER_RANGE">PREF_REFRESH_PARAMETER_RANGE</string>
@@ -88,6 +90,13 @@
     <string name="PREF_NOTIFY_TOGGLE">PREF_NOTIFY_TOGGLE</string>
     <string name="PREF_NOTIFY_SOUND">PREF_NOTIFY_SOUND</string>
     <string name="PREF_APP_WIDGET_TOGGLE">PREF_APP_WIDGET_TOGGLE</string>
+    
+    <string name="PREF_ABOUT_CONTENT">PREF_ABOUT_CONTENT</string>
+    
+    <string name="PREF_HEADER_ABOUT">PREF_HEADER_ABOUT</string>
+    <string name="PREF_HEADER_COMPONENT">PREF_HEADER_COMPONENT</string>
+    <string name="PREF_HEADER_DISPLAY">PREF_HEADER_DISPLAY</string>
+    <string name="PREF_HEADER_REFRESH">PREF_HEADER_REFRESH</string>
     
     <!-- Default values in /array. CHECK before modify -->
     <string name="range_values_default">1</string>
