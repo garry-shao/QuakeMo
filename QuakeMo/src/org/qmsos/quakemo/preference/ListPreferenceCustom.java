@@ -5,6 +5,8 @@ import org.qmsos.quakemo.R;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -23,12 +25,33 @@ public class ListPreferenceCustom extends ListPreference {
 
 	private AppCompatDialog mDialog;
 
+	private String mButtonNegative;
+
+	public ListPreferenceCustom(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		
+		final Resources res = context.getResources();
+		final String defaultNegativeButton = 
+				res.getString(R.string.default_list_preference_negative_button);
+		
+		TypedArray a = context.obtainStyledAttributes(
+				attrs, R.styleable.ListPreferenceCustom, defStyleAttr, 0);
+		
+		String attributeNevativeButton = 
+				a.getString(R.styleable.ListPreferenceCustom_listPrefernceNegativeButton);
+		
+		mButtonNegative = 
+				(attributeNevativeButton != null) ? attributeNevativeButton : defaultNegativeButton;
+		
+		a.recycle();
+	}
+
 	public ListPreferenceCustom(Context context, AttributeSet attrs) {
-		super(context, attrs);
+		this(context, attrs, R.attr.dialogPreferenceStyle);
 	}
 
 	public ListPreferenceCustom(Context context) {
-		super(context);
+		this(context, null);
 	}
 
 	@Override
@@ -43,7 +66,7 @@ public class ListPreferenceCustom extends ListPreference {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setTitle(getTitle());
 		builder.setIcon(getDialogIcon());
-		builder.setNegativeButton(R.string.list_preference_negative_button, null);
+		builder.setNegativeButton(mButtonNegative, null);
 		builder.setSingleChoiceItems(getEntries(), preSelect, new OnClickListener() {
 
 			@Override

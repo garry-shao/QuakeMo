@@ -5,6 +5,8 @@ import org.qmsos.quakemo.R;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -22,22 +24,64 @@ import android.util.AttributeSet;
 public class SwitchPreferenceCustom extends SwitchPreferenceCompat {
 
 	private AppCompatDialog mDialog;
-	
+
+	private String mTitle;
+	private String mMessage;
+	private String mButtonNegative;
+	private String mButtonPositive;
+
+	public SwitchPreferenceCustom(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		
+		final Resources res = context.getResources();
+		final String defaultTitle = 
+				res.getString(R.string.default_switch_preference_title);
+		final String defaultMessage = 
+				res.getString(R.string.default_switch_preference_message);
+		final String defaultNegativeButton = 
+				res.getString(R.string.default_switch_preference_negative_button);
+		final String defaultPositiveButton = 
+				res.getString(R.string.default_switch_preference_positive_button);
+		
+		TypedArray a = context.obtainStyledAttributes(
+				attrs, R.styleable.SwitchPreferenceCustom, defStyleAttr, 0);
+		
+		String attributeTitle = 
+				a.getString(R.styleable.SwitchPreferenceCustom_switchPreferenceDialogTitle);
+		String attributeMessage = 
+				a.getString(R.styleable.SwitchPreferenceCustom_switchPreferenceDialogMessage);
+		String attributeNevativeButton = 
+				a.getString(R.styleable.SwitchPreferenceCustom_switchPreferenceNegativeButton);
+		String attributePositiveButton = 
+				a.getString(R.styleable.SwitchPreferenceCustom_switchPreferencePositiveButton);
+		
+		mTitle = 
+				(attributeTitle != null) ? attributeTitle : defaultTitle;
+		mMessage = 
+				(attributeMessage != null) ? attributeMessage : defaultMessage;
+		mButtonNegative = 
+				(attributeNevativeButton != null) ? attributeNevativeButton : defaultNegativeButton;
+		mButtonPositive = 
+				(attributePositiveButton != null) ? attributePositiveButton : defaultPositiveButton;
+		
+		a.recycle();
+	}
+
 	public SwitchPreferenceCustom(Context context, AttributeSet attrs) {
-		super(context, attrs);
+		this(context, attrs, R.attr.switchPreferenceCompatStyle);
 	}
 
 	public SwitchPreferenceCustom(Context context) {
-		super(context);
+		this(context, null);
 	}
 
 	@Override
 	protected void onClick() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle(R.string.switch_preference_title);
-		builder.setMessage(R.string.switch_preference_message);
-		builder.setNegativeButton(R.string.switch_preference_negative_button, null);
-		builder.setPositiveButton(R.string.switch_preference_positive_button, new OnClickListener() {
+		builder.setTitle(mTitle);
+		builder.setMessage(mMessage);
+		builder.setNegativeButton(mButtonNegative, null);
+		builder.setPositiveButton(mButtonPositive, new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
