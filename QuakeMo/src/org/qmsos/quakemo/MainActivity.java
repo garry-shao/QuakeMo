@@ -203,7 +203,6 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		boolean flagInitialized = prefs.getBoolean(keyInitialized, false);
 		if (!flagInitialized) {
 			PreferenceManager.setDefaultValues(this, R.xml.preference_header, true);
-			PreferenceManager.setDefaultValues(this, R.xml.preference_about, true);
 			PreferenceManager.setDefaultValues(this, R.xml.preference_component, true);
 			PreferenceManager.setDefaultValues(this, R.xml.preference_display, true);
 			PreferenceManager.setDefaultValues(this, R.xml.preference_refresh, true);
