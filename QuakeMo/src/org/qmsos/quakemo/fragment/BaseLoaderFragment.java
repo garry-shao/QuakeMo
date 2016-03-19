@@ -49,7 +49,7 @@ public abstract class BaseLoaderFragment extends Fragment implements LoaderCallb
 		} else {
 			int range = Integer.parseInt(prefs.getString(
 					getString(R.string.PREF_DISPLAY_RANGE), 
-					getString(R.string.range_values_default)));
+					getString(R.string.default_pref_range_value)));
 			
 			long startMillis = System.currentTimeMillis() - range * INTERVAL_DAY_IN_MILLIS;
 			

@@ -1,36 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Application name -->
     <string name="app_name">QuakeMo</string>
+    <!-- End of section -->
 
     <!-- Strings used in toolbar -->
+    <string name="activity_name_main">QuakeMo</string>
     <string name="activity_name_preference">Preferences</string>
+    <!-- End of section -->
 
-    <!-- Strings used in tab title -->
-    <string name="tab_list">List</string>
-    <string name="tab_map">Map</string>
-    <string name="tab_null">Null</string>
+    <!-- Application version name -->
+    <string name="app_version_name">1.1.2</string>
+    <!-- End of section -->
 
-    <!-- Strings used in on click menu -->
-    <string name="menu_preferences">Preferences</string>
-    <string name="menu_purge">Purge</string>
-    <string name="menu_refresh">Refresh</string>
-
-    <!-- Strings used in appwidget -->
-    <string name="appwidget_name">QuakeMo</string>
-    <string name="appwidget_empty"></string>
-
-    <!-- Strings used in about information -->
+    <!-- Strings used in the "About" section of preferences -->
     <!-- The strings should be HTML-escaped -->
     <string name="about_info">
         &lt;h1&gt;QuakeMo&lt;/h1&gt;
-        &lt;p&gt;1.2.0&lt;/p&gt;
+        &lt;p&gt;1.1.2&lt;/p&gt;
     </string>
     <string name="about_regards">
         &lt;p&gt;Earthquake data from USGS.&lt;/p&gt;
         &lt;p&gt;Map powered by Osmdroid.&lt;/p&gt;
         &lt;p&gt;Map data from OpenStreetMap.&lt;/p&gt;
     </string>
+    <!-- End of section -->
+
+    <!-- Strings used in tab title -->
+    <string name="tab_list">List</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_null">Null</string>
+    <!-- End of section -->
+
+    <!-- Strings used in the overflow menu -->
+    <string name="menu_preferences">Preferences</string>
+    <string name="menu_purge">Purge</string>
+    <string name="menu_refresh">Refresh</string>
+    <!-- End of section -->
+
+    <!-- Strings used in appwidget -->
+    <string name="appwidget_name">QuakeMo</string>
+    <string name="appwidget_empty"></string>
+    <!-- End of section -->
 
     <!-- Strings used in popup dialog -->
     <string name="dialog_details_title">Earthquake Details</string>
@@ -39,9 +51,11 @@
     <string name="dialog_confirmation_message">Are you SURE ?</string>
     <string name="dialog_confirmation_positive">Confirm</string>
     <string name="dialog_confirmation_negative">Cancel</string>
+    <!-- End of section -->
 
-    <!-- Strings used in notification builder -->
+    <!-- Strings used in notification -->
     <string name="notification_ticker">Earthquake!</string>
+    <!-- End of section -->
 
     <!-- Strings used only in snackbar -->
     <string name="snackbar_refreshing">Refreshing\u2026</string>
@@ -52,64 +66,92 @@
     <string name="snackbar_canceled">Canceled</string>
     <string name="snackbar_disconnected">No network!</string>
     <string name="snackbar_invalid">Invalid link!</string>
+    <!-- End of section -->
 
-    <!-- Strings used in preferences -->
+    
+    <!-- Strings used in gui of preferences -->
+    
+    <!-- Strings used in gui of the category of refresh section -->
     <string name="pref_category_refresh">Refresh</string>
+    <string name="pref_category_parameter">Parameter</string>
+    <!-- End of sub section -->
+    
+    <!-- Strings used in gui of refresh section -->
     <string name="pref_refresh_connection_type_title">Connection type</string>
     <string name="pref_refresh_auto_toggle_summary">Enable automatic refresh</string>
     <string name="pref_refresh_auto_toggle_title">Automatic</string>
     <string name="pref_refresh_auto_frequency_title">Frequency</string>
-    
-    <string name="pref_category_parameter">Parameter</string>
     <string name="pref_refresh_parameter_range_title">Range</string>
     <string name="pref_refresh_parameter_minimum_title">Minimum</string>
     <string name="pref_refresh_parameter_seamless_summary">Up to the timestamp</string>
     <string name="pref_refresh_parameter_seamless_title">Seamless</string>
+    <!-- End of sub section -->
     
+    <!-- Strings used in gui of display section -->
     <string name="pref_display_all_summary">Show all earthquakes stored</string>
     <string name="pref_display_all_title">Show all</string>
     <string name="pref_display_range_title">Show range</string>
     <string name="pref_display_link_summary">Show a link to website on details</string>
     <string name="pref_display_link_title">Show link</string>
+    <!-- End of sub section -->
     
+    <!-- Strings used in gui of component section -->
     <string name="pref_notify_toggle_summary">Enable notification</string>
     <string name="pref_notify_toggle_title">Notification</string>
     <string name="pref_notify_sound_summary">Notification with sound</string>
     <string name="pref_notify_sound_title">With sound</string>
     <string name="pref_app_widget_toggle_summary">Register app widget</string>
     <string name="pref_app_widget_toggle_title">App widget</string>
+    <!-- End of sub section -->
     
+    <!-- Strings used in gui of headers section -->
     <string name="pref_header_about_title">About</string>
     <string name="pref_header_component_title">Component</string>
     <string name="pref_header_display_title">Display</string>
     <string name="pref_header_refresh_title">Refresh</string>
+    <!-- End of sub section -->
+    
+    <!-- End of whole section -->
 
-    <!-- Keys for shared preferences. DO NOT MODIFY -->
+    
+    <!-- Keys used in shared preferences. DO NOT MODIFY -->
+    
+    <!-- Keys in refresh section -->
     <string name="PREF_REFRESH_CONNECTION_TYPE">PREF_REFRESH_CONNECTION</string>
     <string name="PREF_REFRESH_AUTO_TOGGLE">PREF_REFRESH_AUTO_TOGGLE</string>
     <string name="PREF_REFRESH_AUTO_FREQUENCY">PREF_REFRESH_AUTO_FREQUENCY</string>
-    
     <string name="PREF_REFRESH_PARAMETER_SEAMLESS">PREF_REFRESH_PARAMETER_SEAMLESS</string>
     <string name="PREF_REFRESH_PARAMETER_RANGE">PREF_REFRESH_PARAMETER_RANGE</string>
     <string name="PREF_REFRESH_PARAMETER_MINIMUM">PREF_REFRESH_PARAMETER_MINIMUM</string>
+    <!-- End of sub section -->
     
+    <!-- Keys in display section -->
     <string name="PREF_DISPLAY_LINK">PREF_DISPLAY_LINK</string>
     <string name="PREF_DISPLAY_ALL">PREF_DISPLAY_ALL</string>
     <string name="PREF_DISPLAY_RANGE">PREF_DISPLAY_RANGE</string>
+    <!-- End of sub section -->
     
+    <!-- Keys in component section -->
     <string name="PREF_NOTIFY_TOGGLE">PREF_NOTIFY_TOGGLE</string>
     <string name="PREF_NOTIFY_SOUND">PREF_NOTIFY_SOUND</string>
     <string name="PREF_APP_WIDGET_TOGGLE">PREF_APP_WIDGET_TOGGLE</string>
+    <!-- End of sub section -->
     
+    <!-- Keys in headers section -->
     <string name="PREF_HEADER_ABOUT">PREF_HEADER_ABOUT</string>
     <string name="PREF_HEADER_COMPONENT">PREF_HEADER_COMPONENT</string>
     <string name="PREF_HEADER_DISPLAY">PREF_HEADER_DISPLAY</string>
     <string name="PREF_HEADER_REFRESH">PREF_HEADER_REFRESH</string>
+    <!-- End of sub section -->
+    
+    <!-- End of whole section -->
 
-    <!-- Default values in /array. CHECK before modify -->
-    <string name="range_values_default">1</string>
-    <string name="frequency_values_default">3</string>
-    <string name="minimum_values_default">5</string>
-    <string name="connection_type_values_default">wifi</string>
+    
+    <!-- Default values in preferences. CHECK before modify -->
+    <string name="default_pref_range_value">1</string>
+    <string name="default_pref_frequency_value">3</string>
+    <string name="default_pref_minimum_value">5</string>
+    <string name="default_pref_connection_type_value">wifi</string>
+    <!-- End of section -->
 
 </resources>

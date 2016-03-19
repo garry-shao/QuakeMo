@@ -204,7 +204,7 @@ public class EarthquakeService extends IntentService {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			int frequency = Integer.parseInt(prefs.getString(
 					getString(R.string.PREF_REFRESH_AUTO_FREQUENCY), 
-					getString(R.string.frequency_values_default)));
+					getString(R.string.default_pref_frequency_value)));
 			
 			long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
 			long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
@@ -400,7 +400,7 @@ public class EarthquakeService extends IntentService {
 		} else {
 			int range = Integer.parseInt(prefs.getString(
 					getString(R.string.PREF_REFRESH_PARAMETER_RANGE), 
-					getString(R.string.range_values_default)));
+					getString(R.string.default_pref_range_value)));
 			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 			if (startMillis < timeStamp) {
 				startTime = dateFormat.format(new Date(timeStamp));
@@ -410,7 +410,7 @@ public class EarthquakeService extends IntentService {
 		}
 		String minMagnitude = prefs.getString(
 				getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM), 
-				getString(R.string.minimum_values_default));
+				getString(R.string.default_pref_minimum_value));
 
 		return "http://earthquake.usgs.gov/fdsnws/event/1/query?" + 
 				"format=" + "geojson" + 
@@ -462,10 +462,12 @@ public class EarthquakeService extends IntentService {
 		if (info.getType() == ConnectivityManager.TYPE_WIFI) {
 			return true;
 		} else {
+			String defaultConnectionType = getString(R.string.default_pref_connection_type_value);
+			
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			String type = prefs.getString(getString(R.string.PREF_REFRESH_CONNECTION_TYPE), 
-					getString(R.string.connection_type_values_default));
-			if (type.equals(getString(R.string.connection_type_values_default))) {
+			String type = prefs.getString(
+					getString(R.string.PREF_REFRESH_CONNECTION_TYPE), defaultConnectionType);
+			if (type.equals(defaultConnectionType)) {
 				return false;
 			} else {
 				return true;

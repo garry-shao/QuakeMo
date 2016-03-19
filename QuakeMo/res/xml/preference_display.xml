@@ -14,7 +14,7 @@
         android:title="@string/pref_display_all_title" />
 
     <org.qmsos.quakemo.preference.ListPreferenceCustom
-        android:defaultValue="@string/range_values_default"
+        android:defaultValue="@string/default_pref_range_value"
         android:dependency="@string/PREF_DISPLAY_ALL"
         android:dialogTitle="@string/pref_display_range_title"
         android:entries="@array/range_entries"

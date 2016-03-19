@@ -9,7 +9,7 @@
             android:title="@string/pref_refresh_auto_toggle_title" />
 
         <org.qmsos.quakemo.preference.ListPreferenceCustom
-            android:defaultValue="@string/frequency_values_default"
+            android:defaultValue="@string/default_pref_frequency_value"
             android:dependency="@string/PREF_REFRESH_AUTO_TOGGLE"
             android:dialogTitle="@string/pref_refresh_auto_frequency_title"
             android:entries="@array/frequency_entries"
@@ -18,7 +18,7 @@
             android:summary="%s"
             android:title="@string/pref_refresh_auto_frequency_title" />
         <org.qmsos.quakemo.preference.ListPreferenceCustom
-            android:defaultValue="@string/connection_type_values_default"
+            android:defaultValue="@string/default_pref_connection_type_value"
             android:dialogTitle="@string/pref_refresh_connection_type_title"
             android:entries="@array/connection_type_entries"
             android:entryValues="@array/connection_type_values"
@@ -35,7 +35,7 @@
             android:title="@string/pref_refresh_parameter_seamless_title" />
 
         <org.qmsos.quakemo.preference.ListPreferenceCustom
-            android:defaultValue="@string/range_values_default"
+            android:defaultValue="@string/default_pref_range_value"
             android:dependency="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
             android:dialogTitle="@string/pref_refresh_parameter_range_title"
             android:entries="@array/range_entries"
@@ -44,7 +44,7 @@
             android:summary="%s"
             android:title="@string/pref_refresh_parameter_range_title" />
         <org.qmsos.quakemo.preference.ListPreferenceCustom
-            android:defaultValue="@string/minimum_values_default"
+            android:defaultValue="@string/default_pref_minimum_value"
             android:dialogTitle="@string/pref_refresh_parameter_minimum_title"
             android:entries="@array/minimum_entries"
             android:entryValues="@array/minimum_values"

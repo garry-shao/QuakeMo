@@ -54,7 +54,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		setContentView(R.layout.activity_main);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		toolbar.setTitle(R.string.app_name);
+		toolbar.setTitle(R.string.activity_name_main);
 		toolbar.inflateMenu(R.menu.menu_main_options);
 		toolbar.setOnMenuItemClickListener(this);
 
