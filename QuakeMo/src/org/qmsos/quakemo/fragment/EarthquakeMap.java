@@ -1,7 +1,7 @@
 package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.map.CursorItemOverlay;
+import org.qmsos.quakemo.map.CustomItemizedOverlay;
 import org.qmsos.quakemo.map.CustomTileSourceFactory;
 import org.qmsos.quakemo.map.MapTilesHandler;
 import org.qmsos.quakemo.widget.CustomMapView;
@@ -21,12 +21,9 @@ import android.view.ViewGroup;
  */
 public class EarthquakeMap extends BaseLoaderFragment {
 
-	/**
-	 * The earthquake overlay on the map.
-	 */
-	private CursorItemOverlay mOverlay;
-
 	private CustomMapView mMapView;
+	// The earthquake overlay on the map.
+	private CustomItemizedOverlay mOverlay;
 
 	@Override
 	public void onAttach(Context context) {
@@ -52,20 +49,34 @@ public class EarthquakeMap extends BaseLoaderFragment {
 		mMapView.setUseDataConnection(false);
 		mMapView.setTileSource(CustomTileSourceFactory.offlineTileSource());
 
-		mOverlay = new CursorItemOverlay(getContext(), null);
+		mOverlay = new CustomItemizedOverlay(getContext(), null);
 		mMapView.getOverlays().add(mOverlay);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mOverlay.swapCursor(data);
-		mMapView.invalidate();
+		swapData(data);
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-		mOverlay.swapCursor(null);
-		mMapView.invalidate();
+		swapData(null);
+	}
+
+	/**
+	 * Swap the cursor that contains earthquake data.
+	 * 
+	 * @param data
+	 *            The cursor that contains earthquake data.
+	 */
+	private void swapData(Cursor data) {
+		if (mOverlay != null) {
+			mOverlay.swapCursor(data);
+		}
+		// Did not find a way to redraw Overlay, have to invalidate to whole view.
+		if (mMapView != null) {
+			mMapView.invalidate();
+		}
 	}
 
 }
