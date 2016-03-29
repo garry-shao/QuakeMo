@@ -17,13 +17,12 @@
     <!-- Strings used in the "About" section of preferences -->
     <!-- The strings should be HTML-escaped -->
     <string name="about_info">
-        &lt;h1&gt;QuakeMo&lt;/h1&gt;
+        &lt;h1&gt;QuakeMo &#169;&lt;/h1&gt;
         &lt;p&gt;1.2.0&lt;/p&gt;
     </string>
     <string name="about_regards">
-        &lt;p&gt;Earthquake data from USGS.&lt;/p&gt;
-        &lt;p&gt;Map powered by Osmdroid.&lt;/p&gt;
-        &lt;p&gt;Map data from OpenStreetMap.&lt;/p&gt;
+        &lt;p&gt;Data from earthquake.usgs.gov&lt;/p&gt;
+        &lt;p&gt;Powered by &#169; Osmdroid, &#169; OpenStreetMap&lt;/p&gt;
     </string>
     <!-- End of section -->
 
