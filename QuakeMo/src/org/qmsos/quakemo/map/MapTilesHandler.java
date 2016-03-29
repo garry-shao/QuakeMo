@@ -13,46 +13,61 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.osmdroid.tileprovider.tilesource.ITileSource;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
 
 import android.content.Context;
 
 /**
- * Utility class use to checker if the offline map tiles used in MapView class
- * are available on storage device.
- * 
+ * Utility class that used to handle the offline map-tiles.
  *
  */
-public class TileFilesChecker {
+public class MapTilesHandler {
 
-	private static final String MAP_SOURCE = "Mapnik";
-	private static final String MAP_TILE_FILE = MAP_SOURCE + ".zip";
-	private static final String MAP_TILE_HASH = MAP_SOURCE + ".sha";
+	// Map tile file name, copied to.
+	private static final String MAP_TILE_FILE = CustomTileSourceFactory.MAP_SOURCE + ".zip";
 
-	// Zoom levels of the offline map-tile source.
-	private static final int ZOOM_LEVEL_MIN = 1;
-	private static final int ZOOM_LEVEL_MAX = 4;
-	
+	// Asset file names, copied from.
+	private static final String ASSET_TILE_NAME = "Mapnik.zip";
+	private static final String ASSET_HASH_NAME = "Mapnik.sha";
+
 	// Max retry count before abort.
-	private static final int MAX_RETRY = 3;
+	private static final int MAX_RETRY_COUNT = 3;
 
 	/**
-	 * Create offline map-tile source.
+	 * Check whether offline map tiles are valid, create new valid ones if not.
 	 * 
-	 * @return The offline map-tile source.
+	 * @param context
+	 *            The context of this library resides in.
 	 */
-	public static ITileSource offlineTileSource() {
-		return new XYTileSource(MAP_SOURCE, ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {});
+	public static void initiateMapTiles(Context context) {
+		initiateLibraryPaths(context);
+		
+		boolean tileFileIsValid = false;
+		
+		File mapTileFile = new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
+		if (mapTileFile.exists()) {
+			tileFileIsValid = hashFiles(context, ASSET_HASH_NAME, mapTileFile);
+		}
+		
+		int count = 0;
+		while ((!tileFileIsValid) && (count <= MAX_RETRY_COUNT)) {
+			boolean copySucceed = false;
+			
+			copySucceed = copyFiles(context, ASSET_TILE_NAME, mapTileFile);
+			count++;
+			
+			if (copySucceed) {
+				tileFileIsValid = hashFiles(context, ASSET_HASH_NAME, mapTileFile);
+			}
+		}
 	}
 
 	/**
-	 * Check whether offline map tiles are available, create new ones if not.
+	 * Initiate paths of Osmdroid library.
 	 * 
 	 * @param context
-	 *            The associated context.
+	 *            The context of this library resides in.
 	 */
-	public static void checkMapTileFiles(Context context) {
+	private static void initiateLibraryPaths(Context context) {
 		// Change osmdroid's path, but there are still bugs: since the paths are 
 		// static final fields, the tiles-base path created before the change, so
 		// that still created on old configuration, but since we are using offline
@@ -60,25 +75,18 @@ public class TileFilesChecker {
 		// no harm except an error line on log.
 		String cachePath = context.getCacheDir().getAbsolutePath();
 		String filePath = context.getFilesDir().getAbsolutePath();
+		
 		OpenStreetMapTileProviderConstants.setCachePath(cachePath);
 		OpenStreetMapTileProviderConstants.setOfflineMapsPath(filePath);
-		
-		boolean flag = false;
-		for (int i = 0; i < MAX_RETRY && !flag; i++) {
-			File mapTileFile = new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
-			if (mapTileFile.exists() || copyFiles(context, MAP_TILE_FILE, mapTileFile)) {
-				flag = hashFiles(context, MAP_TILE_HASH, mapTileFile);
-			}
-		}
 	}
 
 	/**
-	 * Copy file from assets in APK to specific path.
+	 * Copy file from assets folder in apk to specific path.
 	 * 
 	 * @param context
 	 *            The associated context.
 	 * @param assetsFilename
-	 *            The name of the file to be copied in assets of APK. 
+	 *            The name of the file to be copied in assets folder of apk. 
 	 * @param targetFilePath
 	 *            Targeted file path.
 	 * @return TRUE if copying succeeded, FALSE otherwise.
@@ -129,7 +137,7 @@ public class TileFilesChecker {
 	 * @param context
 	 *            The associated context.
 	 * @param assetsHashFilename
-	 *            The name of file containing hash info in assets of APK.
+	 *            The name of file containing hash info in assets folder of apk.
 	 * @param targetFilePath
 	 *            Targeted file path to be hashed.
 	 * @return TRUE if the comparison succeeded, FALSE otherwise.

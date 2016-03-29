@@ -3,7 +3,7 @@ package org.qmsos.quakemo.fragment;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.map.CursorItemOverlay;
 import org.qmsos.quakemo.map.CustomTileSourceFactory;
-import org.qmsos.quakemo.map.TileFilesChecker;
+import org.qmsos.quakemo.map.MapTilesHandler;
 import org.qmsos.quakemo.widget.CustomMapView;
 
 import android.content.Context;
@@ -32,7 +32,7 @@ public class EarthquakeMap extends BaseLoaderFragment {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		
-		TileFilesChecker.checkMapTileFiles(context);
+		MapTilesHandler.initiateMapTiles(context);
 	}
 
 	@Override
