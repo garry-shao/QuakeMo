@@ -2,6 +2,7 @@ package org.qmsos.quakemo.fragment;
 
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.map.CursorItemOverlay;
+import org.qmsos.quakemo.map.CustomTileSourceFactory;
 import org.qmsos.quakemo.map.TileFilesChecker;
 import org.qmsos.quakemo.widget.CustomMapView;
 
@@ -49,7 +50,7 @@ public class EarthquakeMap extends BaseLoaderFragment {
 		mMapView.setMultiTouchControls(true);
 		mMapView.setTilesScaledToDpi(true);
 		mMapView.setUseDataConnection(false);
-		mMapView.setTileSource(TileFilesChecker.offlineTileSource());
+		mMapView.setTileSource(CustomTileSourceFactory.offlineTileSource());
 
 		mOverlay = new CursorItemOverlay(getContext(), null);
 		mMapView.getOverlays().add(mOverlay);
