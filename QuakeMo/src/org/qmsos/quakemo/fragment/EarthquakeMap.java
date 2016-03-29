@@ -3,7 +3,6 @@ package org.qmsos.quakemo.fragment;
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.map.CustomItemizedOverlay;
 import org.qmsos.quakemo.map.CustomTileSourceFactory;
-import org.qmsos.quakemo.map.MapTilesHandler;
 import org.qmsos.quakemo.widget.CustomMapView;
 
 import android.content.Context;
@@ -29,7 +28,7 @@ public class EarthquakeMap extends BaseLoaderFragment {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		
-		MapTilesHandler.initiateMapTiles(context);
+		CustomTileSourceFactory.initiateOfflineMapTiles(context);
 	}
 
 	@Override
