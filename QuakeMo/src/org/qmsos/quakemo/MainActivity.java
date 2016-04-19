@@ -5,10 +5,11 @@ import org.qmsos.quakemo.dialog.Confirmation;
 import org.qmsos.quakemo.dialog.Confirmation.OnConfirmationSelectedListener;
 import org.qmsos.quakemo.dialog.EarthquakeDetails;
 import org.qmsos.quakemo.dialog.EarthquakeDetails.OnLinkSelectedListener;
+import org.qmsos.quakemo.fragment.BaseFragmentListPagerAdapter;
 import org.qmsos.quakemo.fragment.BaseLoaderFragment;
+import org.qmsos.quakemo.fragment.CustomFragmentPagerAdapter;
 import org.qmsos.quakemo.fragment.EarthquakeList;
 import org.qmsos.quakemo.fragment.EarthquakeMap;
-import org.qmsos.quakemo.fragment.EarthquakePagerAdapter;
 import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.OnViewHolderClickedListener;
 
 import android.content.BroadcastReceiver;
@@ -59,7 +60,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		toolbar.inflateMenu(R.menu.menu_main_options);
 		toolbar.setOnMenuItemClickListener(this);
 
-		EarthquakePagerAdapter adapter = new EarthquakePagerAdapter(getSupportFragmentManager(), this);
+		BaseFragmentListPagerAdapter adapter = 
+				new CustomFragmentPagerAdapter(getSupportFragmentManager(), this);
 		adapter.addPage(new EarthquakeList());
 		adapter.addPage(new EarthquakeMap());
 		
@@ -253,16 +255,16 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		FragmentManager manager = getSupportFragmentManager();
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		EarthquakePagerAdapter adapter = (EarthquakePagerAdapter) viewPager.getAdapter();
+		BaseFragmentListPagerAdapter adapter = (BaseFragmentListPagerAdapter) viewPager.getAdapter();
 
 		int count = adapter.getCount();
 		for (int i = 0; i < count; i++) {
-			String tag = adapter.getTag(i);
-			if (tag == null) {
+			String fragmentTag = adapter.getFragmentTag(i);
+			if (fragmentTag == null) {
 				return;
 			}
 			
-			Fragment rawFragment = manager.findFragmentByTag(tag);
+			Fragment rawFragment = manager.findFragmentByTag(fragmentTag);
 			if ((rawFragment != null) && rawFragment.isAdded() && 
 					(rawFragment instanceof BaseLoaderFragment)) {
 				
