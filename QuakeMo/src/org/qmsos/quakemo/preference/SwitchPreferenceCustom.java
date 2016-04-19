@@ -85,16 +85,19 @@ public class SwitchPreferenceCustom extends SwitchPreferenceCompat {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				// Continue onClick() logic of super class here.
 				SwitchPreferenceCustom.super.onClick();
 				
 				dialog.dismiss();
 			}
 		});
-		
 		mDialog = builder.create();
+		
 		if (isChecked()) {
+			// User already approve this action.
 			super.onClick();
 		} else {
+			// User hasn't approved this action yet.
 			mDialog.show();
 		}
 	}
