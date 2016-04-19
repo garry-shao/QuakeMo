@@ -1,11 +1,11 @@
 package org.qmsos.quakemo;
 
+import org.qmsos.quakemo.fragment.PreferenceAbout;
+import org.qmsos.quakemo.fragment.PreferenceComponent;
+import org.qmsos.quakemo.fragment.PreferenceDisplay;
 import org.qmsos.quakemo.fragment.PreferenceHeader;
 import org.qmsos.quakemo.fragment.PreferenceHeader.OnPreferenceHeaderClickedListener;
-import org.qmsos.quakemo.fragment.PreferenceHeader.PreferenceAbout;
-import org.qmsos.quakemo.fragment.PreferenceHeader.PreferenceComponent;
-import org.qmsos.quakemo.fragment.PreferenceHeader.PreferenceDisplay;
-import org.qmsos.quakemo.fragment.PreferenceHeader.PreferenceRefresh;
+import org.qmsos.quakemo.fragment.PreferenceRefresh;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,8 +40,8 @@ implements OnBackStackChangedListener, OnPreferenceHeaderClickedListener {
 		FragmentManager manager = getSupportFragmentManager();
 		manager.addOnBackStackChangedListener(this);
 		
-		Fragment fragmentPreferenceHeader = manager.findFragmentByTag(FRAGMENT_TAG_HEADER);
-		if (fragmentPreferenceHeader == null) {
+		Fragment preferenceHeader = manager.findFragmentByTag(FRAGMENT_TAG_HEADER);
+		if (preferenceHeader == null) {
 			FragmentTransaction transaction = manager.beginTransaction();
 			transaction.replace(R.id.fragment_container, new PreferenceHeader(), FRAGMENT_TAG_HEADER);
 			transaction.commit();
