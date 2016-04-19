@@ -53,22 +53,22 @@ public class CustomTileSourceFactory {
 	public static void initiateOfflineMapTiles(Context context) {
 		initiateLibraryPaths(context);
 		
-		boolean tileFileIsValid = false;
+		boolean isTileFileValid = false;
 		
 		File mapTileFile = new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
 		if (mapTileFile.exists()) {
-			tileFileIsValid = TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
+			isTileFileValid = TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
 		}
 		
 		int count = 0;
-		while ((!tileFileIsValid) && (count <= MAX_RETRY_COUNT)) {
-			boolean copySucceed = false;
+		while ((!isTileFileValid) && (count <= MAX_RETRY_COUNT)) {
+			boolean isCopySucceed = false;
 			
-			copySucceed = TileFilesHandler.copyFiles(context, ASSET_TILE_NAME, mapTileFile);
+			isCopySucceed = TileFilesHandler.copyFiles(context, ASSET_TILE_NAME, mapTileFile);
 			count++;
 			
-			if (copySucceed) {
-				tileFileIsValid = TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
+			if (isCopySucceed) {
+				isTileFileValid = TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
 			}
 		}
 	}

@@ -76,11 +76,12 @@ public class EarthquakeService extends IntentService {
 		}
 		
 		if (action.equals(IntentContract.ACTION_REFRESH_AUTO)) {
-			boolean flagAuto = intent.getBooleanExtra(IntentContract.EXTRA_REFRESH_AUTO, false);
+			boolean isEnablingAutoRefresh = 
+					intent.getBooleanExtra(IntentContract.EXTRA_REFRESH_AUTO, false);
 			
-			scheduleAutoRefresh(flagAuto);
+			scheduleAutoRefresh(isEnablingAutoRefresh);
 			
-			if (flagAuto && checkConnection()) {
+			if (isEnablingAutoRefresh && checkConnection()) {
 				executeRefresh();
 			}
 		} else if (action.equals(IntentContract.ACTION_REFRESH_MANUAL)) {
@@ -103,8 +104,9 @@ public class EarthquakeService extends IntentService {
 		} else if (action.equals(IntentContract.ACTION_PURGE_DATABASE)) {
 			Intent localIntent = new Intent(IntentContract.ACTION_PURGE_EXECUTED);
 			
-			boolean flagPurge = intent.getBooleanExtra(IntentContract.EXTRA_PURGE_DATABASE, false);
-			if (flagPurge) {
+			boolean isEnablingPurge = 
+					intent.getBooleanExtra(IntentContract.EXTRA_PURGE_DATABASE, false);
+			if (isEnablingPurge) {
 				executePurgeDatabase();
 				
 				localIntent.putExtra(IntentContract.EXTRA_PURGE_EXECUTED, true);
@@ -189,10 +191,10 @@ public class EarthquakeService extends IntentService {
 	/**
 	 * Schedule the behavior of the alarm that invoked repeatedly to execute automatic refresh.
 	 * 
-	 * @param flag
+	 * @param toggleAlarm
 	 *            TRUE when setting up the alarm, FALSE when canceling the alarm.
 	 */
-	private void scheduleAutoRefresh(boolean flag) {
+	private void scheduleAutoRefresh(boolean toggleAlarm) {
 		int requestCode = 1;
 		
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -200,7 +202,7 @@ public class EarthquakeService extends IntentService {
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, requestCode,
 				new Intent(IntentContract.ACTION_REFRESH_ALARM), PendingIntent.FLAG_UPDATE_CURRENT);
 		
-		if (flag) {
+		if (toggleAlarm) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			int frequency = Integer.parseInt(prefs.getString(
 					getString(R.string.PREF_REFRESH_AUTO_FREQUENCY), 
@@ -285,8 +287,8 @@ public class EarthquakeService extends IntentService {
 	 */
 	private void sendNotification(ContentValues value) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean flagNotify = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
-		if (!flagNotify) {
+		boolean isNotificationEnabled = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
+		if (!isNotificationEnabled) {
 			return;
 		}
 		
@@ -306,8 +308,8 @@ public class EarthquakeService extends IntentService {
 				.setContentTitle("M " + magnitude)
 				.setContentText(details);
 
-		boolean flagSound = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
-		if (flagSound) {
+		boolean isSoundEnabled = prefs.getBoolean(getString(R.string.PREF_NOTIFY_SOUND), false);
+		if (isSoundEnabled) {
 			Uri ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 			builder.setSound(ringUri);
@@ -388,9 +390,9 @@ public class EarthquakeService extends IntentService {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		boolean querySeamless = prefs.getBoolean(
+		boolean isRefreshSeamless = prefs.getBoolean(
 				getString(R.string.PREF_REFRESH_PARAMETER_SEAMLESS), false);
-		if (querySeamless) {
+		if (isRefreshSeamless) {
 			long defaultStartMillis = System.currentTimeMillis() - 7 * AlarmManager.INTERVAL_DAY;
 			if (timeStamp > defaultStartMillis) {
 				startTime = dateFormat.format(new Date(timeStamp));

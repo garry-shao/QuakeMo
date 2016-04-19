@@ -31,8 +31,8 @@ public class TileFilesHandler {
 	 *            Targeted file path.
 	 * @return TRUE if copying succeeded, FALSE otherwise.
 	 */
-	protected static boolean copyFiles(Context context, String assetsFilename, File targetFilePath) {
-		boolean flag = false;
+	public static final boolean copyFiles(Context context, String assetsFilename, File targetFilePath) {
+		boolean isCopySucceeded = false;
 
 		InputStream in = null;
 		BufferedOutputStream bout = null;
@@ -47,15 +47,15 @@ public class TileFilesHandler {
 			while ((content = in.read(buffer)) != -1) {
 				bout.write(buffer, 0, content);
 			}
-			flag = true;
+			isCopySucceeded = true;
 		} catch (IOException e) {
-			flag = false;
+			isCopySucceeded = false;
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					flag = false;
+					isCopySucceeded = false;
 				}
 			}
 			if (bout != null) {
@@ -63,12 +63,12 @@ public class TileFilesHandler {
 					bout.flush();
 					bout.close();
 				} catch (IOException e) {
-					flag = false;
+					isCopySucceeded = false;
 				}
 			}
 		}
 		
-		return flag;
+		return isCopySucceeded;
 	}
 
 	/**
@@ -82,30 +82,33 @@ public class TileFilesHandler {
 	 *            Targeted file path to be hashed.
 	 * @return TRUE if the comparison succeeded, FALSE otherwise.
 	 */
-	protected static boolean hashFiles(Context context, String assetsHashFilename, File targetFilePath) {
-		boolean flagChecksum = false;
-		String fileChecksum = null;
+	public static final boolean hashFiles(Context context, String assetsHashFilename, File targetFilePath) {
+		String valueOfChecksum = null;
+		boolean isChecksumSucceeded = false;
+		
 		InputStream in = null;
 		try {
 			in = context.getAssets().open(assetsHashFilename);
 			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			fileChecksum = reader.readLine();
-			flagChecksum = true;
+			valueOfChecksum = reader.readLine();
+			
+			isChecksumSucceeded = true;
 		} catch (IOException e) {
-			flagChecksum = false;
+			isChecksumSucceeded = false;
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					flagChecksum = false;
+					isChecksumSucceeded = false;
 				}
 			}
 		}
 
-		boolean flagHash = false;
-		String fileHash = null;
+		String valueOfHash = null;
+		boolean isHashSucceeded = false;
+		
 		MessageDigest digest = null;
 		try {
 			digest = MessageDigest.getInstance("SHA-1");
@@ -121,24 +124,25 @@ public class TileFilesHandler {
 			byte[] sha1 = digest.digest();
 			
 			BigInteger bigInt = new BigInteger(1, sha1);
-			fileHash = bigInt.toString(16);
-			flagHash = true;
+			valueOfHash = bigInt.toString(16);
+			
+			isHashSucceeded = true;
 		} catch (IOException e) {
-			flagHash = false;
+			isHashSucceeded = false;
 		} catch (NoSuchAlgorithmException e) {
-			flagHash = false;
+			isHashSucceeded = false;
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					flagHash = false;
+					isHashSucceeded = false;
 				}
 			}
 		}
 		
-		if (flagChecksum && flagHash && 
-				fileChecksum != null && fileHash != null && fileChecksum.equals(fileHash)) {
+		if (isChecksumSucceeded && isHashSucceeded && 
+				valueOfChecksum != null && valueOfHash != null && valueOfChecksum.equals(valueOfHash)) {
 			
 			return true;
 		} else {

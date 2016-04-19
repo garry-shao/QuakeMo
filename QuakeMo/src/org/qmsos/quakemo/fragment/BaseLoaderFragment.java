@@ -40,11 +40,12 @@ public abstract class BaseLoaderFragment extends Fragment implements LoaderCallb
 		String[] projection = { Entity.ID, Entity.TIME, Entity.MAGNITUDE, Entity.DETAILS, 
 				Entity.LATITUDE, Entity.LONGITUDE };
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		
+		// Initialize later.
 		String where;
-		boolean showAll = prefs.getBoolean(getString(R.string.PREF_DISPLAY_ALL), false);
-		if (showAll) {
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+		boolean isDisplayingAll = prefs.getBoolean(getString(R.string.PREF_DISPLAY_ALL), false);
+		if (isDisplayingAll) {
 			where = null;
 		} else {
 			int range = Integer.parseInt(prefs.getString(

@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.Snackbar.Callback;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -133,7 +134,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	
 			return true;
 		case (R.id.menu_purge):
-			Confirmation dialog = new Confirmation();
+			DialogFragment dialog = new Confirmation();
 			dialog.show(getSupportFragmentManager(), "dialog");
 	
 			return true;
@@ -216,9 +217,9 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	 */
 	private void configurePackage() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean flagAppWidget = prefs.getBoolean(getString(R.string.PREF_APP_WIDGET_TOGGLE), false);
+		boolean isAppWidgetEnabled = prefs.getBoolean(getString(R.string.PREF_APP_WIDGET_TOGGLE), false);
 
-		int newState = flagAppWidget ? 
+		int newState = isAppWidgetEnabled ? 
 				PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
 				PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 
@@ -233,11 +234,12 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	 */
 	private void scheduleService() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean flagAuto = prefs.getBoolean(getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
+		boolean isAutoRefreshEnabled = prefs.getBoolean(
+				getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
 		
 		Intent intent = new Intent(this, EarthquakeService.class);
 		intent.setAction(IntentContract.ACTION_REFRESH_AUTO);
-		intent.putExtra(IntentContract.EXTRA_REFRESH_AUTO, flagAuto);
+		intent.putExtra(IntentContract.EXTRA_REFRESH_AUTO, isAutoRefreshEnabled);
 		startService(intent);
 	}
 
@@ -297,16 +299,18 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			
 			String result = null;
 			if (action.equals(IntentContract.ACTION_REFRESH_EXECUTED)) {
-				boolean flag = intent.getBooleanExtra(IntentContract.EXTRA_REFRESH_EXECUTED, false);
-				if (flag) {
+				boolean isRefreshExecuted = intent.getBooleanExtra(
+						IntentContract.EXTRA_REFRESH_EXECUTED, false);
+				if (isRefreshExecuted) {
 					result = intent.getIntExtra(IntentContract.EXTRA_ADDED_COUNT, 0) + 
 							" "	+ getString(R.string.snackbar_refreshed);
 				} else {
 					result = getString(R.string.snackbar_disconnected);
 				}
 			} else if (action.equals(IntentContract.ACTION_PURGE_EXECUTED)) {
-				boolean flag = intent.getBooleanExtra(IntentContract.EXTRA_PURGE_EXECUTED, false);
-				if (flag) {
+				boolean isPurgeExecuted = intent.getBooleanExtra(
+						IntentContract.EXTRA_PURGE_EXECUTED, false);
+				if (isPurgeExecuted) {
 					result = getString(R.string.snackbar_purged);
 				} else {
 					result = getString(R.string.snackbar_canceled);
