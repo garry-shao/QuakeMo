@@ -414,10 +414,13 @@ public class EarthquakeService extends IntentService {
 				getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM), 
 				getString(R.string.default_pref_minimum_value));
 
-		return "http://earthquake.usgs.gov/fdsnws/event/1/query?" + 
-				"format=" + "geojson" + 
-				"&starttime=" + startTime + 
-				"&minmagnitude=" + minMagnitude;
+		StringBuilder builder = new StringBuilder();
+		builder.append("http://earthquake.usgs.gov/fdsnws/event/1/query?");
+		builder.append("format=").append("geojson");
+		builder.append("&starttime=").append(startTime);
+		builder.append("&minmagnitude=").append(minMagnitude);
+		
+		return builder.toString();
 	}
 
 	/**

@@ -96,12 +96,12 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 		if (mMessage != null) {
 			builder.setMessage(mMessage);
 		} else {
-			builder.setMessage("Earthquake ID does not EXIST!");
+			builder.setMessage(R.string.dialog_details_message_error);
 		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		boolean displayLink = prefs.getBoolean(getString(R.string.PREF_DISPLAY_LINK), false);
-		if (displayLink) {
+		boolean isLinkShown = prefs.getBoolean(getString(R.string.PREF_DISPLAY_LINK), false);
+		if (isLinkShown) {
 			builder.setPositiveButton(R.string.dialog_details_link, new OnClickListener() {
 				
 				@Override
@@ -143,12 +143,23 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 					Math.abs(latitude) + "\u00b0N" : Math.abs(latitude) + "\u00b0S";
 			
 			DateFormat dataFormat = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss", Locale.US);
+			String timeString = dataFormat.format(new Date(time));
 			
-			mMessage = dataFormat.format(new Date(time)) + "\n\n" + 
-					"Magnitude: " + magnitude + "\n\n" + 
-					"Depth: " + depth + " km" + "\n\n" + 
-					"Coord: " + lon + " " + lat + "\n\n" + 
-					details;
+			String headerMagnitude = getString(R.string.dialog_details_message_header_magnitude);
+			String headerDepth = getString(R.string.dialog_details_message_header_depth);
+			String headerCoordinate = getString(R.string.dialog_details_message_header_coordinate);
+			
+			StringBuilder messageBuilder = new StringBuilder(timeString);
+			messageBuilder.append("\n\n");
+			messageBuilder.append(headerMagnitude).append(": ").append(magnitude);
+			messageBuilder.append("\n\n");
+			messageBuilder.append(headerDepth).append(": ").append(depth).append(" km");
+			messageBuilder.append("\n\n");
+			messageBuilder.append(headerCoordinate).append(": ").append(lon).append(" ").append(lat);
+			messageBuilder.append("\n\n");
+			messageBuilder.append(details);
+			
+			mMessage = messageBuilder.toString();
 			
 			AlertDialog dialog = (AlertDialog) getDialog();
 			dialog.setMessage(mMessage);

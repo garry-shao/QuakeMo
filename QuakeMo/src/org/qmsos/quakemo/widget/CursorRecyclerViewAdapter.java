@@ -40,14 +40,18 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
-		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
-
 		final long earthquakeId = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.ID));
 		long time = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
 		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
-
-		String info = dateFormat.format(new Date(time)) + " - " + "M " + magnitude;
 		String details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));
+
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
+		String timeString = dateFormat.format(new Date(time));
+
+		StringBuilder infoBuilder = new StringBuilder(timeString);
+		infoBuilder.append(" - ");
+		infoBuilder.append("M ").append(magnitude);
+		String info = infoBuilder.toString();
 
 		((RecyclerViewHolder) holder).mInfoView.setText(info);
 		((RecyclerViewHolder) holder).mDetailsView.setText(details);

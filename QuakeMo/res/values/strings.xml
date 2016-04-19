@@ -46,6 +46,10 @@
     <!-- Strings used in popup dialog -->
     <string name="dialog_details_title">Earthquake Details</string>
     <string name="dialog_details_link">Link</string>
+    <string name="dialog_details_message_error">Invalid earthquake ID!</string>
+    <string name="dialog_details_message_header_magnitude">Magnitude</string>
+    <string name="dialog_details_message_header_depth">Depth</string>
+    <string name="dialog_details_message_header_coordinate">Coord</string>
     <string name="dialog_confirmation_title">Purge</string>
     <string name="dialog_confirmation_message">Are you SURE ?</string>
     <string name="dialog_confirmation_positive">Confirm</string>
