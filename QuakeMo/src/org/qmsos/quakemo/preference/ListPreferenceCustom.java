@@ -88,9 +88,8 @@ public class ListPreferenceCustom extends ListPreference {
 
 	@Override
 	protected void onRestoreInstanceState(Parcelable state) {
-		if (state == null || !state.getClass().equals(SavedState.class)) {
+		if (!(state instanceof SavedState)) {
 			super.onRestoreInstanceState(state);
-
 			return;
 		}
 
