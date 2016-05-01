@@ -106,11 +106,7 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					if (mLink != null) {
-						mListener.onLinkSelected(mLink);
-					} else {
-						mListener.onLinkInvalid();
-					}
+					mListener.onLinkSelected(mLink);
 				}
 			});
 		}
@@ -182,14 +178,9 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 		 * Called when open link action is executed.
 		 * 
 		 * @param link
-		 *            The link string.
+		 *            The link string, NULL if invalid.
 		 */
 		void onLinkSelected(String link);
-		
-		/**
-		 * Called when the link uri is invalid.
-		 */
-		void onLinkInvalid();
 	}
 
 }

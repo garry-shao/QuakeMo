@@ -175,18 +175,17 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 
 	@Override
 	public void onLinkSelected(String link) {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse(link));
-		
-		if (intent.resolveActivity(getPackageManager()) != null) {
-			startActivity(intent);
-		}		
-	}
-
-	@Override
-	public void onLinkInvalid() {
-		String invalidText = getString(R.string.snackbar_invalid);
-		SnackbarFactory.showSnackbar(this, SnackbarFactory.NORMAL, invalidText);
+		if (link != null) {
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setData(Uri.parse(link));
+			
+			if (intent.resolveActivity(getPackageManager()) != null) {
+				startActivity(intent);
+			}
+		} else {
+			String invalidText = getString(R.string.snackbar_invalid);
+			SnackbarFactory.showSnackbar(this, SnackbarFactory.NORMAL, invalidText);
+		}
 	}
 
 	@Override
