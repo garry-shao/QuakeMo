@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_category_refresh" >
+        <org.qmsos.quakemo.preference.SwitchPreferenceCustom
+            android:defaultValue="FALSE"
+            android:key="@string/PREF_REFRESH_AUTO_TOGGLE"
+            android:summary="@string/pref_refresh_auto_toggle_summary"
+            android:title="@string/pref_refresh_auto_toggle_title" />
+
+        <org.qmsos.quakemo.preference.ListPreferenceCustom
+            android:defaultValue="@string/default_pref_frequency_value"
+            android:dependency="@string/PREF_REFRESH_AUTO_TOGGLE"
+            android:dialogTitle="@string/pref_refresh_auto_frequency_title"
+            android:entries="@array/frequency_entries"
+            android:entryValues="@array/frequency_values"
+            android:key="@string/PREF_REFRESH_AUTO_FREQUENCY"
+            android:summary="%s"
+            android:title="@string/pref_refresh_auto_frequency_title" />
+        <org.qmsos.quakemo.preference.ListPreferenceCustom
+            android:defaultValue="@string/default_pref_connection_type_value"
+            android:dialogTitle="@string/pref_refresh_connection_type_title"
+            android:entries="@array/connection_type_entries"
+            android:entryValues="@array/connection_type_values"
+            android:key="@string/PREF_REFRESH_CONNECTION_TYPE"
+            android:summary="%s"
+            android:title="@string/pref_refresh_connection_type_title" />
+    </android.support.v7.preference.PreferenceCategory>
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_category_parameter" >
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="TRUE"
+            android:disableDependentsState="true"
+            android:key="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
+            android:summary="@string/pref_refresh_parameter_seamless_summary"
+            android:title="@string/pref_refresh_parameter_seamless_title" />
+
+        <org.qmsos.quakemo.preference.ListPreferenceCustom
+            android:defaultValue="@string/default_pref_range_value"
+            android:dependency="@string/PREF_REFRESH_PARAMETER_SEAMLESS"
+            android:dialogTitle="@string/pref_refresh_parameter_range_title"
+            android:entries="@array/range_entries"
+            android:entryValues="@array/range_values"
+            android:key="@string/PREF_REFRESH_PARAMETER_RANGE"
+            android:summary="%s"
+            android:title="@string/pref_refresh_parameter_range_title" />
+        <org.qmsos.quakemo.preference.ListPreferenceCustom
+            android:defaultValue="@string/default_pref_minimum_value"
+            android:dialogTitle="@string/pref_refresh_parameter_minimum_title"
+            android:entries="@array/minimum_entries"
+            android:entryValues="@array/minimum_values"
+            android:key="@string/PREF_REFRESH_PARAMETER_MINIMUM"
+            android:summary="%s"
+            android:title="@string/pref_refresh_parameter_minimum_title" />
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

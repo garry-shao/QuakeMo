@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- TabLayout style. -->
+    <style name="tabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabGravity">fill</item>
+        <item name="tabTextAppearance">@style/tabTextAppearance</item>
+        <item name="tabSelectedTextColor">?attr/colorAccent</item>
+    </style>
+    <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <!-- Toolbar style. -->
+    <style name="toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">?attr/colorAccent</item>
+        <item name="titleTextAppearance">
+            @style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse
+        </item>
+        <item name="subtitleTextAppearance">
+            @style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse
+        </item>
+    </style>
+
+	<!-- ViewHolder style. -->
+    <style name="textAppearanceListItemHead">
+        <item name="android:textSize">@dimen/list_item_head_text_size</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+    <style name="textAppearanceListItemBody">
+        <item name="android:textSize">@dimen/list_item_body_text_size</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+    
+	<!-- Belows are hack of PreferenceThemeOverlay.v14.Material, since i did not find
+	    other methods to use customized style, if only use these whose names are defined 
+	    in the theme mentioned above.
+	-->
+    <!-- Preference Style. -->
+	<style name="Preference_TextAppearanceMaterialBody2">
+        <item name="android:textSize">@dimen/preference_category_text_size</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Preference_TextAppearanceMaterialSubhead">
+        <item name="android:textSize">@dimen/preference_summary_text_size</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <!-- End of style hack. -->
+
+</resources>

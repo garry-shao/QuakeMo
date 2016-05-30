@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="range_entries">
+        <item>One day</item>
+        <item>Two days</item>
+        <item>Three days</item>
+        <item>Four days</item>
+        <item>Five days</item>
+    </string-array>
+    <string-array name="range_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="frequency_entries">
+        <item>Every hour</item>
+        <item>Two hours</item>
+        <item>Three hours</item>
+        <item>Six hours</item>
+        <item>Twelve hours</item>
+    </string-array>
+    <string-array name="frequency_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>6</item>
+        <item>12</item>
+    </string-array>
+    <string-array name="minimum_entries">
+        <item>M 3.0</item>
+        <item>M 4.0</item>
+        <item>M 5.0</item>
+        <item>M 6.0</item>
+        <item>M 7.0</item>
+    </string-array>
+    <string-array name="minimum_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="connection_type_entries">
+        <item>Wi-Fi only</item>
+        <item>Any type</item>
+    </string-array>
+    <string-array name="connection_type_values">
+        <item>wifi</item>
+        <item>any</item>
+    </string-array>
+
+</resources>
