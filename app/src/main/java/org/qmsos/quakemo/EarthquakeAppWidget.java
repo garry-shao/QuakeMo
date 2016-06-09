@@ -1,8 +1,5 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.contract.IntentContract;
-import org.qmsos.quakemo.contract.ProviderContract.Entity;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -13,23 +10,27 @@ import android.database.Cursor;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import org.qmsos.quakemo.contract.IntentContract;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
+
 /**
  * Widget of this application show a single earthquake.
- *
- *
  */
 public class EarthquakeAppWidget extends AppWidgetProvider {
 
 	private static final String TAG = EarthquakeAppWidget.class.getSimpleName();
 	
 	@Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		super.onUpdate(context, appWidgetManager, appWidgetIds);
+	public void onUpdate(Context context,
+                         AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
 
 		Intent intent = new Intent(context, MainActivity.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget_earthquake);
+		RemoteViews views =
+				new RemoteViews(context.getPackageName(), R.layout.appwidget_earthquake);
 		views.setOnClickPendingIntent(R.id.appwidget_magnitude, pendingIntent);
 		views.setOnClickPendingIntent(R.id.appwidget_details, pendingIntent);
 
@@ -56,16 +57,19 @@ public class EarthquakeAppWidget extends AppWidgetProvider {
 	 * @param appWidgetManager
 	 *            The AppWidget Manager.
 	 * @param appWidgetIds
-	 *            The AppWidge IDs.
+	 *            The AppWidget IDs.
 	 */
-	private void updateEarthquake(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		double magnitude = 0.0f;
+	private void updateEarthquake(Context context,
+                                  AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
+        double magnitude = 0.0f;
 		String details = context.getString(R.string.appwidget_empty);
 
 		Cursor cursor = null;
 		try {
-			cursor = context.getContentResolver().query(Entity.CONTENT_URI, null, null, null, null);
-			if (cursor != null && cursor.moveToLast()) {
+			cursor = context.getContentResolver().query(Entity.CONTENT_URI,
+					null, null, null, null);
+            if (cursor != null && cursor.moveToLast()) {
 				magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
 				details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));
 			}
@@ -78,13 +82,14 @@ public class EarthquakeAppWidget extends AppWidgetProvider {
 				cursor.close();
 			}
 		}
-		
-		for (int i = 0; i < appWidgetIds.length; i++) {
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget_earthquake);
+
+		for (int appWidgetId : appWidgetIds) {
+			RemoteViews views =
+					new RemoteViews(context.getPackageName(), R.layout.appwidget_earthquake);
 			views.setTextViewText(R.id.appwidget_magnitude, "M " + magnitude);
 			views.setTextViewText(R.id.appwidget_details, details);
 
-			appWidgetManager.updateAppWidget(appWidgetIds[i], views);
+			appWidgetManager.updateAppWidget(appWidgetId, views);
 		}
 	}
 

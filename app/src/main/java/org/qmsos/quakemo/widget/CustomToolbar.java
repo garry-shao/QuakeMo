@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 
 /**
  * Customized Toolbar class that keeping title in SavedState.
- *
  */
 public class CustomToolbar extends Toolbar {
 

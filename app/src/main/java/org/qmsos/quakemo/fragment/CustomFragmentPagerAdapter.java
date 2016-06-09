@@ -1,22 +1,23 @@
 package org.qmsos.quakemo.fragment;
 
-import java.util.List;
-
-import org.qmsos.quakemo.R;
-
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import org.qmsos.quakemo.R;
+
+import java.util.List;
+
 /**
  * Customized FragmentPagerAdapter that provides page titles. 
- *
  */
 public class CustomFragmentPagerAdapter extends BaseFragmentListPagerAdapter {
 
 	private Context mContext;
 
-	public CustomFragmentPagerAdapter(FragmentManager fm, List<Fragment> fragmentList, Context context) {
+	public CustomFragmentPagerAdapter(FragmentManager fm,
+									  List<Fragment> fragmentList, Context context) {
+
 		super(fm, fragmentList);
 
 		this.mContext = context;

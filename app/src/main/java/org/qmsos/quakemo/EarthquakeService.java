@@ -1,25 +1,5 @@
 package org.qmsos.quakemo;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.qmsos.quakemo.contract.IntentContract;
-import org.qmsos.quakemo.contract.ProviderContract.Entity;
-
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -39,10 +19,29 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.qmsos.quakemo.contract.IntentContract;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * The main service performing background jobs.
- *
- *
  */
 public class EarthquakeService extends IntentService {
 
@@ -74,48 +73,54 @@ public class EarthquakeService extends IntentService {
 		if (action == null) {
 			return;
 		}
-		
-		if (action.equals(IntentContract.ACTION_REFRESH_AUTO)) {
-			boolean isEnablingAutoRefresh = 
-					intent.getBooleanExtra(IntentContract.EXTRA_REFRESH_AUTO, false);
-			
-			scheduleAutoRefresh(isEnablingAutoRefresh);
-			
-			if (isEnablingAutoRefresh && checkConnection()) {
-				executeRefresh();
-			}
-		} else if (action.equals(IntentContract.ACTION_REFRESH_MANUAL)) {
-			Intent localIntent = new Intent(IntentContract.ACTION_REFRESH_EXECUTED);
-			
-			if (checkConnection()) {
-				int count = executeRefresh();
-				
-				if (count >= 0) {
-					localIntent.putExtra(IntentContract.EXTRA_REFRESH_EXECUTED, true);
-					localIntent.putExtra(IntentContract.EXTRA_ADDED_COUNT, count);
-				} else {
-					localIntent.putExtra(IntentContract.EXTRA_REFRESH_EXECUTED, false);
-				}
-			} else {
-				localIntent.putExtra(IntentContract.EXTRA_REFRESH_EXECUTED, false);
-			}
-			
-			LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-		} else if (action.equals(IntentContract.ACTION_PURGE_DATABASE)) {
-			Intent localIntent = new Intent(IntentContract.ACTION_PURGE_EXECUTED);
-			
-			boolean isEnablingPurge = 
-					intent.getBooleanExtra(IntentContract.EXTRA_PURGE_DATABASE, false);
-			if (isEnablingPurge) {
-				executePurgeDatabase();
-				
-				localIntent.putExtra(IntentContract.EXTRA_PURGE_EXECUTED, true);
-			} else {
-				localIntent.putExtra(IntentContract.EXTRA_PURGE_EXECUTED, false);
-			}
-			
-			LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-		}
+
+        switch (action) {
+            case IntentContract.ACTION_REFRESH_AUTO:
+                boolean isEnablingAutoRefresh =
+                        intent.getBooleanExtra(IntentContract.EXTRA_REFRESH_AUTO, false);
+
+                scheduleAutoRefresh(isEnablingAutoRefresh);
+
+                if (isEnablingAutoRefresh && checkConnection()) {
+                    executeRefresh();
+                }
+                break;
+            case IntentContract.ACTION_REFRESH_MANUAL: {
+                Intent localIntent = new Intent(IntentContract.ACTION_REFRESH_EXECUTED);
+
+                if (checkConnection()) {
+                    int count = executeRefresh();
+
+                    if (count >= 0) {
+                        localIntent.putExtra(IntentContract.EXTRA_REFRESH_EXECUTED, true);
+                        localIntent.putExtra(IntentContract.EXTRA_ADDED_COUNT, count);
+                    } else {
+                        localIntent.putExtra(IntentContract.EXTRA_REFRESH_EXECUTED, false);
+                    }
+                } else {
+                    localIntent.putExtra(IntentContract.EXTRA_REFRESH_EXECUTED, false);
+                }
+
+                LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+                break;
+            }
+            case IntentContract.ACTION_PURGE_DATABASE: {
+                Intent localIntent = new Intent(IntentContract.ACTION_PURGE_EXECUTED);
+
+                boolean isEnablingPurge =
+                        intent.getBooleanExtra(IntentContract.EXTRA_PURGE_DATABASE, false);
+                if (isEnablingPurge) {
+                    executePurgeDatabase();
+
+                    localIntent.putExtra(IntentContract.EXTRA_PURGE_EXECUTED, true);
+                } else {
+                    localIntent.putExtra(IntentContract.EXTRA_PURGE_EXECUTED, false);
+                }
+
+                LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+                break;
+            }
+        }
 		
 		sendBroadcast(new Intent(IntentContract.ACTION_REFRESH_APPWIDGET));
 	}
@@ -142,39 +147,36 @@ public class EarthquakeService extends IntentService {
 		long latestTimestamp = 0;
 		ContentValues latestCheckedValue = null;
 		
-		LinkedList<ContentValues> checkedListOfValues = new LinkedList<ContentValues>();
-		for (int i = 0; i < rawValues.length; i++) {
-			ContentValues rawValue = rawValues[i];
-			
-			long time = rawValue.getAsLong(Entity.TIME);
-			
-			Cursor cursor = null;
-			try {
-				String where = Entity.TIME + " = " + time;
-				
-				cursor = getContentResolver().query(Entity.CONTENT_URI, null, where, null, null);
-				if (cursor != null && !cursor.moveToNext()) {
-					checkedListOfValues.add(rawValue);
-				}
-			} finally {
-				if (cursor != null && !cursor.isClosed()) {
-					cursor.close();
-				}
-			}
-			
-			if (time > latestTimestamp) {
-				latestTimestamp = time;
-				latestCheckedValue = rawValue;
-			}
-		}
+		List<ContentValues> checkedListOfValues = new LinkedList<>();
+        for (ContentValues rawValue : rawValues) {
+            long time = rawValue.getAsLong(Entity.TIME);
+
+            Cursor cursor = null;
+            try {
+                String where = Entity.TIME + " = " + time;
+
+                cursor = getContentResolver().query(Entity.CONTENT_URI,
+						null, where, null, null);
+                if (cursor != null && !cursor.moveToNext()) {
+                    checkedListOfValues.add(rawValue);
+                }
+            } finally {
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+            }
+
+            if (time > latestTimestamp) {
+                latestTimestamp = time;
+                latestCheckedValue = rawValue;
+            }
+        }
 		
 		ContentValues[] checkedValues = new ContentValues[checkedListOfValues.size()];
 		checkedValues = checkedListOfValues.toArray(checkedValues);
 		
 		int count = getContentResolver().bulkInsert(Entity.CONTENT_URI, checkedValues);
-		if (count > 0 && count == checkedValues.length && 
-				latestTimestamp > 0 && latestCheckedValue != null) {
-			
+		if (count > 0 && count == checkedValues.length && latestTimestamp > 0) {
 			sendNotification(latestCheckedValue);
 		}
 		
@@ -191,22 +193,22 @@ public class EarthquakeService extends IntentService {
 	/**
 	 * Schedule the behavior of the alarm that invoked repeatedly to execute automatic refresh.
 	 * 
-	 * @param toggleAlarm
+	 * @param enablingAlarm
 	 *            TRUE when setting up the alarm, FALSE when canceling the alarm.
 	 */
-	private void scheduleAutoRefresh(boolean toggleAlarm) {
+	private void scheduleAutoRefresh(boolean enablingAlarm) {
 		int requestCode = 1;
 		
 		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		PendingIntent alarmIntent = PendingIntent.getBroadcast(this, requestCode,
-				new Intent(IntentContract.ACTION_REFRESH_ALARM), PendingIntent.FLAG_UPDATE_CURRENT);
+				new Intent(IntentContract.ACTION_REFRESH_ALARM),
+				PendingIntent.FLAG_UPDATE_CURRENT);
 		
-		if (toggleAlarm) {
+		if (enablingAlarm) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			int frequency = Integer.parseInt(prefs.getString(
-					getString(R.string.PREF_REFRESH_AUTO_FREQUENCY), 
-					getString(R.string.default_pref_frequency_value)));
+			int frequency = Integer.parseInt(
+                    prefs.getString(getString(R.string.PREF_REFRESH_AUTO_FREQUENCY), getString(R.string.default_pref_frequency_value)));
 			
 			long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
 			long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
@@ -226,8 +228,8 @@ public class EarthquakeService extends IntentService {
 	 * @return The parsed array of ContentValues or NULL if the raw string is invalid.
 	 */
 	private ContentValues[] parseDownloaded(String results) {
-		JSONArray features = null;
-		int rawLength = 0;
+		JSONArray features;
+		int rawLength;
 		try {
 			JSONObject reader = new JSONObject(results);
 			features = reader.getJSONArray("features");
@@ -237,11 +239,7 @@ public class EarthquakeService extends IntentService {
 			
 			return null;
 		}
-		
-		if (features == null || rawLength <= 0) {
-			return null;
-		}
-		
+
 		ContentValues[] rawValues = new ContentValues[rawLength];
 		for (int i = 0; i < rawLength; i++) {
 			try {
@@ -287,7 +285,8 @@ public class EarthquakeService extends IntentService {
 	 */
 	private void sendNotification(ContentValues value) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean isNotificationEnabled = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
+
+        boolean isNotificationEnabled = prefs.getBoolean(getString(R.string.PREF_NOTIFY_TOGGLE), false);
 		if (!isNotificationEnabled) {
 			return;
 		}
@@ -315,10 +314,10 @@ public class EarthquakeService extends IntentService {
 			builder.setSound(ringUri);
 		}
 
-		int nofiticationId = 1;
+		int notificationId = 1;
 		NotificationManager notificationManager = 
 				(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		notificationManager.notify(nofiticationId, builder.build());
+		notificationManager.notify(notificationId, builder.build());
 	}
 
 	/**
@@ -333,7 +332,7 @@ public class EarthquakeService extends IntentService {
 			return null;
 		}
 		
-		URL url = null;
+		URL url;
 		try {
 			url = new URL(request);
 		} catch (MalformedURLException e) {
@@ -342,7 +341,7 @@ public class EarthquakeService extends IntentService {
 			return null;
 		}
 		
-		HttpURLConnection httpConnection = null;
+		HttpURLConnection httpConnection;
 		try {
 			httpConnection = (HttpURLConnection) url.openConnection();
 		} catch (IOException e) {
@@ -390,19 +389,18 @@ public class EarthquakeService extends IntentService {
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		boolean isRefreshSeamless = prefs.getBoolean(
-				getString(R.string.PREF_REFRESH_PARAMETER_SEAMLESS), false);
+		boolean isRefreshSeamless = prefs.getBoolean(getString(R.string.PREF_REFRESH_PARAMETER_SEAMLESS), false);
 		if (isRefreshSeamless) {
-			long defaultStartMillis = System.currentTimeMillis() - 7 * AlarmManager.INTERVAL_DAY;
+			long defaultStartMillis =
+                    System.currentTimeMillis() - 7 * AlarmManager.INTERVAL_DAY;
 			if (timeStamp > defaultStartMillis) {
 				startTime = dateFormat.format(new Date(timeStamp));
 			} else {
 				startTime = dateFormat.format(new Date(defaultStartMillis));
 			}
 		} else {
-			int range = Integer.parseInt(prefs.getString(
-					getString(R.string.PREF_REFRESH_PARAMETER_RANGE), 
-					getString(R.string.default_pref_range_value)));
+			int range = Integer.parseInt(
+                    prefs.getString(getString(R.string.PREF_REFRESH_PARAMETER_RANGE), getString(R.string.default_pref_range_value)));
 			long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
 			if (startMillis < timeStamp) {
 				startTime = dateFormat.format(new Date(timeStamp));
@@ -410,17 +408,12 @@ public class EarthquakeService extends IntentService {
 				startTime = dateFormat.format(new Date(startMillis));
 			}
 		}
-		String minMagnitude = prefs.getString(
-				getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM), 
-				getString(R.string.default_pref_minimum_value));
+		String minMagnitude = prefs.getString(getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM), getString(R.string.default_pref_minimum_value));
 
-		StringBuilder builder = new StringBuilder();
-		builder.append("http://earthquake.usgs.gov/fdsnws/event/1/query?");
-		builder.append("format=").append("geojson");
-		builder.append("&starttime=").append(startTime);
-		builder.append("&minmagnitude=").append(minMagnitude);
-		
-		return builder.toString();
+		return "http://earthquake.usgs.gov/fdsnws/event/1/query?" +
+                "format=" + "geojson" +
+                "&starttime=" + startTime +
+                "&minmagnitude=" + minMagnitude;
 	}
 
 	/**
@@ -435,7 +428,8 @@ public class EarthquakeService extends IntentService {
 		try {
 			String[] projection = { "MAX(" + Entity.TIME + ") AS " + Entity.TIME };
 			
-			cursor = getContentResolver().query(Entity.CONTENT_URI, projection, null, null, null);
+			cursor = getContentResolver().query(Entity.CONTENT_URI,
+                    projection, null, null, null);
 			if (cursor != null && cursor.moveToFirst()) {
 				timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
 			}
@@ -470,13 +464,9 @@ public class EarthquakeService extends IntentService {
 			String defaultConnectionType = getString(R.string.default_pref_connection_type_value);
 			
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			String type = prefs.getString(
-					getString(R.string.PREF_REFRESH_CONNECTION_TYPE), defaultConnectionType);
-			if (type.equals(defaultConnectionType)) {
-				return false;
-			} else {
-				return true;
-			}
+			String type = prefs.getString(getString(R.string.PREF_REFRESH_CONNECTION_TYPE), defaultConnectionType);
+
+            return !type.equals(defaultConnectionType);
 		}
 	}
 

@@ -1,4 +1,4 @@
 # QuakeMo
 Earthquake Monitor
 
-Using earthquake.usgs.gov service to monitor global earthquakes
+Using http://earthquake.usgs.gov service to monitor global earthquakes

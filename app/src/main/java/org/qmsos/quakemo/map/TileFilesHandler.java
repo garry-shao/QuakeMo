@@ -1,5 +1,7 @@
 package org.qmsos.quakemo.map;
 
+import android.content.Context;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,11 +14,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import android.content.Context;
-
 /**
  * Utility class that used to handle the offline map-tile files.
- *
  */
 public class TileFilesHandler {
 
@@ -31,7 +30,9 @@ public class TileFilesHandler {
 	 *            Targeted file path.
 	 * @return TRUE if copying succeeded, FALSE otherwise.
 	 */
-	public static final boolean copyFiles(Context context, String assetsFilename, File targetFilePath) {
+	public static boolean copyFiles(Context context,
+									String assetsFilename, File targetFilePath) {
+
 		boolean isCopySucceeded = false;
 
 		InputStream in = null;
@@ -41,7 +42,8 @@ public class TileFilesHandler {
 			
 			byte[] buffer = new byte[2048];
 			
-			bout = new BufferedOutputStream(new FileOutputStream(targetFilePath), buffer.length);
+			bout = new BufferedOutputStream(
+					new FileOutputStream(targetFilePath), buffer.length);
 			
 			int content;
 			while ((content = in.read(buffer)) != -1) {
@@ -82,7 +84,9 @@ public class TileFilesHandler {
 	 *            Targeted file path to be hashed.
 	 * @return TRUE if the comparison succeeded, FALSE otherwise.
 	 */
-	public static final boolean hashFiles(Context context, String assetsHashFilename, File targetFilePath) {
+	public static boolean hashFiles(Context context,
+									String assetsHashFilename, File targetFilePath) {
+
 		String valueOfChecksum = null;
 		boolean isChecksumSucceeded = false;
 		
@@ -109,7 +113,7 @@ public class TileFilesHandler {
 		String valueOfHash = null;
 		boolean isHashSucceeded = false;
 		
-		MessageDigest digest = null;
+		MessageDigest digest;
 		try {
 			digest = MessageDigest.getInstance("SHA-1");
 			in = new FileInputStream(targetFilePath);
@@ -127,9 +131,7 @@ public class TileFilesHandler {
 			valueOfHash = bigInt.toString(16);
 			
 			isHashSucceeded = true;
-		} catch (IOException e) {
-			isHashSucceeded = false;
-		} catch (NoSuchAlgorithmException e) {
+		} catch (IOException | NoSuchAlgorithmException e) {
 			isHashSucceeded = false;
 		} finally {
 			if (in != null) {
@@ -140,14 +142,10 @@ public class TileFilesHandler {
 				}
 			}
 		}
-		
-		if (isChecksumSucceeded && isHashSucceeded && 
-				valueOfChecksum != null && valueOfHash != null && valueOfChecksum.equals(valueOfHash)) {
-			
-			return true;
-		} else {
-			return false;
-		}
+
+		return isChecksumSucceeded && isHashSucceeded &&
+				valueOfChecksum != null && valueOfHash != null &&
+				valueOfChecksum.equals(valueOfHash);
 	}
 
 }

@@ -1,17 +1,15 @@
 package org.qmsos.quakemo.datamodel;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * Description of an earthquake instance.
- *
- *
  */
 public class Earthquake implements Parcelable {
 
@@ -25,7 +23,7 @@ public class Earthquake implements Parcelable {
 	// Details description of this earthquake.
 	private String mDetails;
 
-	// An URL link to usgs.gov about this earthquake.
+	// An URL link to http://earthquake.usgs.gov about this earthquake.
 	private String mLink;
 
 	/**
@@ -45,7 +43,8 @@ public class Earthquake implements Parcelable {
 	 * @param depth
 	 *            Depth of the event in kilometers.
 	 */
-	public Earthquake(long time, double magnitude, double longitude, double latitude, double depth) {
+	public Earthquake(long time,
+					  double magnitude, double longitude, double latitude, double depth) {
 		this.mTime = time;
 		this.mMagnitude = magnitude;
 		this.mLongitude = longitude;

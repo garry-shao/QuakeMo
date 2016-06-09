@@ -1,13 +1,5 @@
 package org.qmsos.quakemo.dialog;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.contract.ProviderContract.Entity;
-
 import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
@@ -17,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -24,10 +17,16 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
 
+import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Show a dialog of specific earthquake's details.
- *
- *
  */
 public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks<Cursor> {
 
@@ -75,7 +74,7 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Initialize here in order to prepare infos that are used in 
+		// Initialize here in order to prepare information that will be used in
 		// onCreateDialog(), remember onCreateDialog() is called after 
 		// onCreate() and before onCreateView(). 
 		getLoaderManager().initLoader(0, null, this);
@@ -88,6 +87,7 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 		super.onDestroyView();
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -144,18 +144,12 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 			String headerMagnitude = getString(R.string.dialog_details_message_header_magnitude);
 			String headerDepth = getString(R.string.dialog_details_message_header_depth);
 			String headerCoordinate = getString(R.string.dialog_details_message_header_coordinate);
-			
-			StringBuilder messageBuilder = new StringBuilder(timeString);
-			messageBuilder.append("\n\n");
-			messageBuilder.append(headerMagnitude).append(": ").append(magnitude);
-			messageBuilder.append("\n\n");
-			messageBuilder.append(headerDepth).append(": ").append(depth).append(" km");
-			messageBuilder.append("\n\n");
-			messageBuilder.append(headerCoordinate).append(": ").append(lon).append(" ").append(lat);
-			messageBuilder.append("\n\n");
-			messageBuilder.append(details);
-			
-			mMessage = messageBuilder.toString();
+
+			mMessage = timeString + "\n\n" +
+					headerMagnitude + ": " + magnitude + "\n\n" +
+					headerDepth + ": " + depth + " km" + "\n\n" +
+					headerCoordinate + ": " + lon + " " + lat +	"\n\n" +
+					details;
 			
 			AlertDialog dialog = (AlertDialog) getDialog();
 			dialog.setMessage(mMessage);
@@ -170,8 +164,6 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
 
 	/**
 	 * Interface for a callback to be invoked when open link action is called.
-	 * 
-	 *
 	 */
 	public interface OnLinkSelectedListener {
 		/**

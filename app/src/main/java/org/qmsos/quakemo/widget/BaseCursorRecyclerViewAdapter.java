@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 /**
  * This is basically a mock up of CursorAdapter class with minimum feature, will
  * add more if needed.
- * 
  *
  * @param <VH>
  *            subclass of ViewHolder.
@@ -20,12 +19,11 @@ public abstract class BaseCursorRecyclerViewAdapter<VH extends ViewHolder> exten
 
 	public static final int FLAG_REGISTER_CONTENT_OBSERVER = 0x02;
 
-	protected Cursor mCursor;
-	protected Context mContext;
-	protected int mRowIDColumn;
-	protected boolean mDataValid;
-	protected ChangeObserver mChangeObserver;
-	protected DataSetObserver mDataSetObserver;
+	private Cursor mCursor;
+	private boolean mDataValid;
+	private int mRowIDColumn;
+	private ChangeObserver mChangeObserver;
+	private DataSetObserver mDataSetObserver;
 
 	public BaseCursorRecyclerViewAdapter(Context context, Cursor c, int flags) {
 		init(context, c, flags);
@@ -37,9 +35,9 @@ public abstract class BaseCursorRecyclerViewAdapter<VH extends ViewHolder> exten
 
 	private void init(Context context, Cursor c, int flags) {
 		boolean cursorPresent = c != null;
+
 		mCursor = c;
 		mDataValid = cursorPresent;
-		mContext = context;
 		mRowIDColumn = cursorPresent ? c.getColumnIndexOrThrow("_id") : -1;
 		if ((flags & FLAG_REGISTER_CONTENT_OBSERVER) == FLAG_REGISTER_CONTENT_OBSERVER) {
 			mChangeObserver = new ChangeObserver();

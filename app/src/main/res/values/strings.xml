@@ -40,7 +40,7 @@
 
     <!-- Strings used in appwidget -->
     <string name="appwidget_name">QuakeMo</string>
-    <string name="appwidget_empty"></string>
+    <string name="appwidget_empty">" "</string>
     <!-- End of section -->
 
     <!-- Strings used in popup dialog -->

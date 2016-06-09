@@ -1,15 +1,14 @@
 package org.qmsos.quakemo.map;
 
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Overlay;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
 
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
+
 /**
  * Base class that use cursor to get data of items. 
- *
  */
 public abstract class BaseCursorItemizedOverlay extends Overlay {
 
@@ -24,8 +23,7 @@ public abstract class BaseCursorItemizedOverlay extends Overlay {
 
 	// Initialize the field variables.
 	private void init(Context context, Cursor cursor) {
-		boolean cursorPresent = cursor != null;
-		mDataValid = cursorPresent;
+		mDataValid = (cursor != null);
 		mCursor = cursor;
 	}
 
@@ -64,14 +62,8 @@ public abstract class BaseCursorItemizedOverlay extends Overlay {
 		}
 
 		Cursor oldCursor = mCursor;
-		if (oldCursor != null) {
-		}
 		mCursor = newCursor;
-		if (newCursor != null) {
-			mDataValid = true;
-		} else {
-			mDataValid = false;
-		}
+		mDataValid = (newCursor != null);
 
 		changeDataSet();
 
@@ -79,13 +71,10 @@ public abstract class BaseCursorItemizedOverlay extends Overlay {
 	}
 
 	/**
-	 * Change the data set in this overlay, by default basically does nothing; can be used
+	 * Change the data set in this overlay, by default does nothing; can be used
 	 * to extract data from the data cursor.
 	 */
 	protected void changeDataSet() {
-		if (!mDataValid) {
-			return;
-		}
 	}
 
 }

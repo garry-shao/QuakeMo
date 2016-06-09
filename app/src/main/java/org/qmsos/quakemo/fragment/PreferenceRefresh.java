@@ -1,9 +1,9 @@
 package org.qmsos.quakemo.fragment;
 
-import org.qmsos.quakemo.R;
-
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceFragmentCompat;
+
+import org.qmsos.quakemo.R;
 
 /**
  * The fragment of preference instance about refreshing.

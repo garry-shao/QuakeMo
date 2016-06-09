@@ -7,8 +7,6 @@ import android.view.View;
 
 /**
  * Customized ViewPager that makes MapView answering the scroll gestures first.
- * 
- *
  */
 public class CustomViewPager extends ViewPager {
 
@@ -22,11 +20,7 @@ public class CustomViewPager extends ViewPager {
 
 	@Override
 	protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
-		if (v instanceof CustomMapView) {
-			return true;
-		} else {
-			return super.canScroll(v, checkV, dx, x, y);
-		}
+		return (v instanceof CustomMapView) || super.canScroll(v, checkV, dx, x, y);
 	}
 
 }

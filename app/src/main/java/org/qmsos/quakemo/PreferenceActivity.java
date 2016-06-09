@@ -1,12 +1,5 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.fragment.PreferenceAbout;
-import org.qmsos.quakemo.fragment.PreferenceComponent;
-import org.qmsos.quakemo.fragment.PreferenceDisplay;
-import org.qmsos.quakemo.fragment.PreferenceHeader;
-import org.qmsos.quakemo.fragment.PreferenceHeader.OnPreferenceHeaderClickedListener;
-import org.qmsos.quakemo.fragment.PreferenceRefresh;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,16 +10,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
 import android.support.v7.widget.Toolbar;
 
+import org.qmsos.quakemo.fragment.PreferenceAbout;
+import org.qmsos.quakemo.fragment.PreferenceComponent;
+import org.qmsos.quakemo.fragment.PreferenceDisplay;
+import org.qmsos.quakemo.fragment.PreferenceHeader;
+import org.qmsos.quakemo.fragment.PreferenceRefresh;
+
 /**
  * The main activity managing preferences.
- *
- *
  */
 public class PreferenceActivity extends AppCompatActivity
-implements OnBackStackChangedListener, OnPreferenceHeaderClickedListener {
+        implements OnBackStackChangedListener,
+        PreferenceHeader.OnPreferenceHeaderClickedListener {
 
 	private static final String FRAGMENT_TAG_HEADER = "FRAGMENT_TAG_HEADER";
-
 	private static final String FRAGMENT_TAG_ABOUT = "FRAGMENT_TAG_ABOUT";
 	private static final String FRAGMENT_TAG_COMPONENT = "FRAGMENT_TAG_COMPONENT";
 	private static final String FRAGMENT_TAG_DISPLAY = "FRAGMENT_TAG_DISPLAY";
@@ -43,7 +40,8 @@ implements OnBackStackChangedListener, OnPreferenceHeaderClickedListener {
 		Fragment preferenceHeader = manager.findFragmentByTag(FRAGMENT_TAG_HEADER);
 		if (preferenceHeader == null) {
 			FragmentTransaction transaction = manager.beginTransaction();
-			transaction.replace(R.id.fragment_container, new PreferenceHeader(), FRAGMENT_TAG_HEADER);
+			transaction.replace(R.id.fragment_container,
+					new PreferenceHeader(), FRAGMENT_TAG_HEADER);
 			transaction.commit();
 			
 			// Toolbar's title will be changed based on currently loaded Fragment.
@@ -108,7 +106,7 @@ implements OnBackStackChangedListener, OnPreferenceHeaderClickedListener {
 	}
 
 	/**
-	 * Load fragment to backstack.
+	 * Load fragment to the back stack.
 	 * 
 	 * @param fragment
 	 *            The fragment to be loaded.
@@ -138,16 +136,17 @@ implements OnBackStackChangedListener, OnPreferenceHeaderClickedListener {
 	 * @return The resource id of the "bread crumb title" of this fragment.
 	 */
 	private int projectBreadCrumbTitle(String fragmentTag) {
-		if (fragmentTag.equals(FRAGMENT_TAG_ABOUT)) {
-			return R.string.pref_header_about_title;
-		} else if (fragmentTag.equals(FRAGMENT_TAG_COMPONENT)) {
-			return R.string.pref_header_component_title;
-		} else if (fragmentTag.equals(FRAGMENT_TAG_DISPLAY)) {
-			return R.string.pref_header_display_title;
-		} else if (fragmentTag.equals(FRAGMENT_TAG_REFRESH)) {
-			return R.string.pref_header_refresh_title;
-		} else {
-			return 0;
+		switch (fragmentTag) {
+			case FRAGMENT_TAG_ABOUT:
+				return R.string.pref_header_about_title;
+			case FRAGMENT_TAG_COMPONENT:
+				return R.string.pref_header_component_title;
+			case FRAGMENT_TAG_DISPLAY:
+				return R.string.pref_header_display_title;
+			case FRAGMENT_TAG_REFRESH:
+				return R.string.pref_header_refresh_title;
+			default:
+				return 0;
 		}
 	}
 

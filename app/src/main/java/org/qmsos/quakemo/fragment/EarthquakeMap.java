@@ -1,10 +1,5 @@
 package org.qmsos.quakemo.fragment;
 
-import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.map.CustomItemizedOverlay;
-import org.qmsos.quakemo.map.CustomTileSourceFactory;
-import org.qmsos.quakemo.widget.CustomMapView;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,14 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.map.CustomItemizedOverlay;
+import org.qmsos.quakemo.map.CustomTileSourceFactory;
+import org.qmsos.quakemo.widget.CustomMapView;
+
 /**
  * Show earthquakes on map.
- *
- *
  */
 public class EarthquakeMap extends BaseLoaderFragment {
 
 	private CustomMapView mMapView;
+
 	// The earthquake overlay on the map.
 	private CustomItemizedOverlay mOverlay;
 
@@ -32,10 +31,10 @@ public class EarthquakeMap extends BaseLoaderFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_earthquake_map, container, false);
-		
-		return view;
+	public View onCreateView(LayoutInflater inflater,
+							 ViewGroup container, Bundle savedInstanceState) {
+
+		return inflater.inflate(R.layout.fragment_earthquake_map, container, false);
 	}
 
 	@Override

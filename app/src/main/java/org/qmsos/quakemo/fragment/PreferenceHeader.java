@@ -1,15 +1,14 @@
 package org.qmsos.quakemo.fragment;
 
-import org.qmsos.quakemo.R;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
+import org.qmsos.quakemo.R;
+
 /**
  * The fragment that mocking preference headers.
- *
  */
 public class PreferenceHeader extends PreferenceFragmentCompat {
 

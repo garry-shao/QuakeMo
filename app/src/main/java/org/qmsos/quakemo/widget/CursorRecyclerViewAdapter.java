@@ -1,13 +1,5 @@
 package org.qmsos.quakemo.widget;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.contract.ProviderContract.Entity;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -16,11 +8,17 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * This is a customized Adapter class used on RecyclerView, basically a mock up
- * of SimpleCursorAdapter class .
- * 
- *
+ * of SimpleCursorAdapter class.
  */
 public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<ViewHolder> {
 
@@ -48,10 +46,7 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
 		String timeString = dateFormat.format(new Date(time));
 
-		StringBuilder infoBuilder = new StringBuilder(timeString);
-		infoBuilder.append(" - ");
-		infoBuilder.append("M ").append(magnitude);
-		String info = infoBuilder.toString();
+		String info = timeString + " - " + "M " + magnitude;
 
 		((RecyclerViewHolder) holder).mInfoView.setText(info);
 		((RecyclerViewHolder) holder).mDetailsView.setText(details);
@@ -87,12 +82,10 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
 	/**
 	 * Interface for a callback to be invoked when a view of ViewHolder class is
 	 * called.
-	 * 
-	 *
 	 */
 	public interface OnViewHolderClickedListener {
 		/**
-		 * Callback when specfic ViewHolder is clicked.
+		 * Callback when specific ViewHolder is clicked.
 		 * 
 		 * @param earthquakeId
 		 *            The ID of the earthquake in ViewHolder.

@@ -1,17 +1,5 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.contract.IntentContract;
-import org.qmsos.quakemo.dialog.Confirmation;
-import org.qmsos.quakemo.dialog.Confirmation.OnConfirmationSelectedListener;
-import org.qmsos.quakemo.dialog.EarthquakeDetails;
-import org.qmsos.quakemo.dialog.EarthquakeDetails.OnLinkSelectedListener;
-import org.qmsos.quakemo.fragment.BaseFragmentListPagerAdapter;
-import org.qmsos.quakemo.fragment.BaseLoaderFragment;
-import org.qmsos.quakemo.fragment.CustomFragmentPagerAdapter;
-import org.qmsos.quakemo.fragment.EarthquakeList;
-import org.qmsos.quakemo.fragment.EarthquakeMap;
-import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter.OnViewHolderClickedListener;
-
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -39,14 +27,25 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.qmsos.quakemo.contract.IntentContract;
+import org.qmsos.quakemo.dialog.Confirmation;
+import org.qmsos.quakemo.dialog.EarthquakeDetails;
+import org.qmsos.quakemo.fragment.BaseFragmentListPagerAdapter;
+import org.qmsos.quakemo.fragment.BaseLoaderFragment;
+import org.qmsos.quakemo.fragment.CustomFragmentPagerAdapter;
+import org.qmsos.quakemo.fragment.EarthquakeList;
+import org.qmsos.quakemo.fragment.EarthquakeMap;
+import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter;
+
 /**
  * Main activity of this application.
- *
- *
  */
-public class MainActivity extends AppCompatActivity 
-implements OnSharedPreferenceChangeListener, OnMenuItemClickListener, 
-	OnConfirmationSelectedListener, OnLinkSelectedListener, OnViewHolderClickedListener {
+public class MainActivity extends AppCompatActivity
+        implements OnSharedPreferenceChangeListener,
+        OnMenuItemClickListener,
+        Confirmation.OnConfirmationSelectedListener,
+        EarthquakeDetails.OnLinkSelectedListener,
+        CursorRecyclerViewAdapter.OnViewHolderClickedListener {
 
 	private MessageReceiver mMessageReceiver;
 
@@ -60,7 +59,7 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		toolbar.inflateMenu(R.menu.menu_main_options);
 		toolbar.setOnMenuItemClickListener(this);
 
-		BaseFragmentListPagerAdapter adapter = 
+		BaseFragmentListPagerAdapter adapter =
 				new CustomFragmentPagerAdapter(getSupportFragmentManager(), this);
 		adapter.addPage(new EarthquakeList());
 		adapter.addPage(new EarthquakeMap());
@@ -218,16 +217,16 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	 */
 	private void configurePackage() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
 		boolean isAppWidgetEnabled = prefs.getBoolean(getString(R.string.PREF_APP_WIDGET_TOGGLE), false);
 
 		int newState = isAppWidgetEnabled ? 
 				PackageManager.COMPONENT_ENABLED_STATE_ENABLED : 
 				PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 
-		ComponentName componentName = new ComponentName(this, EarthquakeAppWidget.class);
-		
-		getPackageManager().setComponentEnabledSetting(
-				componentName, newState, PackageManager.DONT_KILL_APP);
+        getPackageManager().setComponentEnabledSetting(
+                new ComponentName(this, EarthquakeAppWidget.class),
+                newState, PackageManager.DONT_KILL_APP);
 	}
 
 	/**
@@ -235,7 +234,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 	 */
 	private void scheduleService() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean isAutoRefreshEnabled = prefs.getBoolean(
+
+        boolean isAutoRefreshEnabled = prefs.getBoolean(
 				getString(R.string.PREF_REFRESH_AUTO_TOGGLE), false);
 		
 		Intent intent = new Intent(this, EarthquakeService.class);
@@ -254,7 +254,8 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 		FragmentManager manager = getSupportFragmentManager();
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-		BaseFragmentListPagerAdapter adapter = (BaseFragmentListPagerAdapter) viewPager.getAdapter();
+		BaseFragmentListPagerAdapter adapter =
+                (BaseFragmentListPagerAdapter) viewPager.getAdapter();
 
 		int count = adapter.getCount();
 		for (int i = 0; i < count; i++) {
@@ -300,17 +301,17 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			
 			String result = null;
 			if (action.equals(IntentContract.ACTION_REFRESH_EXECUTED)) {
-				boolean isRefreshExecuted = intent.getBooleanExtra(
-						IntentContract.EXTRA_REFRESH_EXECUTED, false);
+				boolean isRefreshExecuted =
+                        intent.getBooleanExtra(IntentContract.EXTRA_REFRESH_EXECUTED, false);
 				if (isRefreshExecuted) {
-					result = intent.getIntExtra(IntentContract.EXTRA_ADDED_COUNT, 0) + 
+					result = intent.getIntExtra(IntentContract.EXTRA_ADDED_COUNT, 0) +
 							" "	+ getString(R.string.snackbar_refreshed);
 				} else {
 					result = getString(R.string.snackbar_disconnected);
 				}
 			} else if (action.equals(IntentContract.ACTION_PURGE_EXECUTED)) {
-				boolean isPurgeExecuted = intent.getBooleanExtra(
-						IntentContract.EXTRA_PURGE_EXECUTED, false);
+				boolean isPurgeExecuted =
+                        intent.getBooleanExtra(IntentContract.EXTRA_PURGE_EXECUTED, false);
 				if (isPurgeExecuted) {
 					result = getString(R.string.snackbar_purged);
 				} else {
@@ -412,11 +413,11 @@ implements OnSharedPreferenceChangeListener, OnMenuItemClickListener,
 			if (snackbar != null) {
 				int snackbarActionTextColor = 
 						ContextCompat.getColor(fContext, R.color.snackbar_action_text_color);
-				int snakbarBackgroundColor = 
+				int snackbarBackgroundColor =
 						ContextCompat.getColor(fContext, R.color.snackbar_background_color);
 				
 				snackbar.setActionTextColor(snackbarActionTextColor);
-				snackbar.getView().setBackgroundColor(snakbarBackgroundColor);
+				snackbar.getView().setBackgroundColor(snackbarBackgroundColor);
 				snackbar.show();
 			}
 		}		

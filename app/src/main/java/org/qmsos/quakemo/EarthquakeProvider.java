@@ -1,8 +1,5 @@
 package org.qmsos.quakemo;
 
-import org.qmsos.quakemo.contract.ProviderContract;
-import org.qmsos.quakemo.contract.ProviderContract.Entity;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -15,13 +12,15 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.qmsos.quakemo.contract.ProviderContract;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
+
 /**
  * Content provider storing all earthquakes.
- *
- *
  */
 public class EarthquakeProvider extends ContentProvider {
 
@@ -47,8 +46,8 @@ public class EarthquakeProvider extends ContentProvider {
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, 
-			String[] selectionArgs, String sortOrder) {
+	public Cursor query(@NonNull Uri uri, String[] projection, String selection,
+						String[] selectionArgs, String sortOrder) {
 		
 		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
@@ -71,15 +70,15 @@ public class EarthquakeProvider extends ContentProvider {
 			orderBy = sortOrder;
 		}
 		
-		Cursor cursor = queryBuilder.query(
-				database, projection, selection, selectionArgs, null, null, orderBy);
+		Cursor cursor = queryBuilder.query(database,
+                projection, selection, selectionArgs, null, null, orderBy);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		
 		return cursor;
 	}
 
 	@Override
-	public String getType(Uri uri) {
+	public String getType(@NonNull Uri uri) {
 		switch (URI_MATCHER.match(uri)) {
 		case QUAKES:
 			return "vnd.android.cursor.dir/vnd.org.qmsos.quakemo";
@@ -91,7 +90,7 @@ public class EarthquakeProvider extends ContentProvider {
 	}
 
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
+	public Uri insert(@NonNull Uri uri, ContentValues values) {
 		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		long rowId = database.insert(DatabaseHelper.TABLE_EARTHQUAKE, "earthquake", values);
@@ -107,13 +106,14 @@ public class EarthquakeProvider extends ContentProvider {
 	}
 
 	@Override
-	public int bulkInsert(Uri uri, ContentValues[] values) {
+	public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
 		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		database.beginTransaction();
 		try {
 			for (ContentValues value : values) {
-				long rowId = database.insert(DatabaseHelper.TABLE_EARTHQUAKE, "earthquake", value);
+				long rowId = database.insert(DatabaseHelper.TABLE_EARTHQUAKE,
+                        "earthquake", value);
 				if (rowId < 0) {
 					// some insert in transaction failed, abort and roll back.
 					return 0;
@@ -130,7 +130,7 @@ public class EarthquakeProvider extends ContentProvider {
 	}
 
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
+	public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		int count;
@@ -140,8 +140,9 @@ public class EarthquakeProvider extends ContentProvider {
 			
 			break;
 		case QUAKE_ID:
-			String where = Entity.ID + " = " + uri.getPathSegments().get(1) + 
-					(!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
+			String where = Entity.ID + " = " + uri.getPathSegments().get(1) +
+                    (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
+
 			count = database.delete(DatabaseHelper.TABLE_EARTHQUAKE, where, selectionArgs);
 			
 			break;
@@ -155,20 +156,23 @@ public class EarthquakeProvider extends ContentProvider {
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
+	public int update(@NonNull Uri uri,
+                      ContentValues values, String selection, String[] selectionArgs) {
+
+        SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 		
 		int count;
 		switch (URI_MATCHER.match(uri)) {
 		case QUAKES:
-			count = database.update(
-					DatabaseHelper.TABLE_EARTHQUAKE, values, selection, selectionArgs);
+			count = database.update(DatabaseHelper.TABLE_EARTHQUAKE,
+                    values, selection, selectionArgs);
 			break;
 		case QUAKE_ID:
 			String where = Entity.ID + " = " + uri.getPathSegments().get(1) + 
 					(!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : "");
-			count = database.update(
-					DatabaseHelper.TABLE_EARTHQUAKE, values, where, selectionArgs);
+
+            count = database.update(DatabaseHelper.TABLE_EARTHQUAKE,
+                    values, where, selectionArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -203,7 +207,8 @@ public class EarthquakeProvider extends ContentProvider {
 						Entity.DETAILS + " TEXT, " +
 						Entity.LINK + " TEXT);";
 	
-		public DatabaseHelper(Context context, String name, CursorFactory factory, int version) {
+		public DatabaseHelper(Context context,
+                              String name, CursorFactory factory, int version) {
 			super(context, name, factory, version);
 		}
 		

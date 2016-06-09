@@ -1,8 +1,5 @@
 package org.qmsos.quakemo.fragment;
 
-import org.qmsos.quakemo.R;
-import org.qmsos.quakemo.contract.ProviderContract.Entity;
-
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,10 +9,11 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.preference.PreferenceManager;
 
+import org.qmsos.quakemo.R;
+import org.qmsos.quakemo.contract.ProviderContract.Entity;
+
 /**
  * Abstract class that used as template class, implementing loader callback.
- * 
- *
  */
 public abstract class BaseLoaderFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
@@ -37,20 +35,24 @@ public abstract class BaseLoaderFragment extends Fragment implements LoaderCallb
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { Entity.ID, Entity.TIME, Entity.MAGNITUDE, Entity.DETAILS, 
-				Entity.LATITUDE, Entity.LONGITUDE };
+		String[] projection = { Entity.ID,
+				Entity.TIME,
+				Entity.MAGNITUDE,
+				Entity.DETAILS,
+				Entity.LATITUDE,
+				Entity.LONGITUDE };
 
 		// Initialize later.
 		String where;
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-		boolean isDisplayingAll = prefs.getBoolean(getString(R.string.PREF_DISPLAY_ALL), false);
+
+        boolean isDisplayingAll = prefs.getBoolean(getString(R.string.PREF_DISPLAY_ALL), false);
 		if (isDisplayingAll) {
 			where = null;
 		} else {
-			int range = Integer.parseInt(prefs.getString(
-					getString(R.string.PREF_DISPLAY_RANGE), 
-					getString(R.string.default_pref_range_value)));
+			int range = Integer.parseInt(
+                    prefs.getString(getString(R.string.PREF_DISPLAY_RANGE), getString(R.string.default_pref_range_value)));
 			
 			long startMillis = System.currentTimeMillis() - range * INTERVAL_DAY_IN_MILLIS;
 			

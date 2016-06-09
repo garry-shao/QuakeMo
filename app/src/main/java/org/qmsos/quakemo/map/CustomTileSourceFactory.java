@@ -1,16 +1,15 @@
 package org.qmsos.quakemo.map;
 
-import java.io.File;
+import android.content.Context;
 
 import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 
-import android.content.Context;
+import java.io.File;
 
 /**
  * Customized factory class that creates offline map-tile source.
- *
  */
 public class CustomTileSourceFactory {
 
@@ -41,7 +40,8 @@ public class CustomTileSourceFactory {
 	 * @return The offline map-tile source.
 	 */
 	public static ITileSource offlineTileSource() {
-		return new XYTileSource(MAP_SOURCE, ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {});
+		return new XYTileSource(MAP_SOURCE,
+				ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {});
 	}
 
 	/**
@@ -55,20 +55,22 @@ public class CustomTileSourceFactory {
 		
 		boolean isTileFileValid = false;
 		
-		File mapTileFile = new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
+		File mapTileFile =
+				new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
 		if (mapTileFile.exists()) {
-			isTileFileValid = TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
+			isTileFileValid =
+					TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
 		}
 		
 		int count = 0;
 		while ((!isTileFileValid) && (count <= MAX_RETRY_COUNT)) {
-			boolean isCopySucceed = false;
-			
-			isCopySucceed = TileFilesHandler.copyFiles(context, ASSET_TILE_NAME, mapTileFile);
+			boolean isCopySucceed =
+					TileFilesHandler.copyFiles(context, ASSET_TILE_NAME, mapTileFile);
 			count++;
 			
 			if (isCopySucceed) {
-				isTileFileValid = TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
+				isTileFileValid =
+                        TileFilesHandler.hashFiles(context, ASSET_HASH_NAME, mapTileFile);
 			}
 		}
 	}

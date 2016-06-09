@@ -1,7 +1,5 @@
 package org.qmsos.quakemo.preference;
 
-import org.qmsos.quakemo.R;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -15,11 +13,11 @@ import android.support.v7.app.AppCompatDialog;
 import android.support.v7.preference.ListPreference;
 import android.util.AttributeSet;
 
+import org.qmsos.quakemo.R;
+
 /**
  * Customized ListPreference since ListPreferenceDialogFragmentCompat that 
  * in support library has bug when configuration changed.
- * 
- *
  */
 public class ListPreferenceCustom extends ListPreference {
 
@@ -34,14 +32,15 @@ public class ListPreferenceCustom extends ListPreference {
 		final String defaultNegativeButton = 
 				res.getString(R.string.default_list_preference_negative_button);
 		
-		TypedArray a = context.obtainStyledAttributes(
-				attrs, R.styleable.ListPreferenceCustom, defStyleAttr, 0);
+		TypedArray a = context.obtainStyledAttributes(attrs,
+				R.styleable.ListPreferenceCustom, defStyleAttr, 0);
 		
-		String attributeNevativeButton = 
-				a.getString(R.styleable.ListPreferenceCustom_listPrefernceNegativeButton);
+		String attributeNegativeButton =
+				a.getString(R.styleable.ListPreferenceCustom_listPreferenceNegativeButton);
 		
-		mButtonNegative = 
-				(attributeNevativeButton != null) ? attributeNevativeButton : defaultNegativeButton;
+		mButtonNegative =
+				(attributeNegativeButton != null) ?
+						attributeNegativeButton : defaultNegativeButton;
 		
 		a.recycle();
 	}
@@ -109,7 +108,7 @@ public class ListPreferenceCustom extends ListPreference {
 			return superState;
 		}
 
-		// Workaround, havn't found way to dismiss properly.
+		// Workaround, have not found a way to dismiss properly.
 		mDialog.dismiss();
 
 		final SavedState myState = new SavedState(superState);
@@ -125,13 +124,6 @@ public class ListPreferenceCustom extends ListPreference {
 		boolean mIsDialogShowing;
 		Bundle mDialogBundle;
 
-		public SavedState(Parcel source) {
-			super(source);
-
-			mValue = source.readString();
-			mIsDialogShowing = source.readInt() == 1;
-			mDialogBundle = source.readBundle();
-		}
 
 		public SavedState(Parcelable superState) {
 			super(superState);
@@ -139,24 +131,34 @@ public class ListPreferenceCustom extends ListPreference {
 
 		@Override
 		public void writeToParcel(Parcel dest, int flags) {
-			super.writeToParcel(dest, flags);
-
 			dest.writeString(mValue);
 			dest.writeInt(mIsDialogShowing ? 1 : 0);
 			dest.writeBundle(mDialogBundle);
+
+            super.writeToParcel(dest, flags);
 		}
 
-		public static final Parcelable.Creator<SavedState> CREATOR = 
-				new Parcelable.Creator<SavedState>() {
+		public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
 
-			public SavedState createFromParcel(Parcel in) {
-				return new SavedState(in);
-			}
+            @Override
+            public SavedState createFromParcel(Parcel source) {
+                return new SavedState(source);
+            }
 
-			public SavedState[] newArray(int size) {
-				return new SavedState[size];
-			}
-		};
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
+		private SavedState(Parcel source) {
+			super(source);
+
+			mValue = source.readString();
+			mIsDialogShowing = source.readInt() == 1;
+			mDialogBundle = source.readBundle(getClass().getClassLoader());
+		}
+
 	}
 
 }

@@ -1,22 +1,21 @@
 package org.qmsos.quakemo.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Base class of customized FragmentPagerAdapter that backed by a list.
- *
  */
 public abstract class BaseFragmentListPagerAdapter extends FragmentPagerAdapter {
 
 	// Store tags of fragments.
-	private SparseArray<String> mFragmentTags = new SparseArray<String>();
+	private SparseArray<String> mFragmentTags = new SparseArray<>();
 	
 	private List<Fragment> mFragmentList;
 
@@ -29,14 +28,15 @@ public abstract class BaseFragmentListPagerAdapter extends FragmentPagerAdapter 
 	public BaseFragmentListPagerAdapter(FragmentManager fm) {
 		super(fm);
 		
-		this.mFragmentList = new ArrayList<Fragment>();
+		this.mFragmentList = new ArrayList<>();
 	}
 
 	@Override
 	public Fragment getItem(int position) {
 		// Misleading method name, fragments returned
-		// here aren't same with those in FragmentPagerAdaper.
-		return (mFragmentList == null || mFragmentList.size() == 0) ? null : mFragmentList.get(position);
+		// here aren't same with those in FragmentPagerAdapter.
+		return (mFragmentList == null || mFragmentList.size() == 0) ?
+				null : mFragmentList.get(position);
 	}
 
 	@Override
@@ -67,8 +67,10 @@ public abstract class BaseFragmentListPagerAdapter extends FragmentPagerAdapter 
 	 *            The fragment that will be added.
 	 */
 	public void addPage(Fragment fragment) {
-		if ((mFragmentList != null) && (fragment != null) && !(mFragmentList.contains(fragment))) {
-			mFragmentList.add(fragment);
+		if ((mFragmentList != null) && (fragment != null) &&
+                !(mFragmentList.contains(fragment))) {
+
+            mFragmentList.add(fragment);
 		}
 	}
 

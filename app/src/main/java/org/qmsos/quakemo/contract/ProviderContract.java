@@ -5,7 +5,6 @@ import android.net.Uri;
 /**
  * The contract of the earthquake provider. Contains definition of the supported 
  * URIs and data columns.
- *
  */
 public final class ProviderContract {
 
@@ -34,45 +33,45 @@ public final class ProviderContract {
 		/**
 		 * Primary key that auto increments. <p>TYPE: INTEGER</p> 
 		 */
-		public static final String ID = "_id";
+		String ID = "_id";
 		
 		/**
 		 * The time that earthquake occurred, in UTC. <p>TYPE: INTEGER</p>
 		 */
-		public static final String TIME = "time";
+		String TIME = "time";
 		
 		/**
 		 * The magnitude of that earthquake. <p>TYPE: REAL</p>
 		 */
-		public static final String MAGNITUDE = "magnitude";
+		String MAGNITUDE = "magnitude";
 		
 		/**
 		 * The longitude of the center of that earthquake, negative 
 		 * for western longitude. <p>TYPE: REAL</p>
 		 */
-		public static final String LONGITUDE = "longitude";
+		String LONGITUDE = "longitude";
 		
 		/**
 		 * The latitude of the center of that earthquake, negative 
 		 * for southern latitude. <p>TYPE: REAL</p>
 		 */
-		public static final String LATITUDE = "latitude";
+		String LATITUDE = "latitude";
 		
 		/**
 		 * The depth of the center of that earthquake. <p>TYPE: REAL</p>
 		 */
-		public static final String DEPTH = "depth";
+		String DEPTH = "depth";
 		
 		/**
 		 * The description of the center of that earthquake. <p>TYPE: TEXT</p>
 		 */
-		public static final String DETAILS = "details";
+		String DETAILS = "details";
 		
 		/**
-		 * The link of the earthquake, to website of usgs.gov 
+		 * The link of the earthquake, to website of http://earthquake.usgs.gov
 		 * about this earthquake. <p>TYPE: TEXT</p>
 		 */
-		public static final String LINK = "link";
+		String LINK = "link";
 	
 	}
 

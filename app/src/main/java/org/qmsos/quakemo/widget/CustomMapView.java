@@ -1,16 +1,15 @@
 package org.qmsos.quakemo.widget;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+
 /**
  * Customized MapView class that restores extra information when configuration changed. 
- *
  */
 public class CustomMapView extends MapView {
 
@@ -72,23 +71,23 @@ public class CustomMapView extends MapView {
 			super.writeToParcel(out, flags);
 		}
 
-		public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+		public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
 
-			@Override
-			public SavedState createFromParcel(Parcel source) {
-				return new SavedState(source);
-			}
+            @Override
+            public SavedState createFromParcel(Parcel source) {
+                return new SavedState(source);
+            }
 
-			@Override
-			public SavedState[] newArray(int size) {
-				return new SavedState[size];
-			}
-		};
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
 
 		private SavedState(Parcel source) {
 			super(source);
 			
-			mCenter = source.readParcelable(null);
+			mCenter = source.readParcelable(getClass().getClassLoader());
 			mZoomLevel = source.readInt();
 		}
 

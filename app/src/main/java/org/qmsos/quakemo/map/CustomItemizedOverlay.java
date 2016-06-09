@@ -1,20 +1,20 @@
 package org.qmsos.quakemo.map;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Point;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.Projection;
 import org.qmsos.quakemo.contract.ProviderContract.Entity;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Paint.Style;
-
 /**
- * Customized overlay that draws items of earthquake on the map, the items data is in the cursor.
- *
+ * Customized overlay that draws items of earthquake on the map,
+ * the items data is in the cursor.
  */
 public class CustomItemizedOverlay extends BaseCursorItemizedOverlay {
 

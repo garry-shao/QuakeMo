@@ -1,20 +1,19 @@
 package org.qmsos.quakemo.dialog;
 
-import org.qmsos.quakemo.R;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+
+import org.qmsos.quakemo.R;
 
 /**
  * Simple Material Design liked Dialog fragment, implements the listener inside
  * to get callback.
- * 
- *
  */
 public class Confirmation extends DialogFragment {
 
@@ -33,6 +32,7 @@ public class Confirmation extends DialogFragment {
 		}
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -52,8 +52,6 @@ public class Confirmation extends DialogFragment {
 
 	/**
 	 * Interface for a callback to be invoked when the action is confirmed.
-	 * 
-	 *
 	 */
 	public interface OnConfirmationSelectedListener {
 		/**

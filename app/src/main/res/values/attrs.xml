@@ -3,10 +3,10 @@
 
 	<!-- Following section used in the custom SwitchPreferenceCustom class -->
 	<declare-styleable name="SwitchPreferenceCustom">
-	    <attr name="switchPreferenceDialogTitle" format="reference|string"/>
-	    <attr name="switchPreferenceDialogMessage" format="reference|string"/>
-	    <attr name="switchPreferenceNegativeButton" format="reference|string"/>
-	    <attr name="switchPreferencePositiveButton" format="reference|string"/>
+	    <attr name="switchPreferenceDialogTitle" format="reference|string" />
+	    <attr name="switchPreferenceDialogMessage" format="reference|string" />
+	    <attr name="switchPreferenceNegativeButton" format="reference|string" />
+	    <attr name="switchPreferencePositiveButton" format="reference|string" />
 	</declare-styleable>
 
     <string name="default_switch_preference_title">Warning</string>
@@ -17,7 +17,7 @@
 
 	<!-- Following section used in the custom ListPreferenceCustom class -->
 	<declare-styleable name="ListPreferenceCustom">
-	    <attr name="listPrefernceNegativeButton" format="reference|string"/>
+	    <attr name="listPreferenceNegativeButton" format="reference|string" />
 	</declare-styleable>
 
 	<string name="default_list_preference_negative_button">Cancel</string>
