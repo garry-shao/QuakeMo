@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "org.qmsos.quakemo"
@@ -25,5 +25,5 @@ dependencies {
     compile 'com.android.support:preference-v7:24.2.0'
     compile 'com.android.support:preference-v14:24.2.0'
     compile 'com.android.support:recyclerview-v7:24.2.0'
-    compile 'org.osmdroid:osmdroid-android:5.2@aar'
+    compile 'org.osmdroid:osmdroid-android:5.4:release@aar'
 }

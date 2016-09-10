@@ -1,6 +1,5 @@
 package org.qmsos.quakemo.map;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
 
@@ -14,17 +13,24 @@ public abstract class BaseCursorItemizedOverlay extends Overlay {
 
 	private boolean mDataValid;
 	private Cursor mCursor;
-	
-	public BaseCursorItemizedOverlay(Context context, Cursor cursor) {
-		super(context);
-		
-		init(context, cursor);
-	}
 
-	// Initialize the field variables.
-	private void init(Context context, Cursor cursor) {
+    /**
+     * Constructor with valid data.
+     *
+     * @param cursor
+     *            The cursor containing data.
+     */
+	public BaseCursorItemizedOverlay(Cursor cursor) {
 		mDataValid = (cursor != null);
 		mCursor = cursor;
+	}
+
+    /**
+     * Constructor with empty data.
+     */
+	public BaseCursorItemizedOverlay() {
+		mDataValid = false;
+		mCursor = null;
 	}
 
 	@Override

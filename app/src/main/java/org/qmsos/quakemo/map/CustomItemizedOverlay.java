@@ -1,6 +1,5 @@
 package org.qmsos.quakemo.map;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -21,31 +20,36 @@ public class CustomItemizedOverlay extends BaseCursorItemizedOverlay {
 	private int mRadius;
 	private Paint mPaint;
 
-	// Field variables buffer to data.
+	// Field variables that will be used as buffer.
 	private Point mBufferPoint;
 	private GeoPoint mBufferGeoPoint;
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param context
-	 *            The associated context.
-	 * @param cursor
-	 *            The cursor containing data.
-	 */
-	public CustomItemizedOverlay(Context context, Cursor cursor) {
-		super(context, cursor);
-		
-		mRadius = 3;
-		mPaint = new Paint();
-		mPaint.setARGB(255, 255, 0, 0);
-		mPaint.setAntiAlias(true);
-		mPaint.setFakeBoldText(true);
-		mPaint.setStyle(Style.FILL);
-		
-		mBufferPoint = new Point();
-		mBufferGeoPoint = new GeoPoint(0f, 0f);
+	public CustomItemizedOverlay(Cursor cursor) {
+		super(cursor);
+
+		init();
 	}
+
+	public CustomItemizedOverlay() {
+		super();
+
+		init();
+	}
+
+    /**
+     * Initialize field variables.
+     */
+    private void init() {
+        mRadius = 3;
+        mPaint = new Paint();
+        mPaint.setARGB(255, 255, 0, 0);
+        mPaint.setAntiAlias(true);
+        mPaint.setFakeBoldText(true);
+        mPaint.setStyle(Style.FILL);
+
+        mBufferPoint = new Point();
+        mBufferGeoPoint = new GeoPoint(0.0, 0.0);
+    }
 
 	@Override
 	protected void draw(Canvas canvas, MapView mapView, Cursor data) {
@@ -56,7 +60,7 @@ public class CustomItemizedOverlay extends BaseCursorItemizedOverlay {
 				double latitude = data.getDouble(data.getColumnIndexOrThrow(Entity.LATITUDE));
 				double longitude = data.getDouble(data.getColumnIndexOrThrow(Entity.LONGITUDE));
 				
-				mBufferGeoPoint.setCoordsE6((int) (latitude * 1E6), (int) (longitude * 1E6));
+				mBufferGeoPoint.setCoords(latitude, longitude);
 				mBufferPoint = projection.toPixels(mBufferGeoPoint, mBufferPoint);
 				
 				canvas.drawCircle(mBufferPoint.x, mBufferPoint.y, mRadius, mPaint);
