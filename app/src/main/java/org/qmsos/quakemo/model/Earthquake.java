@@ -1,4 +1,4 @@
-package org.qmsos.quakemo.datamodel;
+package org.qmsos.quakemo.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
