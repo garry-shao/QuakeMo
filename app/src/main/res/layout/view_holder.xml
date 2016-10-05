@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/view_holder_margin_top"
-        android:singleLine="true"
-        android:textAppearance="@style/textAppearanceListItemHead" />
+        android:textAppearance="@style/textAppearanceListItemHead"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/details"
@@ -21,7 +21,7 @@
         android:layout_alignStart="@id/info"
         android:layout_below="@id/info"
         android:ellipsize="end"
-        android:singleLine="true"
-        android:textAppearance="@style/textAppearanceListItemBody" />
+        android:textAppearance="@style/textAppearanceListItemBody"
+        android:maxLines="1" />
 
 </RelativeLayout>
