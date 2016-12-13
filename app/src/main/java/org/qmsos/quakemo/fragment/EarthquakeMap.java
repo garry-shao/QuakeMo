@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import org.qmsos.quakemo.R;
 import org.qmsos.quakemo.map.CustomItemizedOverlay;
-import org.qmsos.quakemo.map.CustomTileSourceFactory;
+import org.qmsos.quakemo.map.OfflineTileSourceFactory;
 import org.qmsos.quakemo.widget.CustomMapView;
 
 /**
@@ -27,7 +27,7 @@ public class EarthquakeMap extends BaseLoaderFragment {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		
-		CustomTileSourceFactory.initiateOfflineMapTiles(context);
+		OfflineTileSourceFactory.initiateOfflineMapTiles(context);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class EarthquakeMap extends BaseLoaderFragment {
 		mMapView.setMultiTouchControls(true);
 		mMapView.setTilesScaledToDpi(true);
 		mMapView.setUseDataConnection(false);
-		mMapView.setTileSource(CustomTileSourceFactory.offlineTileSource());
+		mMapView.setTileSource(OfflineTileSourceFactory.offlineTileSource());
 
 		mOverlay = new CustomItemizedOverlay();
 		mMapView.getOverlays().add(mOverlay);
