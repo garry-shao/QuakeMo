@@ -10,8 +10,8 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.Snackbar.Callback;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -378,13 +378,12 @@ public class MainActivity extends AppCompatActivity
 				intent.setAction(IntentContract.ACTION_REFRESH_MANUAL);
 				
 				snackbar = Snackbar.make(view, R.string.snackbar_refreshing, Snackbar.LENGTH_SHORT);
-				snackbar.setCallback(new Callback() {
-
-					@Override
-					public void onDismissed(Snackbar snackbar, int event) {
-						fContext.startService(intent);
-					}
-				});
+                snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        fContext.startService(intent);
+                    }
+                });
 				break;
 			case PURGE:
 				intent.setAction(IntentContract.ACTION_PURGE_DATABASE);
@@ -397,11 +396,11 @@ public class MainActivity extends AppCompatActivity
 						intent.putExtra(IntentContract.EXTRA_PURGE_DATABASE, false);
 					}
 				});
-				snackbar.setCallback(new Callback() {
+				snackbar.addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
 
 					@Override
-					public void onDismissed(Snackbar snackbar, int event) {
-						if (event != Callback.DISMISS_EVENT_ACTION) {
+					public void onDismissed(Snackbar transientBottomBar, int event) {
+						if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
 							intent.putExtra(IntentContract.EXTRA_PURGE_DATABASE, true);
 						}
 						fContext.startService(intent);
