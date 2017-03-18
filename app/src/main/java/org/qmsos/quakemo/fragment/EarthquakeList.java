@@ -16,35 +16,34 @@ import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter;
  * Show earthquakes as list.
  */
 public class EarthquakeList extends BaseLoaderFragment {
-	
-	private CursorRecyclerViewAdapter mCursorAdapter;
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater,
-							 ViewGroup container, Bundle savedInstanceState) {
 
-		return inflater.inflate(R.layout.fragment_earthquake_list, container, false);
-	}
+    private CursorRecyclerViewAdapter mCursorAdapter;
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+							 Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_earthquake_list, container, false);
+    }
 
-		mCursorAdapter = new CursorRecyclerViewAdapter(getContext(), null);
-		
-		RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.earthquake_list);
-		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-		recyclerView.setAdapter(mCursorAdapter);
-	}
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		mCursorAdapter.swapCursor(data);
-	}
+        mCursorAdapter = new CursorRecyclerViewAdapter(getContext(), null);
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		mCursorAdapter.swapCursor(null);
-	}
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.earthquake_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(mCursorAdapter);
+    }
 
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mCursorAdapter.swapCursor(null);
+    }
 }

@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<!-- Following section used in the custom SwitchPreferenceCustom class -->
-	<declare-styleable name="SwitchPreferenceCustom">
-	    <attr name="switchPreferenceDialogTitle" format="reference|string" />
-	    <attr name="switchPreferenceDialogMessage" format="reference|string" />
-	    <attr name="switchPreferenceNegativeButton" format="reference|string" />
-	    <attr name="switchPreferencePositiveButton" format="reference|string" />
-	</declare-styleable>
+    <!-- Following section used in the custom SwitchPreferenceCustom class -->
+    <declare-styleable name="SwitchPreferenceCustom">
+        <attr name="switchPreferenceDialogTitle" format="reference|string" />
+        <attr name="switchPreferenceDialogMessage" format="reference|string" />
+        <attr name="switchPreferenceNegativeButton" format="reference|string" />
+        <attr name="switchPreferencePositiveButton" format="reference|string" />
+    </declare-styleable>
 
     <string name="default_switch_preference_title">Warning</string>
     <string name="default_switch_preference_message">May cost money updating, are you SURE ?</string>
-	<string name="default_switch_preference_negative_button">No</string>
+    <string name="default_switch_preference_negative_button">No</string>
     <string name="default_switch_preference_positive_button">Yes</string>
-	<!-- End of section -->
+    <!-- End of section -->
 
-	<!-- Following section used in the custom ListPreferenceCustom class -->
-	<declare-styleable name="ListPreferenceCustom">
-	    <attr name="listPreferenceNegativeButton" format="reference|string" />
-	</declare-styleable>
+    <!-- Following section used in the custom ListPreferenceCustom class -->
+    <declare-styleable name="ListPreferenceCustom">
+        <attr name="listPreferenceNegativeButton" format="reference|string" />
+    </declare-styleable>
 
-	<string name="default_list_preference_negative_button">Cancel</string>
-	<!-- End of section -->
+    <string name="default_list_preference_negative_button">Cancel</string>
+    <!-- End of section -->
 
 </resources>

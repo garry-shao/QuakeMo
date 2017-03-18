@@ -12,45 +12,45 @@ import org.qmsos.quakemo.R;
  */
 public class PreferenceHeader extends PreferenceFragmentCompat {
 
-	private OnPreferenceHeaderClickedListener mListener;
+    private OnPreferenceHeaderClickedListener mListener;
 
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		
-		try {
-			mListener = (OnPreferenceHeaderClickedListener) context;
-		} catch (ClassCastException e) {
-			String listenerName = OnPreferenceHeaderClickedListener.class.getSimpleName();
-			
-			throw new ClassCastException(context.toString() + " must implements " + listenerName);
-		}
-	}
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-	@Override
-	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-		addPreferencesFromResource(R.xml.preference_header);
-	}
+        try {
+            mListener = (OnPreferenceHeaderClickedListener) context;
+        } catch (ClassCastException e) {
+            String listenerName = OnPreferenceHeaderClickedListener.class.getSimpleName();
 
-	@Override
-	public boolean onPreferenceTreeClick(Preference preference) {
-		mListener.onPreferenceHeaderClicked(preference);
-		
-		return super.onPreferenceTreeClick(preference);
-	}
+            throw new ClassCastException(context.toString()
+					+ " must implements "
+					+ listenerName);
+        }
+    }
 
-	/**
-	 * Interface that as callback when the mock up of preference header is clicked. 
-	 */
-	public interface OnPreferenceHeaderClickedListener {
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        addPreferencesFromResource(R.xml.preference_header);
+    }
 
-		/**
-		 * Called when any mock up of preference header is clicked.
-		 * 
-		 * @param preferenceHeader
-		 *            The preference header that clicked.
-		 */
-		void onPreferenceHeaderClicked(Preference preferenceHeader);
-	}
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        mListener.onPreferenceHeaderClicked(preference);
 
+        return super.onPreferenceTreeClick(preference);
+    }
+
+    /**
+     * Interface that as callback when the mock up of preference header is clicked.
+     */
+    public interface OnPreferenceHeaderClickedListener {
+        /**
+         * Called when any mock up of preference header is clicked.
+         *
+         * @param preferenceHeader
+         *            The preference header that clicked.
+         */
+        void onPreferenceHeaderClicked(Preference preferenceHeader);
+    }
 }

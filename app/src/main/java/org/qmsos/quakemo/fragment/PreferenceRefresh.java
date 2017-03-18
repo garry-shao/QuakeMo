@@ -10,9 +10,8 @@ import org.qmsos.quakemo.R;
  */
 public class PreferenceRefresh extends PreferenceFragmentCompat {
 
-	@Override
-	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-		addPreferencesFromResource(R.xml.preference_refresh);
-	}
-
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        addPreferencesFromResource(R.xml.preference_refresh);
+    }
 }

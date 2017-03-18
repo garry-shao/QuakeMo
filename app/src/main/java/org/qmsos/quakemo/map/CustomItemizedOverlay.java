@@ -17,24 +17,24 @@ import org.qmsos.quakemo.contract.ProviderContract.Entity;
  */
 public class CustomItemizedOverlay extends BaseCursorItemizedOverlay {
 
-	private int mRadius;
-	private Paint mPaint;
+    private int mRadius;
+    private Paint mPaint;
 
-	// Field variables that will be used as buffer.
-	private Point mBufferPoint;
-	private GeoPoint mBufferGeoPoint;
+    // Field variables that will be used as buffer.
+    private Point mBufferPoint;
+    private GeoPoint mBufferGeoPoint;
 
-	public CustomItemizedOverlay(Cursor cursor) {
-		super(cursor);
+    public CustomItemizedOverlay(Cursor cursor) {
+        super(cursor);
 
-		init();
-	}
+        init();
+    }
 
-	public CustomItemizedOverlay() {
-		super();
+    public CustomItemizedOverlay() {
+        super();
 
-		init();
-	}
+        init();
+    }
 
     /**
      * Initialize field variables.
@@ -51,21 +51,22 @@ public class CustomItemizedOverlay extends BaseCursorItemizedOverlay {
         mBufferGeoPoint = new GeoPoint(0.0, 0.0);
     }
 
-	@Override
-	protected void draw(Canvas canvas, MapView mapView, Cursor data) {
-		Projection projection = mapView.getProjection();
-		
-		if (data != null && data.moveToFirst()) {
-			do {
-				double latitude = data.getDouble(data.getColumnIndexOrThrow(Entity.LATITUDE));
-				double longitude = data.getDouble(data.getColumnIndexOrThrow(Entity.LONGITUDE));
-				
-				mBufferGeoPoint.setCoords(latitude, longitude);
-				mBufferPoint = projection.toPixels(mBufferGeoPoint, mBufferPoint);
-				
-				canvas.drawCircle(mBufferPoint.x, mBufferPoint.y, mRadius, mPaint);
-			} while (data.moveToNext());
-		}
-	}
+    @Override
+    protected void draw(Canvas canvas, MapView mapView, Cursor data) {
+        Projection projection = mapView.getProjection();
 
+        if (data != null && data.moveToFirst()) {
+            do {
+                double latitude = data.getDouble(
+						data.getColumnIndexOrThrow(Entity.LATITUDE));
+                double longitude = data.getDouble(
+						data.getColumnIndexOrThrow(Entity.LONGITUDE));
+
+                mBufferGeoPoint.setCoords(latitude, longitude);
+                mBufferPoint = projection.toPixels(mBufferGeoPoint, mBufferPoint);
+
+                canvas.drawCircle(mBufferPoint.x, mBufferPoint.y, mRadius, mPaint);
+            } while (data.moveToNext());
+        }
+    }
 }

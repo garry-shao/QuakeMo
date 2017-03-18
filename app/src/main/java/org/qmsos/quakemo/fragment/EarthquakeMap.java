@@ -18,63 +18,63 @@ import org.qmsos.quakemo.widget.CustomMapView;
  */
 public class EarthquakeMap extends BaseLoaderFragment {
 
-	private CustomMapView mMapView;
+    private CustomMapView mMapView;
 
-	// The earthquake overlay on the map.
-	private CustomItemizedOverlay mOverlay;
+    // The earthquake overlay on the map.
+    private CustomItemizedOverlay mOverlay;
 
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		
-		OfflineTileSourceFactory.initiateOfflineMapTiles(context);
-	}
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-	@Override
-	public View onCreateView(LayoutInflater inflater,
-							 ViewGroup container, Bundle savedInstanceState) {
+        OfflineTileSourceFactory.initiateOfflineMapTiles(context);
+    }
 
-		return inflater.inflate(R.layout.fragment_earthquake_map, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+							 Bundle savedInstanceState) {
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		
-		mMapView = (CustomMapView) view.findViewById(R.id.earthquake_map);
-		mMapView.setMultiTouchControls(true);
-		mMapView.setTilesScaledToDpi(true);
-		mMapView.setUseDataConnection(false);
-		mMapView.setTileSource(OfflineTileSourceFactory.offlineTileSource());
+        return inflater.inflate(R.layout.fragment_earthquake_map, container, false);
+    }
 
-		mOverlay = new CustomItemizedOverlay();
-		mMapView.getOverlays().add(mOverlay);
-	}
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		swapData(data);
-	}
+        mMapView = (CustomMapView) view.findViewById(R.id.earthquake_map);
+        mMapView.setMultiTouchControls(true);
+        mMapView.setTilesScaledToDpi(true);
+        mMapView.setUseDataConnection(false);
+        mMapView.setTileSource(OfflineTileSourceFactory.offlineTileSource());
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-		swapData(null);
-	}
+        mOverlay = new CustomItemizedOverlay();
+        mMapView.getOverlays().add(mOverlay);
+    }
 
-	/**
-	 * Swap the cursor that contains earthquake data.
-	 * 
-	 * @param data
-	 *            The cursor that contains earthquake data.
-	 */
-	private void swapData(Cursor data) {
-		if (mOverlay != null) {
-			mOverlay.swapCursor(data);
-		}
-		// Did not find a way to redraw Overlay, have to invalidate to whole view.
-		if (mMapView != null) {
-			mMapView.invalidate();
-		}
-	}
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        swapData(data);
+    }
 
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        swapData(null);
+    }
+
+    /**
+     * Swap the cursor that contains earthquake data.
+     *
+     * @param data
+     *            The cursor that contains earthquake data.
+     */
+    private void swapData(Cursor data) {
+        if (mOverlay != null) {
+            mOverlay.swapCursor(data);
+        }
+        // Did not find a way to redraw Overlay, have to invalidate to whole view.
+        if (mMapView != null) {
+            mMapView.invalidate();
+        }
+    }
 }
