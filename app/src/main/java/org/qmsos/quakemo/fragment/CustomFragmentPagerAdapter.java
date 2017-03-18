@@ -13,33 +13,32 @@ import java.util.List;
  */
 public class CustomFragmentPagerAdapter extends BaseFragmentListPagerAdapter {
 
-	private Context mContext;
+    private Context mContext;
 
-	public CustomFragmentPagerAdapter(FragmentManager fm,
-									  List<Fragment> fragmentList, Context context) {
+    public CustomFragmentPagerAdapter(FragmentManager fm,
+                                      List<Fragment> fragmentList,
+                                      Context context) {
+        super(fm, fragmentList);
 
-		super(fm, fragmentList);
+        this.mContext = context;
+    }
 
-		this.mContext = context;
-	}
+    public CustomFragmentPagerAdapter(FragmentManager fm, Context context) {
+        super(fm);
 
-	public CustomFragmentPagerAdapter(FragmentManager fm, Context context) {
-		super(fm);
+        this.mContext = context;
+    }
 
-		this.mContext = context;
-	}
+    @Override
+    public CharSequence getPageTitle(int position) {
+        Fragment fragment = getFragment(position);
 
-	@Override
-	public CharSequence getPageTitle(int position) {
-		Fragment fragment = getFragment(position);
-		
-		if (fragment instanceof EarthquakeList) {
-			return mContext.getString(R.string.tab_list);
-		} else if (fragment instanceof EarthquakeMap) {
-			return mContext.getString(R.string.tab_map);
-		} else {
-			return mContext.getString(R.string.tab_null);
-		}
-	}
-
+        if (fragment instanceof EarthquakeList) {
+            return mContext.getString(R.string.tab_list);
+        } else if (fragment instanceof EarthquakeMap) {
+            return mContext.getString(R.string.tab_map);
+        } else {
+            return mContext.getString(R.string.tab_null);
+        }
+    }
 }

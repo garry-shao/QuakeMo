@@ -21,125 +21,125 @@ import org.qmsos.quakemo.R;
  */
 public class ListPreferenceCustom extends ListPreference {
 
-	private AppCompatDialog mDialog;
+    private AppCompatDialog mDialog;
 
-	private String mButtonNegative;
+    private String mButtonNegative;
 
-	public ListPreferenceCustom(Context context, AttributeSet attrs, int defStyleAttr) {
-		super(context, attrs, defStyleAttr);
-		
-		final Resources res = context.getResources();
-		final String defaultNegativeButton = 
-				res.getString(R.string.default_list_preference_negative_button);
-		
-		TypedArray a = context.obtainStyledAttributes(attrs,
-				R.styleable.ListPreferenceCustom, defStyleAttr, 0);
-		
-		String attributeNegativeButton =
-				a.getString(R.styleable.ListPreferenceCustom_listPreferenceNegativeButton);
-		
-		mButtonNegative =
-				(attributeNegativeButton != null) ?
-						attributeNegativeButton : defaultNegativeButton;
-		
-		a.recycle();
-	}
+    public ListPreferenceCustom(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
 
-	public ListPreferenceCustom(Context context, AttributeSet attrs) {
-		this(context, attrs, R.attr.dialogPreferenceStyle);
-	}
+        final Resources res = context.getResources();
+        final String defaultNegativeButton =
+                res.getString(R.string.default_list_preference_negative_button);
 
-	public ListPreferenceCustom(Context context) {
-		this(context, null);
-	}
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.ListPreferenceCustom,
+				defStyleAttr,
+				0);
 
-	@Override
-	protected void onClick() {
-		if (getEntries() == null || getEntryValues() == null) {
-			throw new IllegalStateException(
-					"ListPreference requires an entries array and an entryValues array.");
-		}
+        String attributeNegativeButton =
+                a.getString(R.styleable.ListPreferenceCustom_listPreferenceNegativeButton);
 
-		int preSelect = findIndexOfValue(getValue());
+        mButtonNegative =(attributeNegativeButton != null)
+                ? attributeNegativeButton
+                : defaultNegativeButton;
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle(getTitle());
-		builder.setIcon(getDialogIcon());
-		builder.setNegativeButton(mButtonNegative, null);
-		builder.setSingleChoiceItems(getEntries(), preSelect, new OnClickListener() {
+        a.recycle();
+    }
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (which >= 0 && getEntryValues() != null) {
-					String value = getEntryValues()[which].toString();
-					if (callChangeListener(value)) {
-						setValue(value);
-					}
-				}
+    public ListPreferenceCustom(Context context, AttributeSet attrs) {
+        this(context, attrs, R.attr.dialogPreferenceStyle);
+    }
 
-				dialog.dismiss();
-			}
-		});
+    public ListPreferenceCustom(Context context) {
+        this(context, null);
+    }
 
-		mDialog = builder.create();
-		mDialog.show();
-	}
+    @Override
+    protected void onClick() {
+        if (getEntries() == null || getEntryValues() == null) {
+            throw new IllegalStateException(
+                    "ListPreference requires an entries array and an entryValues array.");
+        }
 
-	@Override
-	protected void onRestoreInstanceState(Parcelable state) {
-		if (!(state instanceof SavedState)) {
-			super.onRestoreInstanceState(state);
-			return;
-		}
+        int preSelect = findIndexOfValue(getValue());
 
-		SavedState myState = (SavedState) state;
-		super.onRestoreInstanceState(myState.getSuperState());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(getTitle());
+        builder.setIcon(getDialogIcon());
+        builder.setNegativeButton(mButtonNegative, null);
+        builder.setSingleChoiceItems(getEntries(), preSelect, new OnClickListener() {
 
-		setValue(myState.mValue);
-		if (myState.mIsDialogShowing) {
-			onClick();
-		}
-	}
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which >= 0 && getEntryValues() != null) {
+                    String value = getEntryValues()[which].toString();
+                    if (callChangeListener(value)) {
+                        setValue(value);
+                    }
+                }
 
-	@Override
-	protected Parcelable onSaveInstanceState() {
-		final Parcelable superState = super.onSaveInstanceState();
-		if (mDialog == null || !mDialog.isShowing()) {
-			return superState;
-		}
+                dialog.dismiss();
+            }
+        });
 
-		// Workaround, have not found a way to dismiss properly.
-		mDialog.dismiss();
+        mDialog = builder.create();
+        mDialog.show();
+    }
 
-		final SavedState myState = new SavedState(superState);
-		myState.mValue = getValue();
-		myState.mIsDialogShowing = true;
-		myState.mDialogBundle = mDialog.onSaveInstanceState();
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
 
-		return myState;
-	}
+        SavedState myState = (SavedState) state;
+        super.onRestoreInstanceState(myState.getSuperState());
 
-	static class SavedState extends BaseSavedState {
-		String mValue;
-		boolean mIsDialogShowing;
-		Bundle mDialogBundle;
+        setValue(myState.mValue);
+        if (myState.mIsDialogShowing) {
+            onClick();
+        }
+    }
 
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        final Parcelable superState = super.onSaveInstanceState();
+        if (mDialog == null || !mDialog.isShowing()) {
+            return superState;
+        }
 
-		public SavedState(Parcelable superState) {
-			super(superState);
-		}
+        // Workaround, have not found a way to dismiss properly.
+        mDialog.dismiss();
 
-		@Override
-		public void writeToParcel(Parcel dest, int flags) {
-			dest.writeString(mValue);
-			dest.writeInt(mIsDialogShowing ? 1 : 0);
-			dest.writeBundle(mDialogBundle);
+        final SavedState myState = new SavedState(superState);
+        myState.mValue = getValue();
+        myState.mIsDialogShowing = true;
+        myState.mDialogBundle = mDialog.onSaveInstanceState();
+
+        return myState;
+    }
+
+    static class SavedState extends BaseSavedState {
+        String mValue;
+        boolean mIsDialogShowing;
+        Bundle mDialogBundle;
+
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(mValue);
+            dest.writeInt(mIsDialogShowing ? 1 : 0);
+            dest.writeBundle(mDialogBundle);
 
             super.writeToParcel(dest, flags);
-		}
+        }
 
-		public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
             @Override
             public SavedState createFromParcel(Parcel source) {
                 return new SavedState(source);
@@ -151,14 +151,12 @@ public class ListPreferenceCustom extends ListPreference {
             }
         };
 
-		private SavedState(Parcel source) {
-			super(source);
+        private SavedState(Parcel source) {
+            super(source);
 
-			mValue = source.readString();
-			mIsDialogShowing = source.readInt() == 1;
-			mDialogBundle = source.readBundle(getClass().getClassLoader());
-		}
-
-	}
-
+            mValue = source.readString();
+            mIsDialogShowing = source.readInt() == 1;
+            mDialogBundle = source.readBundle(getClass().getClassLoader());
+        }
+    }
 }

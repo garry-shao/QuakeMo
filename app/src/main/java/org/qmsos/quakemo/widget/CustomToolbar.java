@@ -11,79 +11,75 @@ import android.util.AttributeSet;
  */
 public class CustomToolbar extends Toolbar {
 
-	public CustomToolbar(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public CustomToolbar(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public CustomToolbar(Context context) {
-		super(context);
-	}
+    public CustomToolbar(Context context) {
+        super(context);
+    }
 
-	@Override
-	protected Parcelable onSaveInstanceState() {
-		Parcelable superState = super.onSaveInstanceState();
-		
-		String title = getTitle().toString();
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
 
-		SavedState savedState = new SavedState(superState);
-		savedState.mTitle = title;
-		
-		return savedState;
-	}
+        String title = getTitle().toString();
 
-	@Override
-	protected void onRestoreInstanceState(Parcelable state) {
-		if (!(state instanceof SavedState)) {
-			super.onRestoreInstanceState(state);
-			return;
-		}
-		
-		SavedState savedState = (SavedState) state;
-		super.onRestoreInstanceState(savedState.getSuperState());
-		
-		if (savedState.mTitle != null) {
-			setTitle(savedState.mTitle);
-		}
-	}
+        SavedState savedState = new SavedState(superState);
+        savedState.mTitle = title;
 
-	/**
-	 * Used as saved state that passed when saving and restoring instance state.
-	 */
-	static class SavedState extends BaseSavedState {
+        return savedState;
+    }
 
-		private String mTitle;
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
 
-		SavedState(Parcelable superState) {
-			super(superState);
-		}
+        SavedState savedState = (SavedState) state;
+        super.onRestoreInstanceState(savedState.getSuperState());
 
-		@Override
-		public void writeToParcel(Parcel out, int flags) {
-			out.writeString(mTitle);
-			
-			super.writeToParcel(out, flags);
-		}
+        if (savedState.mTitle != null) {
+            setTitle(savedState.mTitle);
+        }
+    }
 
-		public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+    /**
+     * Used as saved state that passed when saving and restoring instance state.
+     */
+    static class SavedState extends BaseSavedState {
+        private String mTitle;
 
-			@Override
-			public SavedState createFromParcel(Parcel source) {
-				return new SavedState(source);
-			}
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
 
-			@Override
-			public SavedState[] newArray(int size) {
-				return new SavedState[size];
-			}
-			
-		};
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeString(mTitle);
 
-		private SavedState(Parcel source) {
-			super(source);
-			
-			mTitle = source.readString();
-		}
+            super.writeToParcel(out, flags);
+        }
 
-	}
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel source) {
+                return new SavedState(source);
+            }
 
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+
+        };
+
+        private SavedState(Parcel source) {
+            super(source);
+
+            mTitle = source.readString();
+        }
+    }
 }

@@ -11,8 +11,8 @@ import org.osmdroid.views.overlay.Overlay;
  */
 public abstract class BaseCursorItemizedOverlay extends Overlay {
 
-	private boolean mDataValid;
-	private Cursor mCursor;
+    private boolean mDataValid;
+    private Cursor mCursor;
 
     /**
      * Constructor with valid data.
@@ -20,67 +20,66 @@ public abstract class BaseCursorItemizedOverlay extends Overlay {
      * @param cursor
      *            The cursor containing data.
      */
-	public BaseCursorItemizedOverlay(Cursor cursor) {
-		mDataValid = (cursor != null);
-		mCursor = cursor;
-	}
+    public BaseCursorItemizedOverlay(Cursor cursor) {
+        mDataValid = (cursor != null);
+        mCursor = cursor;
+    }
 
     /**
      * Constructor with empty data.
      */
-	public BaseCursorItemizedOverlay() {
-		mDataValid = false;
-		mCursor = null;
-	}
+    public BaseCursorItemizedOverlay() {
+        mDataValid = false;
+        mCursor = null;
+    }
 
-	@Override
-	protected void draw(Canvas canvas, MapView mapView, boolean shadow) {
-		if (shadow) {
-			return;
-		}
-		
-		draw(canvas, mapView, mCursor);
-	}
+    @Override
+    protected void draw(Canvas canvas, MapView mapView, boolean shadow) {
+        if (shadow) {
+            return;
+        }
 
-	/**
-	 * Implement to draw overlay on the map, assuming this is a proxy method with 
-	 * shadow=false on {@link #draw(Canvas, MapView, boolean)}. 
-	 * 
-	 * @param canvas
-	 *            The canvas to draw on.
-	 * @param mapView
-	 *            The map view of this overlay.
-	 * @param data
-	 *            The cursor containing data.
-	 */
-	protected abstract void draw(Canvas canvas, MapView mapView, Cursor data);
+        draw(canvas, mapView, mCursor);
+    }
 
-	/**
-	 * Swap the data cursor.
-	 * 
-	 * @param newCursor
-	 *            The new cursor that swapped in.
-	 * @return The old cursor that swapped out.
-	 */
-	public Cursor swapCursor(Cursor newCursor) {
-		if (newCursor == mCursor) {
-			return null;
-		}
+    /**
+     * Implement to draw overlay on the map, assuming this is a proxy method with
+     * shadow=false on {@link #draw(Canvas, MapView, boolean)}.
+     *
+     * @param canvas
+     *            The canvas to draw on.
+     * @param mapView
+     *            The map view of this overlay.
+     * @param data
+     *            The cursor containing data.
+     */
+    protected abstract void draw(Canvas canvas, MapView mapView, Cursor data);
 
-		Cursor oldCursor = mCursor;
-		mCursor = newCursor;
-		mDataValid = (newCursor != null);
+    /**
+     * Swap the data cursor.
+     *
+     * @param newCursor
+     *            The new cursor that swapped in.
+     * @return The old cursor that swapped out.
+     */
+    public Cursor swapCursor(Cursor newCursor) {
+        if (newCursor == mCursor) {
+            return null;
+        }
 
-		changeDataSet();
+        Cursor oldCursor = mCursor;
+        mCursor = newCursor;
+        mDataValid = (newCursor != null);
 
-		return oldCursor;
-	}
+        changeDataSet();
 
-	/**
-	 * Change the data set in this overlay, by default does nothing; can be used
-	 * to extract data from the data cursor.
-	 */
-	protected void changeDataSet() {
-	}
+        return oldCursor;
+    }
 
+    /**
+     * Change the data set in this overlay, by default does nothing; can be used
+     * to extract data from the data cursor.
+     */
+    protected void changeDataSet() {
+    }
 }

@@ -18,93 +18,97 @@ import org.qmsos.quakemo.contract.ProviderContract.Entity;
  */
 public class EarthquakeAppWidget extends AppWidgetProvider {
 
-	private static final String TAG = EarthquakeAppWidget.class.getSimpleName();
-	
-	@Override
-	public void onUpdate(Context context,
-                         AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    private static final String TAG = EarthquakeAppWidget.class.getSimpleName();
+
+    @Override
+    public void onUpdate(Context context,
+                         AppWidgetManager appWidgetManager,
+                         int[] appWidgetIds) {
 
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
-		Intent intent = new Intent(context, MainActivity.class);
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-		RemoteViews views =
-				new RemoteViews(context.getPackageName(), R.layout.appwidget_earthquake);
-		views.setOnClickPendingIntent(R.id.appwidget_magnitude, pendingIntent);
-		views.setOnClickPendingIntent(R.id.appwidget_details, pendingIntent);
+        RemoteViews views = new RemoteViews(
+                context.getPackageName(), R.layout.appwidget_earthquake);
+        views.setOnClickPendingIntent(R.id.appwidget_magnitude, pendingIntent);
+        views.setOnClickPendingIntent(R.id.appwidget_details, pendingIntent);
 
-		appWidgetManager.updateAppWidget(appWidgetIds, views);
+        appWidgetManager.updateAppWidget(appWidgetIds, views);
 
-		updateEarthquake(context, appWidgetManager, appWidgetIds);
-	}
+        updateEarthquake(context, appWidgetManager, appWidgetIds);
+    }
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		super.onReceive(context, intent);
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
 
-		String action = intent.getAction();
-		if (action != null && action.equals(IntentContract.ACTION_REFRESH_APPWIDGET)) {
-			updateEarthquake(context);
-		}
-	}
+        String action = intent.getAction();
+        if (action != null && action.equals(IntentContract.ACTION_REFRESH_APPWIDGET)) {
+            updateEarthquake(context);
+        }
+    }
 
-	/**
-	 * Update AppWidget using the following parameters.
-	 * 
-	 * @param context
-	 *            The context this AppWidget provider is in.
-	 * @param appWidgetManager
-	 *            The AppWidget Manager.
-	 * @param appWidgetIds
-	 *            The AppWidget IDs.
-	 */
-	private void updateEarthquake(Context context,
-                                  AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    /**
+     * Update AppWidget using the following parameters.
+     *
+     * @param context
+     *            The context this AppWidget provider is in.
+     * @param appWidgetManager
+     *            The AppWidget Manager.
+     * @param appWidgetIds
+     *            The AppWidget IDs.
+     */
+    private void updateEarthquake(Context context,
+                                  AppWidgetManager appWidgetManager,
+                                  int[] appWidgetIds) {
 
         double magnitude = 0.0f;
-		String details = context.getString(R.string.appwidget_empty);
+        String details = context.getString(R.string.appwidget_empty);
 
-		Cursor cursor = null;
-		try {
-			cursor = context.getContentResolver().query(Entity.CONTENT_URI,
-					null, null, null, null);
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver()
+                    .query(Entity.CONTENT_URI, null, null, null, null);
             if (cursor != null && cursor.moveToLast()) {
-				magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
-				details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));
-			}
-		} catch (NumberFormatException e) {
-			Log.e(TAG, "error parsing number");
-		} catch (IllegalArgumentException e) {
-			Log.e(TAG, "Columns do not exist");
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
+                magnitude = cursor.getDouble(
+                        cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
+                details = cursor.getString(
+                        cursor.getColumnIndexOrThrow(Entity.DETAILS));
+            }
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "error parsing number");
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Columns do not exist");
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
 
-		for (int appWidgetId : appWidgetIds) {
-			RemoteViews views =
-					new RemoteViews(context.getPackageName(), R.layout.appwidget_earthquake);
-			views.setTextViewText(R.id.appwidget_magnitude, "M " + magnitude);
-			views.setTextViewText(R.id.appwidget_details, details);
+        for (int appWidgetId : appWidgetIds) {
+            RemoteViews views = new RemoteViews(
+                    context.getPackageName(), R.layout.appwidget_earthquake);
+            views.setTextViewText(R.id.appwidget_magnitude, "M " + magnitude);
+            views.setTextViewText(R.id.appwidget_details, details);
 
-			appWidgetManager.updateAppWidget(appWidgetId, views);
-		}
-	}
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
+    }
 
-	/**
-	 * Update AppWidget using Context only.
-	 * 
-	 * @param context
-	 *            The context this AppWidget provider is in.
-	 */
-	private void updateEarthquake(Context context) {
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-		
-		int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
-				new ComponentName(context, EarthquakeAppWidget.class));
+    /**
+     * Update AppWidget using Context only.
+     *
+     * @param context
+     *            The context this AppWidget provider is in.
+     */
+    private void updateEarthquake(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 
-		updateEarthquake(context, appWidgetManager, appWidgetIds);
-	}
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                new ComponentName(context, EarthquakeAppWidget.class));
+
+        updateEarthquake(context, appWidgetManager, appWidgetIds);
+    }
 }

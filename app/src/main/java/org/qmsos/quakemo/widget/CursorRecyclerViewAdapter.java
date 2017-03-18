@@ -22,75 +22,80 @@ import java.util.Locale;
  */
 public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<ViewHolder> {
 
-	private OnViewHolderClickedListener mListener;
+    private OnViewHolderClickedListener mListener;
 
-	public CursorRecyclerViewAdapter(Context context, Cursor cursor) {
-		super(context, cursor);
-		
-		try {
-			mListener = (OnViewHolderClickedListener) context;
-		} catch (ClassCastException e) {
-			String listenerName = OnViewHolderClickedListener.class.getSimpleName();
-			
-			throw new ClassCastException(context.toString() + " must implements " + listenerName);
-		}
-	}
+    public CursorRecyclerViewAdapter(Context context, Cursor cursor) {
+        super(context, cursor);
 
-	@Override
-	public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
-		final long earthquakeId = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.ID));
-		long time = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
-		double magnitude = cursor.getDouble(cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
-		String details = cursor.getString(cursor.getColumnIndexOrThrow(Entity.DETAILS));
+        try {
+            mListener = (OnViewHolderClickedListener) context;
+        } catch (ClassCastException e) {
+            String listenerName = OnViewHolderClickedListener.class.getSimpleName();
 
-		DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
-		String timeString = dateFormat.format(new Date(time));
+            throw new ClassCastException(context.toString()
+                    + " must implements "
+                    + listenerName);
+        }
+    }
 
-		String info = timeString + " - " + "M " + magnitude;
+    @Override
+    public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
+        final long earthquakeId = cursor.getLong(
+				cursor.getColumnIndexOrThrow(Entity.ID));
+        long time = cursor.getLong(
+				cursor.getColumnIndexOrThrow(Entity.TIME));
+        double magnitude = cursor.getDouble(
+                cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
+        String details = cursor.getString(
+                cursor.getColumnIndexOrThrow(Entity.DETAILS));
 
-		((RecyclerViewHolder) holder).mInfoView.setText(info);
-		((RecyclerViewHolder) holder).mDetailsView.setText(details);
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
+        String timeString = dateFormat.format(new Date(time));
 
-		holder.itemView.setOnClickListener(new OnClickListener() {
+        String info = timeString + " - " + "M " + magnitude;
 
-			@Override
-			public void onClick(View v) {
-				mListener.onViewHolderClicked(earthquakeId);
-			}
-		});
-	}
+        ((RecyclerViewHolder) holder).mInfoView.setText(info);
+        ((RecyclerViewHolder) holder).mDetailsView.setText(details);
 
-	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View view = View.inflate(parent.getContext(), R.layout.view_holder, null);
+        holder.itemView.setOnClickListener(new OnClickListener() {
 
-		return new RecyclerViewHolder(view);
-	}
+            @Override
+            public void onClick(View v) {
+                mListener.onViewHolderClicked(earthquakeId);
+            }
+        });
+    }
 
-	static class RecyclerViewHolder extends ViewHolder {
-		TextView mInfoView;
-		TextView mDetailsView;
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = View.inflate(parent.getContext(), R.layout.view_holder, null);
 
-		public RecyclerViewHolder(View itemView) {
-			super(itemView);
+        return new RecyclerViewHolder(view);
+    }
 
-			mInfoView = (TextView) itemView.findViewById(R.id.info);
-			mDetailsView = (TextView) itemView.findViewById(R.id.details);
-		}
-	}
+    static class RecyclerViewHolder extends ViewHolder {
+        TextView mInfoView;
+        TextView mDetailsView;
 
-	/**
-	 * Interface for a callback to be invoked when a view of ViewHolder class is
-	 * called.
-	 */
-	public interface OnViewHolderClickedListener {
-		/**
-		 * Callback when specific ViewHolder is clicked.
-		 * 
-		 * @param earthquakeId
-		 *            The ID of the earthquake in ViewHolder.
-		 */
-		void onViewHolderClicked(long earthquakeId);
-	}
+        public RecyclerViewHolder(View itemView) {
+            super(itemView);
 
+            mInfoView = (TextView) itemView.findViewById(R.id.info);
+            mDetailsView = (TextView) itemView.findViewById(R.id.details);
+        }
+    }
+
+    /**
+     * Interface for a callback to be invoked when a view of ViewHolder class is
+     * called.
+     */
+    public interface OnViewHolderClickedListener {
+        /**
+         * Callback when specific ViewHolder is clicked.
+         *
+         * @param earthquakeId
+         *            The ID of the earthquake in ViewHolder.
+         */
+        void onViewHolderClicked(long earthquakeId);
+    }
 }

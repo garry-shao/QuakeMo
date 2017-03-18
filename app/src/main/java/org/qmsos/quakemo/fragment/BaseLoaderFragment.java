@@ -17,49 +17,53 @@ import org.qmsos.quakemo.contract.ProviderContract.Entity;
  */
 public abstract class BaseLoaderFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
-	private static final long INTERVAL_DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+    private static final long INTERVAL_DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
-		getLoaderManager().initLoader(0, null, this);
-	}
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-	@Override
-	public void onDestroyView() {
-		getLoaderManager().destroyLoader(0);
-		
-		super.onDestroyView();
-	}
+        getLoaderManager().initLoader(0, null, this);
+    }
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		String[] projection = { Entity.ID,
-				Entity.TIME,
-				Entity.MAGNITUDE,
-				Entity.DETAILS,
-				Entity.LATITUDE,
-				Entity.LONGITUDE };
+    @Override
+    public void onDestroyView() {
+        getLoaderManager().destroyLoader(0);
 
-		// Initialize later.
-		String where;
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        super.onDestroyView();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = { Entity.ID,
+                Entity.TIME,
+                Entity.MAGNITUDE,
+                Entity.DETAILS,
+                Entity.LATITUDE,
+                Entity.LONGITUDE };
+
+        // Initialize later.
+        String where;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         boolean isDisplayingAll = prefs.getBoolean(getString(R.string.PREF_DISPLAY_ALL), false);
-		if (isDisplayingAll) {
-			where = null;
-		} else {
-			int range = Integer.parseInt(
+        if (isDisplayingAll) {
+            where = null;
+        } else {
+            int range = Integer.parseInt(
                     prefs.getString(getString(R.string.PREF_DISPLAY_RANGE), getString(R.string.default_pref_range_value)));
-			
-			long startMillis = System.currentTimeMillis() - range * INTERVAL_DAY_IN_MILLIS;
-			
-			where = Entity.TIME + " >= " + startMillis;
-		}
-		
-		return new CursorLoader(getContext(), Entity.CONTENT_URI, projection, where, null, null);
-	}
 
+            long startMillis = System.currentTimeMillis() - range * INTERVAL_DAY_IN_MILLIS;
+
+            where = Entity.TIME + " >= " + startMillis;
+        }
+
+        return new CursorLoader(getContext(),
+				Entity.CONTENT_URI,
+				projection,
+				where,
+				null,
+				null);
+    }
 }

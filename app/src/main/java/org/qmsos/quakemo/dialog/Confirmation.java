@@ -17,47 +17,48 @@ import org.qmsos.quakemo.R;
  */
 public class Confirmation extends DialogFragment {
 
-	private OnConfirmationSelectedListener mListener;
-	
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		
-		try {
-			mListener = (OnConfirmationSelectedListener) context;
-		} catch (ClassCastException e) {
-			String listenerName = OnConfirmationSelectedListener.class.getSimpleName();
-			
-			throw new ClassCastException(context.toString() + " must implements " + listenerName);
-		}
-	}
+    private OnConfirmationSelectedListener mListener;
 
-	@NonNull
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle(R.string.dialog_confirmation_title);
-		builder.setMessage(R.string.dialog_confirmation_message);
-		builder.setNegativeButton(R.string.dialog_confirmation_negative, null);
-		builder.setPositiveButton(R.string.dialog_confirmation_positive, new OnClickListener() {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				mListener.onConfirmationSelected();
-			}
-		});
+        try {
+            mListener = (OnConfirmationSelectedListener) context;
+        } catch (ClassCastException e) {
+            String listenerName = OnConfirmationSelectedListener.class.getSimpleName();
 
-		return builder.create();
-	}
+            throw new ClassCastException(context.toString()
+					+ " must implements "
+					+ listenerName);
+        }
+    }
 
-	/**
-	 * Interface for a callback to be invoked when the action is confirmed.
-	 */
-	public interface OnConfirmationSelectedListener {
-		/**
-		 * Called when the action is confirmed.
-		 */
-		void onConfirmationSelected();
-	}
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.dialog_confirmation_title);
+        builder.setMessage(R.string.dialog_confirmation_message);
+        builder.setNegativeButton(R.string.dialog_confirmation_negative, null);
+        builder.setPositiveButton(R.string.dialog_confirmation_positive, new OnClickListener() {
 
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mListener.onConfirmationSelected();
+            }
+        });
+
+        return builder.create();
+    }
+
+    /**
+     * Interface for a callback to be invoked when the action is confirmed.
+     */
+    public interface OnConfirmationSelectedListener {
+        /**
+         * Called when the action is confirmed.
+         */
+        void onConfirmationSelected();
+    }
 }

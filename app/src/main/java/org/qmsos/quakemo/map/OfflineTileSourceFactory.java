@@ -23,41 +23,41 @@ import java.security.NoSuchAlgorithmException;
  */
 public class OfflineTileSourceFactory {
 
-	// Zoom levels of the offline map-tile source, should be consistent with the map-tile file.
-	private static final int ZOOM_LEVEL_MIN = 1;
-	private static final int ZOOM_LEVEL_MAX = 4;
+    // Zoom levels of the offline map-tile source, should be consistent with the map-tile file.
+    private static final int ZOOM_LEVEL_MIN = 1;
+    private static final int ZOOM_LEVEL_MAX = 4;
 
-	// Max retry count before abort.
-	private static final int MAX_RETRY_COUNT = 3;
+    // Max retry count before abort.
+    private static final int MAX_RETRY_COUNT = 3;
 
     // Name of tile source, should be the same with the folder name in map-tile file.
-	private static final String MAP_SOURCE = "Mapnik";
-	// Map tile file name, copied to.
-	private static final String MAP_TILE_FILE = MAP_SOURCE + ".zip";
+    private static final String MAP_SOURCE = "Mapnik";
+    // Map tile file name, copied to.
+    private static final String MAP_TILE_FILE = MAP_SOURCE + ".zip";
 
-	// Asset file name, copied from.
-	private static final String ASSET_TILE_NAME = "Mapnik.zip";
+    // Asset file name, copied from.
+    private static final String ASSET_TILE_NAME = "Mapnik.zip";
 
-	// Asset hash name, whether the map-tile file is corrupted.
-	private static final String ASSET_HASH_NAME = "Mapnik.sha";
+    // Asset hash name, whether the map-tile file is corrupted.
+    private static final String ASSET_HASH_NAME = "Mapnik.sha";
 
-	/**
-	 * Create offline map-tile source.
-	 * 
-	 * @return The offline map-tile source.
-	 */
-	public static ITileSource offlineTileSource() {
-		return new XYTileSource(MAP_SOURCE,
-				ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {});
-	}
+    /**
+     * Create offline map-tile source.
+     *
+     * @return The offline map-tile source.
+     */
+    public static ITileSource offlineTileSource() {
+        return new XYTileSource(MAP_SOURCE,
+                ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {});
+    }
 
-	/**
-	 * Initialize offline map tiles, should be called before map being drawed.
-	 * 
-	 * @param context
-	 *            The context of the map resides in.
-	 */
-	public static void initiateOfflineMapTiles(Context context) {
+    /**
+     * Initialize offline map tiles, should be called before map being drawed.
+     *
+     * @param context
+     *            The context of the map resides in.
+     */
+    public static void initiateOfflineMapTiles(Context context) {
         // Valid up until osmdroid@5.5, changing coufiguration of this library.
         //
         // Known issues:
@@ -78,10 +78,14 @@ public class OfflineTileSourceFactory {
         OpenStreetMapTileProviderConstants.setOfflineMapsPath(filePath);
 
         File mapTileFile =
-				new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
+                new File(OpenStreetMapTileProviderConstants.getBasePath(), MAP_TILE_FILE);
 
-        tileCheckup(context, mapTileFile, MAX_RETRY_COUNT, ASSET_TILE_NAME, ASSET_HASH_NAME);
-	}
+        tileCheckup(context,
+                mapTileFile,
+                MAX_RETRY_COUNT,
+                ASSET_TILE_NAME,
+                ASSET_HASH_NAME);
+    }
 
     /**
      * Check whether offline map tiles are valid, create new valid ones if not.

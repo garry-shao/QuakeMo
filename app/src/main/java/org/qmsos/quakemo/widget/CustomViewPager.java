@@ -10,17 +10,16 @@ import android.view.View;
  */
 public class CustomViewPager extends ViewPager {
 
-	public CustomViewPager(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public CustomViewPager(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public CustomViewPager(Context context) {
-		super(context);
-	}
+    public CustomViewPager(Context context) {
+        super(context);
+    }
 
-	@Override
-	protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
-		return (v instanceof CustomMapView) || super.canScroll(v, checkV, dx, x, y);
-	}
-
+    @Override
+    protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
+        return (v instanceof CustomMapView) || super.canScroll(v, checkV, dx, x, y);
+    }
 }
