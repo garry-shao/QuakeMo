@@ -67,8 +67,8 @@ public class EarthquakeDetails extends DialogFragment implements LoaderCallbacks
             String listenerName = OnLinkSelectedListener.class.getSimpleName();
 
             throw new ClassCastException(context.toString()
-					+ " must implements "
-					+ listenerName);
+                    + " must implements "
+                    + listenerName);
         }
     }
 

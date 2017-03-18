@@ -56,8 +56,8 @@ public class SwitchPreferenceCustom extends SwitchPreferenceCompat {
                 a.getString(R.styleable.SwitchPreferenceCustom_switchPreferencePositiveButton);
 
         mTitle = (attributeTitle != null)
-				? attributeTitle
-				: defaultTitle;
+                ? attributeTitle
+                : defaultTitle;
         mMessage = (attributeMessage != null)
                 ? attributeMessage
                 : defaultMessage;

@@ -36,7 +36,7 @@ public abstract class BaseFragmentListPagerAdapter extends FragmentPagerAdapter 
         // Misleading method name, fragments returned
         // here aren't same with those in FragmentPagerAdapter.
         return (mFragmentList == null || mFragmentList.size() == 0)
-				? null
+                ? null
                 : mFragmentList.get(position);
     }
 

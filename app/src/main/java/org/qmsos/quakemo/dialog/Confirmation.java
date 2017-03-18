@@ -29,8 +29,8 @@ public class Confirmation extends DialogFragment {
             String listenerName = OnConfirmationSelectedListener.class.getSimpleName();
 
             throw new ClassCastException(context.toString()
-					+ " must implements "
-					+ listenerName);
+                    + " must implements "
+                    + listenerName);
         }
     }
 

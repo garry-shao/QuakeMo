@@ -34,8 +34,8 @@ public class ListPreferenceCustom extends ListPreference {
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ListPreferenceCustom,
-				defStyleAttr,
-				0);
+                defStyleAttr,
+                0);
 
         String attributeNegativeButton =
                 a.getString(R.styleable.ListPreferenceCustom_listPreferenceNegativeButton);

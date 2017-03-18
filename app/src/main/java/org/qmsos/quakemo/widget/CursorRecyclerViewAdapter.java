@@ -41,9 +41,9 @@ public class CursorRecyclerViewAdapter extends BaseCursorRecyclerViewAdapter<Vie
     @Override
     public void onBindViewHolder(ViewHolder holder, Cursor cursor) {
         final long earthquakeId = cursor.getLong(
-				cursor.getColumnIndexOrThrow(Entity.ID));
+                cursor.getColumnIndexOrThrow(Entity.ID));
         long time = cursor.getLong(
-				cursor.getColumnIndexOrThrow(Entity.TIME));
+                cursor.getColumnIndexOrThrow(Entity.TIME));
         double magnitude = cursor.getDouble(
                 cursor.getColumnIndexOrThrow(Entity.MAGNITUDE));
         String details = cursor.getString(

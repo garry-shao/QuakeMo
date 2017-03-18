@@ -58,10 +58,9 @@ public class CustomItemizedOverlay extends BaseCursorItemizedOverlay {
         if (data != null && data.moveToFirst()) {
             do {
                 double latitude = data.getDouble(
-						data.getColumnIndexOrThrow(Entity.LATITUDE));
+                        data.getColumnIndexOrThrow(Entity.LATITUDE));
                 double longitude = data.getDouble(
-						data.getColumnIndexOrThrow(Entity.LONGITUDE));
-
+                        data.getColumnIndexOrThrow(Entity.LONGITUDE));
                 mBufferGeoPoint.setCoords(latitude, longitude);
                 mBufferPoint = projection.toPixels(mBufferGeoPoint, mBufferPoint);
 

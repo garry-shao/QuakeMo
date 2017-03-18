@@ -205,8 +205,9 @@ public class EarthquakeService extends IntentService {
 
         if (enablingAlarm) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            int frequency = Integer.parseInt(
-                    prefs.getString(getString(R.string.PREF_REFRESH_AUTO_FREQUENCY), getString(R.string.default_pref_frequency_value)));
+            int frequency = Integer.parseInt(prefs.getString(
+                    getString(R.string.PREF_REFRESH_AUTO_FREQUENCY),
+                    getString(R.string.default_pref_frequency_value)));
 
             long intervalMillis = frequency * AlarmManager.INTERVAL_HOUR;
             long timeToRefresh = SystemClock.elapsedRealtime() + intervalMillis;
@@ -401,8 +402,9 @@ public class EarthquakeService extends IntentService {
                 startTime = dateFormat.format(new Date(defaultStartMillis));
             }
         } else {
-            int range = Integer.parseInt(
-                    prefs.getString(getString(R.string.PREF_REFRESH_PARAMETER_RANGE), getString(R.string.default_pref_range_value)));
+            int range = Integer.parseInt(prefs.getString(
+                    getString(R.string.PREF_REFRESH_PARAMETER_RANGE),
+                    getString(R.string.default_pref_range_value)));
             long startMillis = System.currentTimeMillis() - range * AlarmManager.INTERVAL_DAY;
             if (startMillis < timeStamp) {
                 startTime = dateFormat.format(new Date(timeStamp));
@@ -410,12 +412,17 @@ public class EarthquakeService extends IntentService {
                 startTime = dateFormat.format(new Date(startMillis));
             }
         }
-        String minMagnitude = prefs.getString(getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM), getString(R.string.default_pref_minimum_value));
+        String minMagnitude = prefs.getString(
+                getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM),
+                getString(R.string.default_pref_minimum_value));
 
-        return "http://earthquake.usgs.gov/fdsnws/event/1/query?" +
-                "format=" + "geojson" +
-                "&starttime=" + startTime +
-                "&minmagnitude=" + minMagnitude;
+        return "http://earthquake.usgs.gov/fdsnws/event/1/query?"
+                + "format="
+                + "geojson"
+                + "&starttime="
+                + startTime
+                + "&minmagnitude="
+                + minMagnitude;
     }
 
     /**
@@ -430,12 +437,11 @@ public class EarthquakeService extends IntentService {
         try {
             String[] projection = { "MAX(" + Entity.TIME + ") AS " + Entity.TIME };
 
-            cursor = getContentResolver()
-                    .query(Entity.CONTENT_URI,
-                            projection,
-                            null,
-                            null,
-                            null);
+            cursor = getContentResolver().query(Entity.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null);
             if (cursor != null && cursor.moveToFirst()) {
                 timeStamp = cursor.getLong(cursor.getColumnIndexOrThrow(Entity.TIME));
             }

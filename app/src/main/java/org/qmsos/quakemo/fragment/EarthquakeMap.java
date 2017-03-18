@@ -33,7 +33,7 @@ public class EarthquakeMap extends BaseLoaderFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
-							 Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_earthquake_map, container, false);
     }

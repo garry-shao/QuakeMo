@@ -45,9 +45,9 @@ public class Earthquake implements Parcelable {
      */
     public Earthquake(long time,
                       double magnitude,
-					  double longitude,
-					  double latitude,
-					  double depth) {
+                      double longitude,
+                      double latitude,
+                      double depth) {
         this.mTime = time;
         this.mMagnitude = magnitude;
         this.mLongitude = longitude;

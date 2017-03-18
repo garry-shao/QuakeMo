@@ -22,7 +22,7 @@ public class EarthquakeList extends BaseLoaderFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
-							 Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_earthquake_list, container, false);
     }
 

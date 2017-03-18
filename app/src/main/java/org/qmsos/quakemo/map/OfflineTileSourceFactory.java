@@ -48,7 +48,11 @@ public class OfflineTileSourceFactory {
      */
     public static ITileSource offlineTileSource() {
         return new XYTileSource(MAP_SOURCE,
-                ZOOM_LEVEL_MIN, ZOOM_LEVEL_MAX, 256, ".png", new String[] {});
+                ZOOM_LEVEL_MIN,
+                ZOOM_LEVEL_MAX,
+                256,
+                ".png",
+                new String[] {});
     }
 
     /**
@@ -253,8 +257,10 @@ public class OfflineTileSourceFactory {
             }
         }
 
-        return isChecksumSucceeded && isHashSucceeded &&
-                valueOfChecksum != null && valueOfHash != null &&
-                valueOfChecksum.equals(valueOfHash);
+        return isChecksumSucceeded
+                && isHashSucceeded
+                && valueOfChecksum != null
+                && valueOfHash != null
+                && valueOfChecksum.equals(valueOfHash);
     }
 }

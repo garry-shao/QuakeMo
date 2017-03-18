@@ -39,8 +39,8 @@ public abstract class BaseCursorRecyclerViewAdapter<VH extends ViewHolder> exten
         mCursor = c;
         mDataValid = cursorPresent;
         mRowIDColumn = cursorPresent
-				? c.getColumnIndexOrThrow("_id")
-				: -1;
+                ? c.getColumnIndexOrThrow("_id")
+                : -1;
         if ((flags & FLAG_REGISTER_CONTENT_OBSERVER) == FLAG_REGISTER_CONTENT_OBSERVER) {
             mChangeObserver = new ChangeObserver();
             mDataSetObserver = new MyDataSetObserver();

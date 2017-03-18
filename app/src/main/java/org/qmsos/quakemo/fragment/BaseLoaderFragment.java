@@ -60,10 +60,10 @@ public abstract class BaseLoaderFragment extends Fragment implements LoaderCallb
         }
 
         return new CursorLoader(getContext(),
-				Entity.CONTENT_URI,
-				projection,
-				where,
-				null,
-				null);
+                Entity.CONTENT_URI,
+                projection,
+                where,
+                null,
+                null);
     }
 }

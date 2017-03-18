@@ -42,7 +42,7 @@ import org.qmsos.quakemo.widget.CursorRecyclerViewAdapter;
  */
 public class MainActivity extends AppCompatActivity
         implements OnSharedPreferenceChangeListener,
-		OnMenuItemClickListener,
+        OnMenuItemClickListener,
         Confirmation.OnConfirmationSelectedListener,
         EarthquakeDetails.OnLinkSelectedListener,
         CursorRecyclerViewAdapter.OnViewHolderClickedListener {

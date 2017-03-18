@@ -24,8 +24,8 @@ public class PreferenceHeader extends PreferenceFragmentCompat {
             String listenerName = OnPreferenceHeaderClickedListener.class.getSimpleName();
 
             throw new ClassCastException(context.toString()
-					+ " must implements "
-					+ listenerName);
+                    + " must implements "
+                    + listenerName);
         }
     }
 
