@@ -416,7 +416,7 @@ public class EarthquakeService extends IntentService {
                 getString(R.string.PREF_REFRESH_PARAMETER_MINIMUM),
                 getString(R.string.default_pref_minimum_value));
 
-        return "http://earthquake.usgs.gov/fdsnws/event/1/query?"
+        return "https://earthquake.usgs.gov/fdsnws/event/1/query?"
                 + "format="
                 + "geojson"
                 + "&starttime="
